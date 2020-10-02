@@ -1,0 +1,26 @@
+html,
+body {
+    height: 100vh;
+    color: #636b6f;
+    background-color: #fff;
+}
+.full-height {
+    width: 90%;
+    height: 100vh;
+    margin: 0 auto;
+    max-width: 900px;
+}
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.title {
+    font-size: 40px;
+}
+.content {
+    text-align: center;
+}
+.m-b-md {
+    margin-bottom: 30px;
+}

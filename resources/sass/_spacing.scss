@@ -1,0 +1,76 @@
+$sizeUnit: rem;
+$marginKey: "m";
+$paddingKey: "p";
+$separator: "-";
+$sizes: (("none", 0), ("xxs", 0.125), ("xs", 0.25), ("sm", 0.5), ("md", 1), ("lg", 2), ("xl", 4), ("xxl", 8));
+$positions: (("t", "top"), ("r", "right"), ("b", "bottom"), ("l", "left"));
+
+@function sizeValue($key, $value) {
+    @return if($key == "none", 0, $value + $sizeUnit);
+}
+
+@each $size in $sizes {
+    $sizeKey: nth($size, 1);
+    $sizeValue: nth($size, 2);
+    .#{$marginKey}#{$separator}#{$sizeKey} {
+        margin: sizeValue($sizeKey, $sizeValue) !important;
+    }
+    .#{$paddingKey}#{$separator}#{$sizeKey} {
+        padding: sizeValue($sizeKey, $sizeValue) !important;
+    }
+    @each $position in $positions {
+        $posKey: nth($position, 1);
+        $posValue: nth($position, 2);
+        .#{$marginKey}#{$separator}#{$posKey}#{$separator}#{$sizeKey} {
+            margin-#{$posValue}: sizeValue($sizeKey, $sizeValue) !important;
+        }
+        .#{$paddingKey}#{$separator}#{$posKey}#{$separator}#{$sizeKey} {
+            padding-#{$posValue}: sizeValue($sizeKey, $sizeValue) !important;
+        }
+    }
+    .#{$marginKey}#{$separator}x#{$separator}#{$sizeKey} {
+        margin-left: sizeValue($sizeKey, $sizeValue) !important;
+        margin-right: sizeValue($sizeKey, $sizeValue) !important;
+    }
+    .#{$paddingKey}#{$separator}x#{$separator}#{$sizeKey} {
+        padding-left: sizeValue($sizeKey, $sizeValue) !important;
+        padding-right: sizeValue($sizeKey, $sizeValue) !important;
+    }
+    .#{$marginKey}#{$separator}y#{$separator}#{$sizeKey} {
+        margin-top: sizeValue($sizeKey, $sizeValue) !important;
+        margin-bottom: sizeValue($sizeKey, $sizeValue) !important;
+    }
+    .#{$paddingKey}#{$separator}y#{$separator}#{$sizeKey} {
+        padding-top: sizeValue($sizeKey, $sizeValue) !important;
+        padding-bottom: sizeValue($sizeKey, $sizeValue) !important;
+    }
+}
+@include desktop {
+    .w50 {
+        width: 50px;
+    }
+    .w75 {
+        width: 75px;
+    }
+    .w100 {
+        width: 100px;
+    }
+    .w125 {
+        width: 125px;
+    }
+    .w150 {
+        width: 150px;
+    }
+    .w175 {
+        width: 175px;
+    }
+    .w200 {
+        width: 200px;
+    }
+    .w225 {
+        width: 225px;
+    }
+    .w250 {
+        width: 250px;
+    }
+}

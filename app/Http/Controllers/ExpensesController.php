@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Expense;
+use App\Http\Requests\ExpenseRequest;
+
+class ExpensesController extends Controller
+{
+    public function create()
+    {
+        $expense = new Expense;
+        return $expense->attributes();
+    }
+
+    public function destroy(Expense $expense)
+    {
+        $expense->delete();
+        return response(['success' => true], 204);
+    }
+
+    public function index()
+    {
+        return response()->json(Expense::mine()->vueTable(Expense::$columns));
+    }
+
+    public function show(Expense $expense)
+    {
+        $expense->attributes = $expense->attributes();
+        $expense->load($expense->attributes->pluck('slug')->toArray());
+        return $expense;
+    }
+
+    public function store(ExpenseRequest $request)
+    {
+        $v       = $request->validated();
+        $expense = $request->user()->expenses()->create($v);
+        $expense->categories()->sync($v['category']);
+        return $expense;
+    }
+
+    public function update(ExpenseRequest $request, Expense $expense)
+    {
+        $v = $request->validated();
+        $expense->update($v);
+        $expense->categories()->sync($v['category']);
+        return $expense;
+    }
+}

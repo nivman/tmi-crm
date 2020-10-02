@@ -1,0 +1,72 @@
+/* raleway-300 - latin */
+// @font-face {
+//   font-family: 'Raleway';
+//   font-style: normal;
+//   font-weight: 300;
+//   src: url('../assets/raleway/raleway-v11-latin-300.eot'); /* IE9 Compat Modes */
+//   src: local('Raleway Light'), local('Raleway-Light'),
+//   url('../assets/raleway/raleway-v11-latin-300.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+//   url('../assets/raleway/raleway-v11-latin-300.woff2') format('woff2'), /* Super Modern Browsers */
+//   url('../assets/raleway/raleway-v11-latin-300.woff') format('woff'), /* Modern Browsers */
+//   url('../assets/raleway/raleway-v11-latin-300.ttf') format('truetype'), /* Safari, Android, iOS */
+//   url('../assets/raleway/raleway-v11-latin-300.svg#Raleway') format('svg'); /* Legacy iOS */
+// }
+// /* raleway-regular - latin */
+@font-face {
+    font-family: "Raleway";
+    font-style: normal;
+    font-weight: 400;
+    src: url("../assets/raleway/raleway-v11-latin-regular.eot"); /* IE9 Compat Modes */
+    src: local("Raleway"), local("Raleway-Regular"),
+        url("../assets/raleway/raleway-v11-latin-regular.eot?#iefix")
+            format("embedded-opentype"),
+        /* IE6-IE8 */ url("../assets/raleway/raleway-v11-latin-regular.woff2")
+            format("woff2"),
+        /* Super Modern Browsers */
+            url("../assets/raleway/raleway-v11-latin-regular.woff")
+            format("woff"),
+        /* Modern Browsers */
+            url("../assets/raleway/raleway-v11-latin-regular.ttf")
+            format("truetype"),
+        /* Safari, Android, iOS */
+            url("../assets/raleway/raleway-v11-latin-regular.svg#Raleway")
+            format("svg"); /* Legacy iOS */
+}
+/* raleway-600 - latin */
+@font-face {
+    font-family: "Raleway";
+    font-style: normal;
+    font-weight: 600;
+    src: url("../assets/raleway/raleway-v11-latin-600.eot"); /* IE9 Compat Modes */
+    src: local("Raleway SemiBold"), local("Raleway-SemiBold"),
+        url("../assets/raleway/raleway-v11-latin-600.eot?#iefix")
+            format("embedded-opentype"),
+        /* IE6-IE8 */ url("../assets/raleway/raleway-v11-latin-600.woff2")
+            format("woff2"),
+        /* Super Modern Browsers */
+            url("../assets/raleway/raleway-v11-latin-600.woff") format("woff"),
+        /* Modern Browsers */ url("../assets/raleway/raleway-v11-latin-600.ttf")
+            format("truetype"),
+        /* Safari, Android, iOS */
+            url("../assets/raleway/raleway-v11-latin-600.svg#Raleway")
+            format("svg"); /* Legacy iOS */
+}
+
+body {
+    font-family: "Raleway", sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+}
+
+// .navbar i {
+//   font-weight: 600 !important;
+//   font-size: 1.2rem;
+//   line-height: 1rem;
+// }
