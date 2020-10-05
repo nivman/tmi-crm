@@ -112,7 +112,7 @@
                                     id="offline"
                                     name="offline"
                                     v-model="form.offline"
-                                    :checked="form.offline"
+                                    :checked=form.offline
                                     label="Show this in offline payments"
                                 ></checkbox-component>
                             </div>

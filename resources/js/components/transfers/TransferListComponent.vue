@@ -60,6 +60,7 @@ export default {
             filters: 0,
             columns: ['from', 'to', 'amount', 'details', 'actions'],
             options: {
+                perPage: 10,
                 orderBy: { ascending: false, column: 'id' },
                 sortable: ['id', 'amount', 'details'],
                 filterable: ['id', 'from', 'to', 'amount', 'details'],

@@ -37,7 +37,8 @@
                             <h1>Invoice No.
                                 <small>{{ $invoice->id }}</small>
                             </h1>
-                            <h4 class="text-muted">Date: {{ \Carbon\Carbon::parse($invoice->date)->format(php_date_formate()) }}</h4>
+
+                            <h4 class="text-muted">Date: {{ \Carbon\Carbon::parse($invoice->date)->format('d/m/yy') }}</h4>
                             <h4 class="text-muted">Reference: {{ $invoice->reference }}</h4>
                         </div>
                     </div>
@@ -137,13 +138,13 @@
                                     </td>
                                     @if ($invoice->company->show_discount)
                                     <td class="has-text-right">
-                                        {{--
+
                                         <div class="inline-block m-b-none">
                                             <small class="text-muted">{{ $item->discount }}</small>
-                                            <span class="is-pulled-right right"> --}}
+                                            <span class="is-pulled-right right">
                                                 {{ formatNumber($item->discount_amount) }}
-                                            {{-- </span>
-                                        </div> --}}
+                                             </span>
+                                        </div>
                                     </td>
                                     @endif @if ($invoice->company->show_tax)
                                     <td>

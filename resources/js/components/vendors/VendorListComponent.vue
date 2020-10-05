@@ -87,6 +87,7 @@ export default {
             columns: ['name', 'company', 'email', 'phone', 'payable', 'actions'],
             filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
             options: {
+                perPage: 10,
                 orderBy: { ascending: true, column: 'name' },
                 sortable: ['id', 'name', 'company', 'email', 'phone'],
                 columnsClasses: { id: 'w50 has-text-centered', payable: 'w125 has-text-right', actions: 'w175 has-text-centered p-x-none' },

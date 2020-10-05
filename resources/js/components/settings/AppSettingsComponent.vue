@@ -53,7 +53,7 @@
                                                 class="input"
                                                 id="ac.short_name"
                                                 v-validate="'required'"
-                                                v-model="form.ac.short_name"
+                                                v-model="form.short_name"
                                                 data-vv-name="ac.short_name"
                                                 :class="{
                                                     'is-danger': errors.has(
@@ -76,7 +76,7 @@
                                                     id="ac.dateformat"
                                                     v-validate="'required'"
                                                     data-vv-name="ac.dateformat"
-                                                    v-model="form.ac.dateformat"
+                                                    v-model="form.dateformat"
                                                     :class="{
                                                         'is-danger': errors.has(
                                                             'ac.dateformat'
@@ -121,7 +121,7 @@
                                                 :searchable="false"
                                                 :options="countries"
                                                 v-validate="'required'"
-                                                v-model="form.ac.country"
+                                                v-model="form.country"
                                                 :style="{ width: '100%' }"
                                                 placeholder="Select Country..."
                                                 :class="{
@@ -153,32 +153,32 @@
                                                 label="10"
                                                 value="10"
                                                 name="ac.noRows"
-                                                v-model="form.ac.noRows"
-                                                :checked="form.ac.noRows == 10"
+                                                v-model="form.noRows"
+                                                :checked="form.noRows == 10"
                                             ></radio-component>
                                             <radio-component
                                                 id="25"
                                                 label="25"
                                                 value="25"
                                                 name="ac.noRows"
-                                                v-model="form.ac.noRows"
-                                                :checked="form.ac.noRows == 25"
+                                                v-model="form.noRows"
+                                                :checked="form.noRows == 25"
                                             ></radio-component>
                                             <radio-component
                                                 id="50"
                                                 label="50"
                                                 value="50"
                                                 name="ac.noRows"
-                                                v-model="form.ac.noRows"
-                                                :checked="form.ac.noRows == 50"
+                                                v-model="form.noRows"
+                                                :checked="form.noRows == 50"
                                             ></radio-component>
                                             <radio-component
                                                 id="100"
                                                 label="100"
                                                 value="100"
                                                 name="ac.noRows"
-                                                v-model="form.ac.noRows"
-                                                :checked="form.ac.noRows == 100"
+                                                v-model="form.noRows"
+                                                :checked="form.noRows == 100"
                                             ></radio-component>
                                         </div>
                                         <div class="help is-danger">
@@ -199,9 +199,9 @@
                                                 label="Top"
                                                 value="top"
                                                 name="ac.navPosition"
-                                                v-model="form.ac.navPosition"
+                                                v-model="form.navPosition"
                                                 :checked="
-                                                    form.ac.navPosition == 'top'
+                                                    form.navPosition == 'top'
                                                 "
                                             ></radio-component>
                                             <radio-component
@@ -209,9 +209,9 @@
                                                 value="left"
                                                 label="Left"
                                                 name="ac.navPosition"
-                                                v-model="form.ac.navPosition"
+                                                v-model="form.navPosition"
                                                 :checked="
-                                                    form.ac.navPosition ==
+                                                    form.navPosition ==
                                                         'left'
                                                 "
                                             ></radio-component>
@@ -227,8 +227,8 @@
                                             id="ac.idColumn"
                                             name="ac.idColumn"
                                             label="Hide ID Column"
-                                            v-model="form.ac.idColumn"
-                                            :checked="!!form.ac.idColumn"
+                                            v-model="form.idColumn"
+                                            :checked="!!form.idColumn"
                                         ></checkbox-component>
                                         <div class="help is-danger">
                                             {{ errors.first("ac.idColumn") }}
@@ -240,8 +240,8 @@
                                         <checkbox-component
                                             id="ac.select"
                                             name="ac.select"
-                                            v-model="form.ac.select"
-                                            :checked="!!form.ac.select"
+                                            v-model="form.select"
+                                            :checked="!!form.select"
                                             label="Add empty option to select"
                                         ></checkbox-component>
                                         <div class="help is-danger">
@@ -317,6 +317,15 @@ export default {
                             .post("app/settings")
                             .then(res => {
                                 this.form = new this.$form(this.settings);
+
+                                this.form.country = res.data.country.label ===  undefined ? res.data.country : res.data.country.label
+                                this.form.app.name =  res.data.app.name;
+                                this.form.dateformat = res.data.dateformat;
+                                this.form.idColumn = res.data.idColumn;
+                                this.form.select = res.data.select;
+                                this.form.short_name = res.data.short_name;
+                                this.form.noRows = res.data.noRows;
+                                this.form.navPosition = res.data.navPosition;
                                 this.$store.commit("UPDATE_SETTINGS", res.data);
                                 this.notify(
                                     "success",

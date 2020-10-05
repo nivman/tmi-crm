@@ -61,6 +61,7 @@ export default {
             loading: true,
             columns: ['name', 'type', 'reference', 'details', 'balance', 'actions'],
             options: {
+                perPage: 10,
                 orderBy: { ascending: true, column: 'name' },
                 sortable: ['id', 'name', 'type', 'reference', 'details'],
                 filterable: ['id', 'name', 'type', 'reference', 'details'],

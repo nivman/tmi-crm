@@ -23,6 +23,7 @@ class AccountRequest extends FormRequest
             'type'            => 'required|max:25',
             'reference'       => 'nullable|max:255',
             'opening_balance' => 'nullable|numeric',
+            'offline'         => 'nullable|boolean'
         ];
 
         $account          = new Account;
@@ -41,10 +42,12 @@ class AccountRequest extends FormRequest
         $validated = $this->only(collect($rules)->keys()->map(function ($rule) {
             return str_contains($rule, '.') ? explode('.', $rule)[0] : $rule;
         })->unique()->toArray());
-
+;
         if (!isset($validated['opening_balance']) && empty($validated['opening_balance'])) {
             $validated['opening_balance'] = 0;
         }
+
+        $validated['offline'] = $validated['offline'] == true ? 1 : 0;
 
         foreach ($this->attributes as $attribute) {
             if ($attribute->type == 'datetime' && !empty($validated[$attribute->slug])) {

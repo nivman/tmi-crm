@@ -50,8 +50,10 @@ class AccountsController extends Controller
 
     public function show(Account $account)
     {
-        $account->value      = $account->id;
+        $account->value = $account->id;
         $account->attributes = $account->attributes();
+
+        $account->offline = $account->offline === 1 ? true : false;
         $account->load($account->attributes->pluck('slug')->toArray());
         return $account;
     }
@@ -71,7 +73,10 @@ class AccountsController extends Controller
 
     public function update(AccountRequest $request, Account $account)
     {
+
         $v = $request->validated();
+
+        //dd($v);
         $account->update($v);
         return $account;
     }

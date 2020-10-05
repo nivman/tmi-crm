@@ -18995,6 +18995,7 @@ body,
 #app {
   height: 100%;
   -webkit-font-smoothing: antialiased;
+  direction: rtl;
 }
 
 ::-webkit-input-placeholder {
@@ -19073,13 +19074,13 @@ input.vs__search::-webkit-input-placeholder {
   width: calc(100% - 190px);
   min-height: calc(100vh - 55px);
   transition: all 0.2s;
-  margin-left: 210px;
+  margin-right: 210px;
   float: right;
 }
 
 .is-app .wrapper {
   margin-top: 70px;
-  margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 .is-app.hide-side-bar .is-sidebar {
@@ -19088,7 +19089,7 @@ input.vs__search::-webkit-input-placeholder {
 
 .is-app.hide-side-bar .is-main {
   width: 100%;
-  margin-left: 0;
+  margin-right: 0;
   float: none;
 }
 
@@ -19812,7 +19813,7 @@ a.navbar-item.is-white.is-active {
   max-width: calc(100% - 40px) !important;
   width: calc(100% - 40px) !important;
   margin-left: 20px !important;
-  margin-right: 20px !important;
+  margin-right: 2px !important;
 }
 
 .buttons .button {

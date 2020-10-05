@@ -87,20 +87,20 @@ export default {
         };
     },
     created() {
-        // if (this.$store.getters.admin || this.$store.getters.superAdmin) {
-        //     let filters = { code: '', name: '', categories: { name: '' }, taxes: { name: '' }, cost: '', price: '', nf1: 'Qty', range: 0 };
-        //     let actions = this.columns.pop();
-        //     let price = this.columns.pop();
-        //     this.columns.push('cost');
-        //     this.columns.push(price);
-        //     if (this.$store.getters.stock) {
-        //         this.columns.push('qty');
-        //     } else {
-        //         delete filters.nf1;
-        //     }
-        //     this.columns.push(actions);
-        //     this.filters = new this.$form(filters);
-        // }
+        if (this.$store.getters.admin || this.$store.getters.superAdmin) {
+            let filters = { code: '', name: '', categories: { name: '' }, taxes: { name: '' }, cost: '', price: '', nf1: 'Qty', range: 0 };
+            let actions = this.columns.pop();
+            let price = this.columns.pop();
+            this.columns.push('cost');
+            this.columns.push(price);
+            if (this.$store.getters.stock) {
+                this.columns.push('qty');
+            } else {
+                delete filters.nf1;
+            }
+            this.columns.push(actions);
+            this.filters = new this.$form(filters);
+        }
     },
     methods: {
         showTaxes(taxes) {

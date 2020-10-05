@@ -2,11 +2,15 @@
 
 namespace App;
 
+use App\Providers\AppServiceProvider;
 use App\Traits\VueTable;
 use App\Traits\LogActivity;
 use App\Traits\AttributableModel;
 use App\Traits\DynamicHiddenVisible;
 use Illuminate\Database\Eloquent\Model;
+use Rinvex\Attributes\Models\Attribute;
+use Rinvex\Attributes\Models\Type\Varchar;
+use Rinvex\Attributes\Support\RelationBuilder;
 
 class Product extends Model
 {
@@ -15,7 +19,8 @@ class Product extends Model
     public static $columns = ['id', 'code', 'name', 'price', 'categories.name', 'taxes.name'];
 
     protected $fillable = ['code', 'name', 'cost', 'price', 'details', 'image'];
-    protected $with     = ['categories', 'taxes', 'stock'];
+
+    protected $with     = ['categories', 'taxes', 'stock', 'eav'];
 
     protected static function boot()
     {
@@ -59,5 +64,13 @@ class Product extends Model
     public function taxes()
     {
         return $this->morphToMany(Tax::class, 'taxable');
+    }
+
+    public function eav()
+    {
+        Attribute::typeMap([
+            'varchar' => Varchar::class,
+        ]);
+        app('rinvex.attributes.entities')->push('entity');
     }
 }

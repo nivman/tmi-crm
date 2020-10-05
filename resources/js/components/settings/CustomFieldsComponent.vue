@@ -50,6 +50,7 @@ export default {
         return {
             columns: ['name', 'slug', 'type', 'sort_order', 'required', 'entities', 'actions'],
             options: {
+                perPage: 10,
                 orderBy: { ascending: true, column: 'sort_order' },
                 sortable: ['id', 'name', 'slug', 'type', 'sort_order', 'required'],
                 columnsClasses: {

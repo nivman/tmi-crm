@@ -83,6 +83,7 @@ export default {
             }),
             columns: ['created_at', 'title', 'reference', 'category', 'account', 'amount', 'actions'],
             options: {
+                perPage: 10,
                 orderBy: { ascending: false, column: 'created_at' },
                 sortable: ['id', 'created_at', 'title', 'reference', 'amount'],
                 columnsClasses: { id: 'w50 has-text-centered', actions: 'w125 has-text-centered p-x-none', amount: 'w125' },

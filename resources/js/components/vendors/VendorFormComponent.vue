@@ -25,7 +25,8 @@
                                     type="text"
                                     class="input"
                                     v-model="form.name"
-                                    v-validate="'required'"
+                                    validate="'required'"
+                                    validate.persist="'required'"
                                     :class="{ 'is-danger': errors.has('name') }"
                                 />
                                 <div
@@ -64,7 +65,8 @@
                                     name="email"
                                     class="input"
                                     v-model="form.email"
-                                    v-validate="'email'"
+                                    validate="'email'"
+                                    validate.persist="'required'"
                                     :class="{
                                         'is-danger': errors.has('email')
                                     }"

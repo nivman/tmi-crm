@@ -96,6 +96,7 @@ export default {
             options: {
                 orderBy: { ascending: true, column: 'name' },
                 sortable: ['id', 'name', 'company', 'email', 'phone'],
+                perPage: 10,
                 columnsClasses: {
                     id: 'w50 has-text-centered',
                     receivable: 'w125 has-text-right',

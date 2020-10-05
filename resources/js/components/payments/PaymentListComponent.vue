@@ -150,6 +150,7 @@ export default {
                 date_range: '',
             }),
             options: {
+                perPage: 10,
                 orderBy: { ascending: false, column: 'created_at' },
                 sortable: ['id', 'created_at', 'reference', 'amount', 'gateway'],
                 columnsClasses: {

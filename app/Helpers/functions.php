@@ -1,21 +1,25 @@
 <?php
 
 // App Config
+use Illuminate\Support\Facades\Storage;
+
 if (!function_exists('app_config')) {
     function app_config($label = null)
     {
-        //TODO go to thew bottom of all the installation thing  and the settings.json file
-        //For now i live it like that
-        if (!($settings = app()->request->session()->get('appSettings'))) {
-            $settings = json_decode(Storage::disk('local')->get('settings.json'), true);
-        }
 
+        //TODO go to the bottom of all the installation thing  and the settings.json file
+        //For now i live it like that
+       // if (!($settings = app()->request->session()->get('appSettings'))) {
+      //$settings = json_decode(Storage::disk('local')->get('settings.json'), true);
+     //   }
+       // dump($settings);die;
         return true;
     }
 }
 
 // App Version
 if (!function_exists('app_version')) {
+
     function app_version()
     {
         $cf = json_decode(file_get_contents(base_path('composer.json')));

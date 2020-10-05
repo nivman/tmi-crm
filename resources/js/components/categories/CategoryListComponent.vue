@@ -42,6 +42,7 @@ export default {
         return {
             columns: ['name', 'actions'],
             options: {
+                perPage:10,
                 orderBy: { ascending: true, column: 'name' },
                 sortable: ['id', 'name'],
                 columnsClasses: { id: 'w50 has-text-centered', actions: 'w100 has-text-centered p-x-none' },

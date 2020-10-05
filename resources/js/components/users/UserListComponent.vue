@@ -43,6 +43,7 @@ export default {
             loading: true,
             columns: ['name', 'username', 'email', 'phone', 'actions'],
             options: {
+                perPage: 10,
                 orderBy: { ascending: true, column: 'name' },
                 sortable: ['id', 'name', 'username', 'email', 'phone'],
                 columnsClasses: { id: 'w50 has-text-centered', actions: 'w125 has-text-centered p-x-none' },

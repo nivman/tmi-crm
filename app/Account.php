@@ -12,9 +12,9 @@ class Account extends Model
 {
     use AccountingJournal, AttributableModel, LogActivity, VueTable;
 
-    public static $columns = ['id', 'name', 'type', 'reference', 'details'];
+    public static $columns = ['id', 'name', 'type', 'reference', 'details', 'offline'];
 
-    protected $fillable = ['name', 'type', 'reference', 'details', 'opening_balance'];
+    protected $fillable = ['name', 'type', 'reference', 'details', 'opening_balance', 'offline'];
     protected $hidden   = ['created_at', 'updated_at'];
 
     protected static function boot()

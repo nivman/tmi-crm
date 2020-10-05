@@ -94,6 +94,7 @@ export default {
                 orderBy: { ascending: false, column: 'start_date' },
                 sortable: ['id', 'reference', 'start_date', 'last_created_at', 'repeat', 'active', 'grand_total'],
                 filterable: ['id', 'reference', 'start_date', 'last_created_at', 'repeat', 'customer.name', 'active', 'grand_total'],
+                perPage:10,
                 columnsClasses: {
                     id: 'w50 has-text-centered',
                     reference: 'w175',

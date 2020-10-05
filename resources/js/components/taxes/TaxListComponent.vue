@@ -80,6 +80,7 @@ export default {
             filters: 0,
             columns: ['code', 'name', 'rate', 'details', 'number', 'compound', 'recoverable', 'state', 'actions'],
             options: {
+                perPage: 10,
                 orderBy: { ascending: true, column: 'code' },
                 filterable: ['id', 'code', 'name', 'rate', 'details', 'number'],
                 sortable: ['id', 'code', 'name', 'rate', 'details', 'number', 'compound', 'recoverable', 'state'],

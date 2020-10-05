@@ -77,7 +77,7 @@
                             <h1>Payment No.
                                 <small>{{ $payment->id }}</small>
                             </h1>
-                            <h4 class="text-muted">Date: {{ \Carbon\Carbon::parse($payment->created_at)->format(php_date_formate()) }}</h4>
+                            <h4 class="text-muted">Date: {{ \Carbon\Carbon::parse($payment->created_at)->format('d/m/YY') }}</h4>
                             <h4 class="text-muted">Reference: {{ $payment->reference }}</h4>
                         </div>
                     </div>

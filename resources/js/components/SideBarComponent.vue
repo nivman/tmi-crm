@@ -3,7 +3,7 @@
         <ul class="menu-list" v-if="!$store.getters.customer && !$store.getters.vendor">
             <li>
                 <router-link to="/" exact @click.native="hideMenu">
-                    <span class="icon is-small m-r-sm">
+                    <span class="icon is-small m-l-sm">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
                     </span>
                     Dashboard
@@ -11,14 +11,14 @@
             </li>
             <li>
                 <router-link to="/calendar" exact @click.native="hideMenu">
-                    <span class="icon is-small m-r-sm">
+                    <span class="icon is-small m-l-sm">
                         <i class="fas fa-fw fa-calendar-alt"></i>
                     </span>
                     Calendar
                 </router-link>
             </li>
             <side-bar-menu-component :expand="subIsActive(['/invoices', '/recurrings'])">
-                <span class="icon is-small m-r-sm">
+                <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-file-invoice"></i>
                 </span>
                 Invoices
@@ -39,7 +39,7 @@
             </side-bar-menu-component>
 
             <side-bar-menu-component :expand="subIsActive(['/purchases'])">
-                <span class="icon is-small m-r-sm">
+                <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-file-invoice-dollar"></i>
                 </span>
                 Purchases
@@ -54,7 +54,7 @@
             </side-bar-menu-component>
 
             <side-bar-menu-component :expand="subIsActive(['/products'])">
-                <span class="icon is-small m-r-sm">
+                <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-cubes"></i>
                 </span>
                 Products
@@ -69,7 +69,7 @@
             </side-bar-menu-component>
 
             <side-bar-menu-component :expand="subIsActive(['/customers'])">
-                <span class="icon is-small m-r-sm">
+                <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-users"></i>
                 </span>
                 Customers
@@ -84,7 +84,7 @@
             </side-bar-menu-component>
 
             <side-bar-menu-component :expand="subIsActive(['/vendors'])">
-                <span class="icon is-small m-r-sm">
+                <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-user-friends"></i>
                 </span>
                 Vendors
@@ -99,7 +99,7 @@
             </side-bar-menu-component>
 
             <side-bar-menu-component :expand="subIsActive(['/incomes'])">
-                <span class="icon is-small m-r-sm">
+                <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-money-check"></i>
                 </span>
                 Incomes
@@ -114,7 +114,7 @@
             </side-bar-menu-component>
 
             <side-bar-menu-component :expand="subIsActive(['/expenses'])">
-                <span class="icon is-small m-r-sm">
+                <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-money-check-alt"></i>
                 </span>
                 Expenses
@@ -129,7 +129,7 @@
             </side-bar-menu-component>
 
             <side-bar-menu-component :expand="subIsActive(['/payments'])">
-                <span class="icon is-small m-r-sm">
+                <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-dollar-sign"></i>
                 </span>
                 Payments
@@ -145,7 +145,7 @@
 
             <span v-if="$store.getters.admin">
                 <side-bar-menu-component :expand="subIsActive(['/transfers'])">
-                    <span class="icon is-small m-r-sm">
+                    <span class="icon is-small m-l-sm">
                         <i class="fas fa-fw fa-exchange-alt"></i>
                     </span>
                     Transfers
@@ -160,7 +160,7 @@
                 </side-bar-menu-component>
 
                 <side-bar-menu-component :expand="subIsActive(['/accounts'])">
-                    <span class="icon is-small m-r-sm">
+                    <span class="icon is-small m-l-sm">
                         <i class="fas fa-fw fa-swatchbook"></i>
                     </span>
                     Accounts
@@ -177,7 +177,7 @@
 
             <span v-if="$store.getters.superAdmin">
                 <side-bar-menu-component :expand="subIsActive(['/users'])">
-                    <span class="icon is-small m-r-sm">
+                    <span class="icon is-small m-l-sm">
                         <i class="fas fa-fw fa-users-cog"></i>
                     </span>
                     Users
@@ -194,7 +194,7 @@
 
             <span v-if="$store.getters.admin">
                 <side-bar-menu-component :expand="subIsActive(['/settings', '/taxes', '/categories'])">
-                    <span class="icon is-small m-r-sm">
+                    <span class="icon is-small m-l-sm">
                         <i class="fas fa-fw fa-cogs"></i>
                     </span>
                     Settings
@@ -231,7 +231,7 @@
             </span>
             <li v-if="$store.getters.admin">
                 <router-link to="/report" exact @click.native="hideMenu">
-                    <span class="icon is-small m-r-sm">
+                    <span class="icon is-small m-l-sm">
                         <i class="fas fa-fw fa-chart-line"></i>
                     </span>
                     Report

@@ -29,10 +29,9 @@
                 </span>
                 <router-link
                     class="is-hidden-desktop navbar-item is-radiusless is-shadowless"
-                    style="margin-left:auto;"
+                    style="margin-right:auto;"
                     to="/profile"
-                    exact
-                >
+                    exact>
                     <i class="fas fa-user" />
                 </router-link>
                 <router-link class="is-hidden-desktop navbar-item is-radiusless is-shadowless" to="/change_password" exact>
@@ -50,34 +49,30 @@
                 </a>
             </div>
             <div class="navbar-end is-hidden-touch" style="font-size: .95rem;" v-if="!$store.getters.customer && !$store.getters.vendor">
-                <a
-                    exact
-                    v-if="$store.getters.demo"
-                    class="button is-success m-t-sm m-r-sm"
-                    href="https://codecanyon.net/checkout/from_item/24093379?license=regular&ref=tecdiary"
-                >
-                    <i class="fas fa-shopping-cart" />
-                    <span class="is-hidden-touch m-l-sm">Buy Now</span>
-                </a>
-                <router-link to="/" exact class="navbar-item">
-                    <i class="fas fa-tachometer-alt" />
+                    <router-link to="/" exact class="navbar-item">
+
                     <span class="is-hidden-touch m-l-sm">Dashboard</span>
+                  <i class="fas fa-tachometer-alt" />
                 </router-link>
                 <router-link to="/settings" exact class="navbar-item" v-if="$store.getters.superAdmin">
-                    <i class="fas fa-cogs" />
+
                     <span class="is-hidden-touch m-l-sm">Settings</span>
+                  <i class="fas fa-cogs" />
                 </router-link>
                 <router-link to="/report" exact class="navbar-item" v-if="$store.getters.admin">
-                    <i class="fas fa-chart-line" />
+
                     <span class="is-hidden-touch m-l-sm">Report</span>
+                  <i class="fas fa-chart-line" />
                 </router-link>
                 <router-link to="/calendar" exact class="navbar-item">
-                    <i class="fas fa-calendar-alt" />
+
                     <span class="is-hidden-touch m-l-sm">Calendar</span>
+                  <i class="fas fa-calendar-alt" />
                 </router-link>
                 <router-link to="/logs" exact class="navbar-item" v-if="$store.getters.superAdmin">
-                    <i class="fas fa-file-alt" />
+
                     <span class="is-hidden-touch m-l-sm">Logs</span>
+                  <i class="fas fa-file-alt" />
                 </router-link>
                 <div class="navbar-item has-dropdown is-hoverable" v-if="$store.getters.notifications">
                     <a role="button" class="navbar-link is-arrowless no-caret p-x-md">
@@ -96,8 +91,9 @@
                 </div>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
-                        <i class="fas fa-user m-r-sm" />
+
                         <span class="is-capitalized">{{ user_name }}</span>
+                      <i class="fas fa-user m-r-sm" />
                     </a>
                     <div class="navbar-dropdown is-right">
                         <router-link to="/profile" exact class="navbar-item">{{ name }}'s Profile</router-link>

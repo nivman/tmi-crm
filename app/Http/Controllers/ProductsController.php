@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CustomField;
 use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
@@ -58,7 +59,7 @@ class ProductsController extends Controller
             Product::setStaticHidden(['cost']);
         }
         $product->attributes = $product->attributes();
-        $product->load($product->attributes->pluck('slug')->toArray());
+
         return $product;
     }
 

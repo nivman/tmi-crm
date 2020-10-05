@@ -64,6 +64,7 @@ export default {
             options: {
                 orderBy: { ascending: false, column: 'created_at' },
                 sortable: ['created_at', 'log_name', 'description', 'subject_id', 'subject_type', ''],
+                perPage: 10,
                 columnsClasses: {
                     created_at: 'w175',
                     log_name: 'w125',

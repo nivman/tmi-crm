@@ -121,6 +121,7 @@ export default {
                 // multiSort: [{ column: 'id', ascending: true }],
                 sortable: ['id', 'date', 'reference', 'draft', 'grand_total'],
                 filterable: ['id', 'date', 'reference', 'draft', 'grand_total'],
+                perPage: 10,
                 columnsClasses: {
                     id: 'w50 has-text-centered',
                     date: 'w150',

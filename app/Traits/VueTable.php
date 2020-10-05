@@ -9,7 +9,9 @@ trait VueTable
 {
     public static function scopeVueTable($data, $fields, $special_field = false)
     {
+        $byColumn = null;
         $request = app()->make('request');
+        $ascending = null;
         extract($request->only('filters', 'query', 'limit', 'page', 'orderBy', 'ascending', 'byColumn'));
 
         $limit = $request->request->filter('limit') == '' ? 10 : (int)$request->request->filter('limit');
