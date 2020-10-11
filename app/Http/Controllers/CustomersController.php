@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
+use App\Status;
 use Illuminate\Http\Request;
 use App\Http\Requests\CustomerRequest;
 
@@ -10,8 +11,10 @@ class CustomersController extends Controller
 {
     public function create()
     {
+        $customerStatuses = (new Status)->getAllEntityStatus('App\Customer');
+
         $customer = new Customer;
-        return $customer->attributes();
+        return ['attributes' => $customer->attributes(), 'statuses' => $customerStatuses];
     }
 
     public function destroy(Customer $customer)
@@ -29,12 +32,12 @@ class CustomersController extends Controller
 
     public function index()
     {
-        return response()->json(Customer::with('journal')->mine()->vueTable(Customer::$columns));
+        return response()->json(Customer::with(['journal','status'])->mine()->vueTable(Customer::$columns));
     }
 
     public function search(Request $request)
     {
-        $v       = $request->validate(['query' => 'required|string']);
+        $v = $request->validate(['query' => 'required|string']);
         $results = Customer::search($v['query'])->select(
             \DB::raw("*, id as value,
                 if (`name` LIKE '{$v['query']}%', 20, if (`name` LIKE '%{$v['query']}%', 10, 0))
@@ -49,14 +52,21 @@ class CustomersController extends Controller
     public function show(Customer $customer)
     {
         $customer->attributes = $customer->attributes();
+
+        $customer->status = $customer->getStatus($customer->getAttribute('status_id'));
+        $customerStatuses = (new Status)->getAllEntityStatus('App\Customer');
+
         $customer->load($customer->attributes->pluck('slug')->toArray());
-        return $customer;
+        return ['customer' => $customer, 'statuses' => $customerStatuses];
+
     }
 
     public function store(CustomerRequest $request)
     {
-        $v            = $request->validated();
+
+        $v = $request->validated();
         $v['user_id'] = auth()->id();
+        $v['status_id'] = $request->request->get('status');
         return Customer::create($v);
     }
 
@@ -67,6 +77,7 @@ class CustomersController extends Controller
             abort(403);
         }
         $v = $request->validated();
+        $v['status_id'] = $request->request->get('status');
         $customer->update($v);
         return $customer;
     }

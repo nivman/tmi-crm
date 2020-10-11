@@ -357,6 +357,38 @@ const router = new VueRouter({
                     meta: { title: "Invoice Settings", admin: false, super: true }
                 },
                 {
+                    path: "statuses",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/settings/StatusComponent.vue"),
+                    meta: { title: "Statuses", admin: false, super: true }
+                },
+                {
+                    path: "statuses",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/settings/StatusFormComponent.vue"),
+                    meta: { title: "Statuses", admin: true },
+                    children: [
+                        {
+                            path: "add",
+                            component: () =>
+                                import(/* webpackChunkName: "components" */ "./components/settings/StatusFormComponent.vue"),
+                            meta: {
+                                title: "הוספת סטטוס",
+                                admin: true,
+                                modal: true
+                            }
+                        },
+                        {
+                            path: "edit/:id",
+                            component: () =>
+                                import(/* webpackChunkName: "components" */ "./components/settings/StatusFormComponent.vue"),
+                            meta: {
+                                title: "עריכת סטטוס",
+                                admin: true,
+                                modal: true
+                            }
+                        }
+                    ]
+                },
+                {
                     path: "fields",
                     component: () => import(/* webpackChunkName: "components" */ "./components/settings/CustomFieldsComponent.vue"),
                     meta: { title: "Custom Fields", admin: true },

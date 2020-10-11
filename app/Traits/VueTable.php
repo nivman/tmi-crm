@@ -3,10 +3,18 @@
 namespace App\Traits;
 
 use Carbon\Carbon;
-use Symfony\Component\HttpFoundation\InputBag;
+use Illuminate\Database\Eloquent\Builder;
+
 
 trait VueTable
 {
+    /**
+     * @param Builder $data
+     * @param $fields
+     * @param false $special_field
+     * @return array
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
     public static function scopeVueTable($data, $fields, $special_field = false)
     {
         $byColumn = null;
@@ -38,7 +46,9 @@ trait VueTable
 
         if ($special_field) {
             foreach ($special_field as $sf) {
-                foreach ($results as &$value) {
+
+                foreach ($results as $value) {
+
                     $value->{$sf} = $value->{$sf};
                 }
             }

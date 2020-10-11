@@ -72,13 +72,13 @@
                 <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-users"></i>
                 </span>
-                Customers
+                לקוחות
                 <template slot="submenu">
                     <li>
-                        <router-link to="/customers" exact @click.native="hideMenu">List Customers</router-link>
+                        <router-link to="/customers" exact @click.native="hideMenu">רשימת לקוחות</router-link>
                     </li>
                     <li>
-                        <router-link to="/customers/add" @click.native="hideMenu">Add New Customer</router-link>
+                        <router-link to="/customers/add" @click.native="hideMenu">הוספת לקוח חדש</router-link>
                     </li>
                 </template>
             </side-bar-menu-component>
@@ -226,6 +226,12 @@
                         <li>
                             <router-link to="/settings/fields" @click.native="hideMenu">List Custom Fields</router-link>
                         </li>
+                      <li>
+                            <router-link to="/settings/statuses" @click.native="hideMenu">רשימת סטטוסים</router-link>
+                        </li>
+                       <li>
+                            <router-link to="/settings/fields" @click.native="hideMenu"></router-link>
+                        </li>
                     </template>
                 </side-bar-menu-component>
             </span>
@@ -334,7 +340,8 @@
                     <span class="icon is-small m-r-sm">
                         <i class="fas fa-fw fa-file-alt"></i>
                     </span>
-                    Company
+                    חברה
+
                 </router-link>
             </li>
         </ul>

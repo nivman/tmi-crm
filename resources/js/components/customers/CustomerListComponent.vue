@@ -20,6 +20,11 @@
                     ref="customersTable"
                     name="customersTable"
                 >
+                  <template slot="status" slot-scope="props">
+                    <div class="has-text-centered" v-bind:style="{background: props.row.status ? props.row.status.color : ''} ">
+                      {{ props.row.status ? props.row.status.name : '' }}
+                    </div>
+                  </template>
                     <template slot="receivable" slot-scope="props">
                         <div class="has-text-right">
                             {{ props.row.journal ? props.row.journal.balance.amount : 0 | formatJournalBalance }}
@@ -91,7 +96,7 @@ export default {
     data() {
         return {
             total_amount: 0,
-            columns: ['name', 'company', 'email', 'phone', 'receivable', 'actions'],
+            columns: ['name', 'company', 'email', 'phone', 'receivable', 'status','actions'],
             filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
             options: {
                 orderBy: { ascending: true, column: 'name' },

@@ -99,6 +99,12 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::resource('recurrings', 'RecurringsController')->only(['destroy']);
         Route::resource('settings', 'SettingsController')->only(['index', 'store']);
         Route::resource('custom_fields', 'CustomFieldsController')->only(['destroy']);
+        Route::resource('statuses', 'StatusController')->only(['index']);
+        Route::post('statuses/create', 'StatusController@store');
+        Route::post('statuses/edit/{status}', 'StatusController@update');
+        Route::delete('statuses/delete/{status}', 'StatusController@destroy');
+        Route::delete('customers/delete/{customer}', 'CustomersController@destroy');
+        Route::get('statuses/{status}', 'StatusController@edit');
         Route::get('templates/{template?}', 'EmailTemplateController@show');
         Route::put('templates/{template?}', 'EmailTemplateController@update');
     });

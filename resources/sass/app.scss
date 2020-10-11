@@ -53,6 +53,7 @@ input.vs__search::-webkit-input-placeholder {
   width: 100%;
   margin: 0;
   padding: 0;
+  direction: rtl;
   .is-sidebar {
     position: fixed;
     bottom: 0;
@@ -550,8 +551,8 @@ footer {
         position: absolute;
         top: 0;
         bottom: 0;
-        left: 50%;
-        right: 0;
+        right: 50%;
+        left: 0;
         .bg {
           height: 100%;
           width: 100%;
@@ -880,4 +881,22 @@ a.navbar-item.is-white.is-active {
 }
 .cursor-default {
   cursor: default;
+}
+.panel-heading-title{
+  line-height: inherit;
+
+}
+.table-title{
+  margin-right: 10px;
+}
+
+.is-pulled-left {
+  float: right !important;
+}
+
+.is-pulled-right {
+  float: left !important;
+}
+.v--modal-background-click{
+  direction: ltr !important;
 }

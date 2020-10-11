@@ -15,7 +15,7 @@ class Customer extends Model
 
     public static $columns = ['id', 'name', 'company', 'email', 'phone', 'address', 'state', 'country'];
 
-    protected $fillable = ['name', 'company', 'email', 'phone', 'user_id', 'opening_balance', 'address', 'state', 'country', 'state_name', 'country_name'];
+    protected $fillable = ['name', 'company', 'email', 'phone', 'user_id', 'opening_balance', 'address', 'state', 'country', 'state_name', 'country_name','status_id'];
     protected $hidden   = ['created_at', 'updated_at'];
 
     protected static function boot()
@@ -57,4 +57,16 @@ class Customer extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public function getStatus($statusId)
+    {
+
+        return (new Status)->getStatusById($statusId);
+    }
+
 }

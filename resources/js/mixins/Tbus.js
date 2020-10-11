@@ -73,16 +73,17 @@ function tBus(url) {
             }, 500),
             deleteRecord(id) {
                 this.$modal.show("dialog", {
-                    title: "Delete " + name + "!",
-                    text: "This action will have permanent effect that can't be reversed.",
+                    title: "למחוק " + name + "!",
+                    text: "הפעולה תמחק את הרשומה ללא אפשרות שיחזור.",
                     buttons: [
                         {
-                            title: "Yes, please delete",
+                            title: "כן למחוק",
                             class: "button is-danger is-radiusless is-radius-bottom-left",
                             handler: () => {
                                 this.$http
-                                    .delete(`${url}/${id}`)
+                                    .delete(`${url}/delete/${id}`)
                                     .then(res => {
+
                                         this.notify("success", name + " has been successfully deleted.");
                                         this.refreshTable();
                                         this.$modal.hide("dialog");
@@ -92,7 +93,7 @@ function tBus(url) {
                                     });
                             }
                         },
-                        { title: "No, please cancel", class: "button is-warning is-radiusless is-radius-bottom-right" }
+                        { title: "ביטול", class: "button is-warning is-radiusless is-radius-bottom-right" }
                     ]
                 });
             }

@@ -3,7 +3,7 @@
         <div class="modal-background"></div>
         <div class="modal-card is-medium animated fastest zoomIn">
             <header class="modal-card-head is-radius-top">
-                <p class="modal-card-title">Customer Details</p>
+                <p class="modal-card-title">פרטי לקוח</p>
                 <button type="button" class="delete" @click="$router.go(-1)"></button>
             </header>
             <section class="modal-card-body is-radius-bottom">
@@ -32,13 +32,17 @@
                                 <td>{{ customer.address }}</td>
                             </tr>
                             <tr>
-                                <td>State</td>
-                                <td>{{ customer.state_name }}</td>
+                                <td>סטטוס</td>
+                                <td>
+
+                                  <div class="has-text-centered"
+                                       :style="{background: customer.status.length > 0 ? customer.status[0].color: ''}">
+                                    {{ customer.status.length > 0 ?customer.status[0].name : ''}}
+                                  </div>
+
+                                </td>
                             </tr>
-                            <tr>
-                                <td>Country</td>
-                                <td>{{ customer.country_name }}</td>
-                            </tr>
+
                             <template v-if="customer.attributes">
                                 <tr v-for="attr in customer.attributes" :key="attr.slug">
                                     <td>{{ attr.name }}</td>
@@ -69,7 +73,7 @@ export default {
         this.$http
             .get(`app/customers/${this.$route.params.id}`)
             .then(res => {
-                this.customer = res.data;
+                this.customer = res.data.customer;
                 this.loading = false;
             })
             .catch(err => {

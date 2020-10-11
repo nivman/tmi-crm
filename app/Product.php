@@ -8,6 +8,7 @@ use App\Traits\LogActivity;
 use App\Traits\AttributableModel;
 use App\Traits\DynamicHiddenVisible;
 use Illuminate\Database\Eloquent\Model;
+use mysql_xdevapi\Collection;
 use Rinvex\Attributes\Models\Attribute;
 use Rinvex\Attributes\Models\Type\Varchar;
 use Rinvex\Attributes\Support\RelationBuilder;
@@ -63,14 +64,16 @@ class Product extends Model
 
     public function taxes()
     {
+
         return $this->morphToMany(Tax::class, 'taxable');
     }
 
-    public function eav()
-    {
-        Attribute::typeMap([
-            'varchar' => Varchar::class,
-        ]);
-        app('rinvex.attributes.entities')->push('entity');
-    }
+//    public function eav()
+//    {
+//        Attribute::typeMap([
+//            'varchar' => Varchar::class,
+//        ]);
+//        app('rinvex.attributes.entities')->push('entity');
+//
+//    }
 }

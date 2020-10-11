@@ -59,5 +59,8 @@
 		"vue-template-compiler": "^2.6.10",
 		"vue2-autocomplete-js": "^0.2.2",
 		"vuex": "^3.5.1"
+	},
+	"dependencies": {
+		"vue-color": "^2.7.1"
 	}
 }
