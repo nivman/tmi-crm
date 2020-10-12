@@ -1,4 +1,5 @@
 <template>
+  <div>
     <aside class="menu app-sidebar animated fastest fadeInRight">
         <ul class="menu-list" v-if="!$store.getters.customer && !$store.getters.vendor">
             <li>
@@ -82,7 +83,24 @@
                     </li>
                 </template>
             </side-bar-menu-component>
+          <side-bar-menu-component :expand="subIsActive(['/events'])">
+                <span class="icon is-small m-l-sm">
+                    <i class="fas fa-fw fa-users"></i>
+                </span>
+            התקשרויות
+            <template slot="submenu">
+              <li>
+                <router-link to="/events/list" exact @click.native="hideMenu">רשימת התקשרויות</router-link>
+              </li>
+              <li>
+                <a
+                    @click="addEvent"
+                    >הוספת התקשרות
+                </a>
 
+              </li>
+            </template>
+          </side-bar-menu-component>
             <side-bar-menu-component :expand="subIsActive(['/vendors'])">
                 <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-user-friends"></i>
@@ -379,14 +397,19 @@
                 </router-link>
             </li>
         </ul>
+
     </aside>
+    <event-form-modal></event-form-modal>
+  </div>
 </template>
 
 <script>
 import SideBarMenuComponent from './helpers/SideBarMenuComponent.vue';
+import EventFormModal from "./calendar/EventFormModal.vue";
 export default {
     components: {
         SideBarMenuComponent,
+        EventFormModal
     },
     methods: {
         hideMenu() {
@@ -403,7 +426,13 @@ export default {
                 return this.$route.path.indexOf(path) === 0;
             });
         },
+      addEvent() {
+
+        this.$modal.show("event-form-modal", { event: null });
+      },
+
     },
+
 };
 </script>
 

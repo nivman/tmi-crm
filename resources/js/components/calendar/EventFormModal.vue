@@ -25,6 +25,53 @@
                     ></button>
                 </header>
                 <section class="modal-card-body is-radius-bottom">
+
+
+                  <div class="column">
+
+                    <div class="field">
+                      <label class="label" for="contact"
+                      >איש קשר</label>
+                      <select
+                          class="input"
+                          type="select"
+                          id="contact"
+                          name="contact"
+                          @keydown="someHandler"
+                          v-model="form.contact">
+                        <option
+                            v-for="contact in contacts"
+                            :value="contact.id"
+                            :selected="contact.id === form.contact.id">
+                          {{ contact.first_name+ ' '+ contact.last_name}}
+
+                        </option>
+                      </select>
+                      <div class="help is-danger">
+                        {{ errors.first("contact") }}
+                      </div>
+                    </div>
+                  </div>
+
+
+
+
+
+<!--                  <div class="field">-->
+<!--                    <label class="label" for="contact">איש קשר</label>-->
+<!--                    <input-->
+<!--                        type="text"-->
+<!--                        id="contact"-->
+<!--                        name="title"-->
+<!--                        class="input"-->
+<!--                        v-model="form.contact"-->
+<!--                        @keydown="someHandler"-->
+<!--                        :class="{ 'is-danger': errors.has('contact') }"-->
+<!--                    />-->
+<!--                    <div class="help is-danger">-->
+<!--                      {{ errors.first("contact") }}-->
+<!--                    </div>-->
+<!--                  </div>-->
                     <div class="field">
                         <label class="label" for="title">Title</label>
                         <input
@@ -107,11 +154,7 @@
                             {{ errors.first("color") }}
                         </div>
                     </div>
-                    <!-- <div class="field">
-                        <label class="label" for="url">URL</label>
-                        <input v-model="form.url" v-validate="'url:true'" type="text" name="url" id="url" class="input" :class="{'is-danger': errors.has('url') }">
-                        <div class="help is-danger">{{ errors.first('url') }}</div>
-                    </div> -->
+
                     <div class="field">
                         <button
                             type="submit"
@@ -151,33 +194,59 @@ export default {
     components: { flatPickr },
     data() {
         return {
+           contacts:[],
             form: new this.$form({
                 id: "",
                 start_date: "",
                 end_date: "",
                 title: "",
                 details: "",
-                color: ""
+                color: "",
+                contact: ""
             }),
             loading: false,
-            isSaving: false
+            isSaving: false,
+            contact_id: null,
         };
     },
     methods: {
+      someHandler() {
+        alert(5555)
+      },
         beforeOpen(e) {
+
             if (e.params.event) {
                 this.form = new this.$form(e.params.event);
             } else {
+                if (e.params.customerId) {
+                  this.fetchContact(e.params.customerId)
+                }
                 this.form = new this.$form({
                     id: "",
                     start_date: "",
                     end_date: "",
                     title: "",
                     details: "",
-                    color: ""
+                    color: "",
+                    contact: "",
+                    contact_id: null
                 });
             }
         },
+      fetchContact(customer_id) {
+
+        this.$http
+            .get(`app/contacts/${customer_id}`)
+            .then(res => {
+              console.log(res.data)
+              this.form.contact = res.data[0].id;
+              this.contacts = res.data
+              this.form.contact_id =  res.data[0].id;
+            })
+            .catch(err => {
+              this.$event.fire("appError", err.response);
+            });
+      },
         submit() {
             this.isSaving = true;
             if (this.form.id && this.form.id !== "") {

@@ -20,6 +20,7 @@ class EventsController extends Controller
             'end_date'   => 'nullable|date_format:Y-m-d|after_or_equal:start_date',
             'color'      => 'nullable',
             'details'    => 'nullable',
+            'contact_id' => 'required'
         ]);
     }
 
@@ -31,8 +32,20 @@ class EventsController extends Controller
 
     public function index(Request $request)
     {
-        list($year, $month) = explode('-', $request->date);
+        $date = $request->date == null ? '2020-10' : $request->date;
+
+        list($year, $month) = explode('-', $date);
+
         return response()->json(Event::whereYear('start_date', $year)->whereMonth('start_date', $month)->mine()->orderBy('start_date')->get());
+    }
+
+    public function list(Request $request)
+    {
+        $date = $request->date == null ? '2020-10' : $request->date;
+
+        list($year, $month) = explode('-', $date);
+
+        return response()->json(Event::whereYear('start_date', $year)->whereMonth('start_date', $month)->mine()->vueTable(Event::$columns));
     }
 
     public function show(Event $event)
@@ -42,7 +55,11 @@ class EventsController extends Controller
 
     public function store(Request $request)
     {
+
         $v = $this->isValid($request);
+
+        $v['contact_id'] = $request->request->get('contact_id');
+
         return $request->user()->events()->create($v);
     }
 

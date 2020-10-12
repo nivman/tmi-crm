@@ -129,6 +129,28 @@ const router = new VueRouter({
             ]
         },
         {
+            path: "/events/list",
+            component: () => import(/* webpackChunkName: "components" */ "./components/events/EventsListComponent.vue"),
+            meta: { title: "Events", admin: false },
+            children: [
+                // {
+                //     path: "/events/add",
+                //     component: () => import(/* webpackChunkName: "components" */ "./components/calendar/EventFormModal.vue"),
+                //     meta: { title: "Add Event", admin: false, modal: true }
+                // },
+                {
+                    path: "edit/:id",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/products/ProductFormComponent.vue"),
+                    meta: { title: "Edit Product", admin: true, modal: true }
+                },
+                {
+                    path: ":id",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/products/ProductViewComponent.vue"),
+                    meta: { title: "View Product", admin: false, modal: true }
+                }
+            ]
+        },
+        {
             path: "/categories",
             component: () => import(/* webpackChunkName: "components" */ "./components/categories/CategoryListComponent.vue"),
             meta: { title: "Categories", admin: true },

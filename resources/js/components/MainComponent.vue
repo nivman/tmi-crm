@@ -36,6 +36,7 @@
     <modals-container></modals-container>
     <vue-progress-bar></vue-progress-bar>
     <notifications group="app" classes="notification" />
+    <event-form-modal></event-form-modal>
   </div>
 </template>
 
@@ -45,8 +46,9 @@ import TopBarComponent from './TopBarComponent.vue';
 import NavBarComponent from './NavBarComponent.vue';
 import FooterComponent from './FooterComponent.vue';
 import SideBarComponent from './SideBarComponent.vue';
+import EventFormModal from "./calendar/EventFormModal.vue";
 export default {
-  components: { LoginModal, TopBarComponent, NavBarComponent, SideBarComponent, FooterComponent },
+  components: { LoginModal, TopBarComponent, NavBarComponent, SideBarComponent, FooterComponent,EventFormModal },
   computed: {
     menu() {
       return this.$store.state.sideBar;

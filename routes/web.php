@@ -35,12 +35,15 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::put('vendor/{vendor}', 'VendorsController@update');
     Route::get('customers/search', 'CustomersController@search');
     Route::put('customer/{customer}', 'CustomersController@update');
+    Route::get('contacts/{customerId}', 'ContactsController@getContactByCustomerId');
     Route::resource('categories', 'CategoriesController')->only(['index', 'show']);
 
     Route::get('invoices/{invoice}/payments', 'InvoicesController@payments');
     Route::get('purchases/{purchase}/payments', 'PurchasesController@payments');
-
+    Route::get('events/list', 'EventsController@list');
+    Route::get('events/list/add', 'EventsController@list');
     Route::resource('events', 'EventsController');
+
     Route::resource('companies', 'CompaniesController')->only(['show']);
     Route::post('users/change_password', 'UsersController@changePassword');
     Route::resource('incomes', 'IncomesController')->except(['update', 'destroy']);

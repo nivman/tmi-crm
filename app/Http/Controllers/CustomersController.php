@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contact;
 use App\Customer;
 use App\Status;
 use Illuminate\Http\Request;
@@ -67,7 +68,10 @@ class CustomersController extends Controller
         $v = $request->validated();
         $v['user_id'] = auth()->id();
         $v['status_id'] = $request->request->get('status');
-        return Customer::create($v);
+        $contact = new Contact();
+        $customer = Customer::create($v);
+        $contact->createNewContact($v, $customer->id);
+        return $customer;
     }
 
     public function update(CustomerRequest $request, Customer $customer)

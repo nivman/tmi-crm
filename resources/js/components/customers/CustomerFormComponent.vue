@@ -7,11 +7,24 @@
           <p class="modal-card-title">
             {{ form.id ? "עריכת לקוח" : "יצירת לקוח חדש" }}
           </p>
-          <button
-              type="button"
-              class="delete"
-              @click="$router.go(-1)"
-          ></button>
+          <div class="buttons is-centered">
+            <p class="control tooltip" v-if="customerId">
+              <a
+                  @click="addEvent"
+                  class="fas fa-comment-dots is-small button is-info">
+                <span class="tooltip-text bottom"> התקשרות חדשה</span>
+
+              </a>
+            </p>
+            <p class="control tooltip">
+              <button
+                  type="button"
+                  class="delete"
+                  @click="$router.go(-1)"
+              ></button>
+            </p>
+
+          </div>
         </header>
         <section class="modal-card-body is-radius-bottom">
           <loading v-if="loading"></loading>
@@ -194,10 +207,14 @@
         aria-label="close"
         @click="$router.go(-1)"
     ></button>
+    <event-form-modal></event-form-modal>
   </div>
+
 </template>
 
 <script>
+import EventFormModal from "../calendar/EventFormModal.vue";
+
 export default {
   data() {
     return {
@@ -210,6 +227,7 @@ export default {
       optionsStatuses: [],
       isSaving: false,
       country: this.$store.state.settings.ac.country,
+      customerId: null,
       form: new this.$form({
         id: "",
         name: "",
@@ -231,6 +249,7 @@ export default {
           this.countries = countries.data;
           if (this.$route.params.id) {
             this.fetchCustomer(this.$route.params.id);
+            this.customerId = this.$route.params.id
           } else {
             this.$http
                 .get(`app/customers/create`)
@@ -268,7 +287,7 @@ export default {
             .catch(err => this.$event.fire("appError", err.response))
             .finally(() => (this.isSaving = false));
       } else {
-        console.log(this.form)
+
         this.form
             .post("app/customers")
             .then(() => {
@@ -337,7 +356,12 @@ export default {
     stateChange(selected) {
       this.state = selected;
       this.form.state = selected ? selected.value : "";
-    }
-  }
+    },
+    addEvent() {
+
+      this.$modal.show("event-form-modal", {customerId: this.$route.params.id});
+    },
+  },
+  components: {EventFormModal},
 };
 </script>
