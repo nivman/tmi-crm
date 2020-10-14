@@ -399,7 +399,7 @@
         </ul>
 
     </aside>
-    <event-form-modal></event-form-modal>
+
   </div>
 </template>
 
@@ -409,7 +409,7 @@ import EventFormModal from "./calendar/EventFormModal.vue";
 export default {
     components: {
         SideBarMenuComponent,
-        EventFormModal
+
     },
     methods: {
         hideMenu() {

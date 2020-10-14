@@ -24,6 +24,12 @@ class ContactsController extends Controller
     {
         return (new Contact)->getContactByCustomer($id);
     }
+
+    public function getContactBySearchTerm($search)
+    {
+        return (new Contact)->getContactByName($search);
+    }
+
     public function index()
     {
 

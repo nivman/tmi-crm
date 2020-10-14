@@ -39,8 +39,23 @@ class Contact extends Model
 
     public function getContactByCustomer($id)
     {
-        return DB::table('contacts')->select('id', 'first_name', 'last_name')
+        return DB::table('contacts')->select('id', DB::raw('CONCAT(first_Name, " ", last_Name) As full_name'))
             ->where('customer_id', $id)
             ->get();
+    }
+
+    public function getContactByName($search)
+    {
+        return DB::table('contacts')->select('id', DB::raw('CONCAT(first_Name, " ", last_Name) As full_name'))
+            ->where('first_name','LIKE', '%'.$search.'%')
+            ->orWhere('last_name','LIKE', '%'.$search.'%')
+            ->get();
+    }
+
+    public function getContactById($id)
+    {
+        return DB::table('contacts')->select('customer_id')
+            ->where('id',$id)
+            ->get()->toArray()[0]->customer_id;
     }
 }

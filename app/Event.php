@@ -12,8 +12,8 @@ class Event extends Model
     use LogActivity, Restrictable, VueTable;
 
     public static $columns = ['title', 'details', 'start_date', 'end_date', 'color', 'user_id'];
-    protected $fillable = ['title', 'details', 'start_date', 'end_date', 'color', 'user_id', 'contact_id'];
-    protected $hidden   = ['created_at', 'updated_at'];
+    protected $fillable = ['title', 'details', 'start_date', 'end_date', 'color', 'user_id','type_id', 'contact_id'];
+    protected $hidden   = ['updated_at'];
 
     public function user()
     {
@@ -24,4 +24,16 @@ class Event extends Model
     {
         return $this->belongsTo(Contact::class);
     }
+
+    public function type()
+    {
+        return $this->belongsTo(EventsType::class);
+    }
+
+    public function getType($typeId)
+    {
+        return (new EventsType())->getStatusById($typeId);
+    }
+
+
 }

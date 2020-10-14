@@ -19968,3 +19968,12 @@ a.navbar-item.is-white.is-active {
   direction: ltr !important;
 }
 
+.rtl-direction {
+  direction: rtl;
+}
+
+#vs2__listbox > li {
+  direction: rtl;
+  text-align: right;
+}
+

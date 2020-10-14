@@ -8,6 +8,7 @@ use App\Traits\Restrictable;
 use App\Traits\AccountingJournal;
 use App\Traits\AttributableModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Customer extends Model
 {
@@ -69,4 +70,10 @@ class Customer extends Model
         return (new Status)->getStatusById($statusId);
     }
 
+    public function getContactByCustomer($id)
+    {
+        $customerId = (new Contact)->getContactById($id);
+        return Customer::find($customerId);
+
+    }
 }

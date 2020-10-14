@@ -62,6 +62,26 @@ class CustomersController extends Controller
 
     }
 
+    public function getCustomerByContactId($contactId)
+    {
+
+        $customer = (new Customer())->getContactByCustomer($contactId);
+        if ($customer) {
+
+
+            $customer->attributes = $customer->attributes();
+
+            $customer->status = $customer->getStatus($customer->getAttribute('status_id'));
+
+
+            $customer->load($customer->attributes->pluck('slug')->toArray());
+        }
+        $customerStatuses = (new Status)->getAllEntityStatus('App\Customer');
+        return ['customer' => $customer, 'statuses' => $customerStatuses];
+
+    }
+
+
     public function store(CustomerRequest $request)
     {
 
@@ -85,4 +105,5 @@ class CustomersController extends Controller
         $customer->update($v);
         return $customer;
     }
+
 }

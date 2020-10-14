@@ -3,11 +3,22 @@
         <div class="modal-background"></div>
         <div class="modal-card is-medium animated fastest zoomIn">
             <header class="modal-card-head is-radius-top">
+              <template v-if="customer">
                 <p class="modal-card-title">פרטי לקוח</p>
                 <button type="button" class="delete" @click="$router.go(-1)"></button>
+              <p class="control tooltip">
+                <a
+                    @click="addEvent"
+                    class="fas fa-comment-dots is-small button is-info">
+                  <span class="tooltip-text bottom"> התקשרות חדשה</span>
+
+                </a>
+              </p>
+              </template>
             </header>
             <section class="modal-card-body is-radius-bottom">
                 <loading v-if="loading"></loading>
+                <div v-if="!customer">אוי לאיש הקשר הזה אין לקוח זה כנראה באג!</div>
                 <div v-else>
                     <table class="table is-bordered is-rounded is-rounded-body is-striped is-narrow is-hoverable is-fullwidth m-b-none">
                         <tbody>
@@ -70,16 +81,29 @@ export default {
         };
     },
     created() {
+
+      let route = 'app/customers/';
+      if(this.$route.name === 'contact') {
+         route = 'app/customer/contact/';
+      }
         this.$http
-            .get(`app/customers/${this.$route.params.id}`)
+            .get(route+`${this.$route.params.id}`)
             .then(res => {
-                this.customer = res.data.customer;
-                this.loading = false;
+             if( res.data.customer) {
+               this.customer = res.data.customer;
+
+             }
+              this.loading = false;
             })
             .catch(err => {
                 this.$event.fire('appError', err.response);
             });
     },
-    methods: {},
+    methods: {
+      addEvent() {
+
+        this.$modal.show("event-form-modal", {customerId: this.$route.params.id});
+      },
+    },
 };
 </script>

@@ -173,6 +173,12 @@ const router = new VueRouter({
             meta: { title: "Customer Company Details", admin: false, customer: true }
         },
         {
+            path: "/customer/contact/:id",
+            name: 'contact',
+            component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerViewComponent.vue"),
+            meta: { title: "View Customer", admin: false, modal: true }
+        },
+        {
             path: "/customers",
             component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerListComponent.vue"),
             meta: { title: "Customers", admin: false },
