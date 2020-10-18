@@ -21,7 +21,7 @@
                     name="customersTable"
                 >
                   <template slot="status" slot-scope="props">
-                    <div class="has-text-centered" v-bind:style="{background: props.row.status ? props.row.status.color : ''} ">
+                    <div class="has-text-centered" :style="{background: props.row.status ? props.row.status.color : ''} ">
                       {{ props.row.status ? props.row.status.name : '' }}
                     </div>
                   </template>

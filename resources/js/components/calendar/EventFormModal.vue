@@ -180,24 +180,16 @@ export default {
 
       }),
       config: {
-
         altInput: true,
         enableTime: true,
         altFormat: "d/m/Y H:i",
         dateFormat: "d/m/Y H:i",
-
       },
       loading: false,
       isSaving: false,
       contact_id: null,
       type_id: null,
       type: '',
-    }
-  },
-  watch: {
-    type_id: function (newValue, oldValue) {
-    console.log(newValue)
-      console.log(oldValue)
     }
   },
   methods: {

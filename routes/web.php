@@ -46,7 +46,8 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('events/list/add', 'EventsController@list');
     Route::get('events/eventsTypes', 'EventsController@eventsTypes');
     Route::resource('events', 'EventsController');
-
+    Route::post('tasks/add', 'TasksController@store');
+    Route::resource('tasks', 'TasksController');
 
     Route::resource('companies', 'CompaniesController')->only(['show']);
     Route::post('users/change_password', 'UsersController@changePassword');
@@ -111,6 +112,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::post('statuses/edit/{status}', 'StatusController@update');
         Route::delete('statuses/delete/{status}', 'StatusController@destroy');
         Route::delete('customers/delete/{customer}', 'CustomersController@destroy');
+        Route::delete('tasks/delete/{task}', 'TasksController@destroy');
         Route::get('statuses/{status}', 'StatusController@edit');
         Route::get('templates/{template?}', 'EmailTemplateController@show');
         Route::put('templates/{template?}', 'EmailTemplateController@update');

@@ -2,12 +2,13 @@
 
 namespace App;
 
+use App\Http\ModelForm;
 use App\Traits\LogActivity;
 use App\Traits\VueTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Status extends Model
+class Status extends ModelForm
 {
     use LogActivity, VueTable;
     public static $columns = ['id', 'name', 'entity_name', 'color'];

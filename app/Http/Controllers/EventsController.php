@@ -55,7 +55,6 @@ class EventsController extends Controller
             return response()->json(Event::orderBy($orderBy,$ascending)->with(['type', 'contact'])->mine()->vueTable(Event::$columns));
 
         }
-      //  $date = $request->date == null ? '2020-10' : $request->date;
 
         list($year, $month) = explode('-',  $request->date);
 

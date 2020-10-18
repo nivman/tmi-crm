@@ -151,6 +151,28 @@ const router = new VueRouter({
             ]
         },
         {
+            path: "/tasks",
+            component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskListComponent.vue"),
+            meta: { title: "Tasks", admin: false },
+            children: [
+                {
+                    path: "add",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskFormModal.vue"),
+                    meta: { title: "Add Task", admin: false, modal: true }
+                },
+                {
+                    path: "edit/:id",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskFormModal.vue"),
+                    meta: { title: "Edit Task", admin: true, modal: true }
+                },
+                {
+                    path: ":id",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskViewComponent.vue"),
+                    meta: { title: "View Task", admin: false, modal: true }
+                }
+            ]
+        },
+        {
             path: "/categories",
             component: () => import(/* webpackChunkName: "components" */ "./components/categories/CategoryListComponent.vue"),
             meta: { title: "Categories", admin: true },

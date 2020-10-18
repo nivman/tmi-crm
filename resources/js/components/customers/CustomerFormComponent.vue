@@ -56,10 +56,7 @@
                     class="input"
                     name="company"
                     v-model="form.company"
-                    :class="{
-                                        'is-danger': errors.has('company')
-                                    }"
-                />
+                    :class="{'is-danger': errors.has('company')}"/>
                 <div
                     class="help is-danger"
                     v-if="errors.has('company')"
@@ -78,10 +75,7 @@
                     v-model="form.email"
                     validate="'email'"
                     validate.persist="'required'"
-                    :class="{
-                                        'is-danger': errors.has('email')
-                                    }"
-                />
+                    :class="{'is-danger': errors.has('email') }"/>
                 <div
                     class="help is-danger"
                     v-if="errors.has('email')"
@@ -96,24 +90,19 @@
                     name="phone"
                     class="input"
                     v-model="form.phone"
-                    :class="{
-                                        'is-danger': errors.has('phone')
-                                    }"
-                />
+                    :class="{ 'is-danger': errors.has('phone') }"/>
                 <div
                     class="help is-danger"
                     v-if="errors.has('phone')"
-                    v-text="errors.first('phone')"
-                ></div>
+                    v-text="errors.first('phone')">
+                </div>
               </div>
             </div>
           </div>
           <div class="columns">
             <div class="column">
               <div class="field">
-                <label class="label" for="opening_balance"
-                >Opening Balance</label
-                >
+                <label class="label" for="opening_balance">Opening Balance</label>
                 <input
                     class="input"
                     type="number"
@@ -121,10 +110,7 @@
                     name="opening_balance"
                     v-model="form.opening_balance"
                     :readonly="form.id ? true : false"
-                    :class="{
-                                'is-danger': errors.has('opening_balance')
-                            }"
-                />
+                    :class="{'is-danger': errors.has('opening_balance')}"/>
                 <div class="help is-danger">
                   {{ errors.first("opening_balance") }}
                 </div>
@@ -134,8 +120,7 @@
             <div class="column">
 
               <div class="field">
-                <label class="label" for="status"
-                >סטטוס</label>
+                <label class="label" for="status">סטטוס</label>
                 <select
                     class="input"
                     type=""

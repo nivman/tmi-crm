@@ -19132,6 +19132,25 @@ input.vs__search::-webkit-input-placeholder {
   }
 }
 
+.is-app .is-sidebar {
+  position: fixed;
+  bottom: 0;
+  height: calc(100vh - 69px);
+  float: left;
+  transition: all 0.2s;
+  border-radius: 0;
+  margin-top: -20px;
+  margin-right: 0px;
+  overflow-y: auto;
+}
+
+.is-app .is-sidebar aside {
+  height: calc(100vh - 70px);
+  width: 211px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .topMenu .is-app .is-main {
   min-height: calc(100vh - 148px);
 }

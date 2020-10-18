@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call(RecurringsTableSeeder::class);
         $this->call(StatusesTableSeeder::class);
         $this->call(EventsTypeTableSeeder::class);
+        $this->call(TaskPriorityTableSeeder::class);
     }
 }

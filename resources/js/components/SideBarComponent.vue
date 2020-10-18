@@ -95,10 +95,27 @@
               <li>
                 <a
                     @click="addEvent"
-                    >הוספת התקשרות
+                    >יצירת התקשרות
                 </a>
 
               </li>
+            </template>
+          </side-bar-menu-component>
+          <side-bar-menu-component :expand="subIsActive(['/tasks'])">
+                <span class="icon is-small m-l-sm">
+                    <i class="fas fa-fw fa-users"></i>
+                </span>
+            משימות
+            <template slot="submenu">
+              <li>
+                <router-link to="/tasks" exact @click.native="hideMenu">רשימת משימות</router-link>
+              </li>
+              <li>
+              <li>
+                <router-link to="/tasks/add" @click.native="hideMenu">יצירת משימה</router-link>
+              </li>
+
+
             </template>
           </side-bar-menu-component>
             <side-bar-menu-component :expand="subIsActive(['/vendors'])">
@@ -210,12 +227,13 @@
                 </side-bar-menu-component>
             </span>
 
+
             <span v-if="$store.getters.admin">
                 <side-bar-menu-component :expand="subIsActive(['/settings', '/taxes', '/categories'])">
                     <span class="icon is-small m-l-sm">
                         <i class="fas fa-fw fa-cogs"></i>
                     </span>
-                    Settings
+                    הגדרות
                     <template slot="submenu">
                         <span v-if="$store.getters.superAdmin">
                             <li>

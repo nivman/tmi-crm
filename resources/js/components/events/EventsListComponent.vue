@@ -46,40 +46,6 @@
                         {{ format_date(props.row.created_at) }}
                       </div>
                     </template>
-          <!--          <template v-if="$store.getters.stock" slot="qty" slot-scope="props">-->
-          <!--            <div class="has-text-centered">{{ props.row.stock ? props.row.stock.qty : 0 | formatNumber }}</div>-->
-          <!--          </template>-->
-          <!--          <template v-if="$store.getters.admin || $store.getters.superAdmin" slot="cost" slot-scope="props">-->
-          <!--            <div class="has-text-right">{{ props.row.cost | formatNumber }}</div>-->
-          <!--          </template>-->
-          <!--          <template slot="price" slot-scope="props">-->
-          <!--            <div class="has-text-right">{{ props.row.price | formatNumber }}</div>-->
-          <!--          </template>-->
-          <!--          <template slot="actions" slot-scope="props">-->
-          <!--            <div class="buttons has-addons is-centered">-->
-          <!--              <p class="control tooltip">-->
-          <!--                <router-link :to="'/products/' + props.row.id" class="button is-primary is-small">-->
-          <!--                  <i class="fas fa-file"></i>-->
-          <!--                  <span class="tooltip-text">View</span>-->
-          <!--                </router-link>-->
-          <!--              </p>-->
-          <!--              <p class="control tooltip" v-if="$store.getters.admin">-->
-          <!--                <router-link :to="'/products/edit/' + props.row.id" class="button is-warning is-small">-->
-          <!--                  <i class="fas fa-edit"></i>-->
-          <!--                  <span class="tooltip-text">Edit</span>-->
-          <!--                </router-link>-->
-          <!--              </p>-->
-          <!--              <p class="control tooltip" v-if="$store.getters.superAdmin">-->
-          <!--                <button type="button" class="button is-danger is-small" @click="deleteRecord(props.row.id)">-->
-          <!--                  <i class="fas fa-trash"></i>-->
-          <!--                  <span class="tooltip-text">Delete</span>-->
-          <!--                </button>-->
-          <!--              </p>-->
-          <!--            </div>-->
-          <!--          </template>-->
-          <!--          <template slot="afterBody">-->
-          <!--            <table-filters-component :filters="filters"></table-filters-component>-->
-          <!--          </template>-->
         </v-server-table>
       </div>
     </div>
