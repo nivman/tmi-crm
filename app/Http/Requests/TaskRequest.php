@@ -18,16 +18,19 @@ class TaskRequest extends FormRequest
     public function rules()
     {
 
-         $rules = [
+        $rules = [
 
-            'name' => 'required|max:255',
+            'name' => 'max:255',
             'details' => 'nullable',
             'start_date' => 'nullable|date_format:Y-m-d H:i',
-            'end_date'   => 'nullable|date_format:Y-m-d H:i|after_or_equal:start_date',
+            'end_date' => 'nullable|date_format:Y-m-d H:i|after_or_equal:start_date',
             'customer_id' => 'nullable',
-            'priority_id'    => 'nullable',
-            'event_id'   => 'nullable',
-            'status_id' => 'nullable'
+            'priority_id' => 'nullable',
+            'event_id' => 'nullable',
+            'status_id' => 'nullable',
+            'estimated_time' => 'nullable',
+            'actual_time' => 'nullable',
+            'date_to_complete' => 'nullable|date_format:Y-m-d',
         ];
 
         $task = new Task;
@@ -41,9 +44,18 @@ class TaskRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $format_date = Date::formatDate($this);
 
-        $this->merge(['start_date'=> $format_date['start_date'], 'end_date' => $format_date['end_date']]);
+        if ($this['start_date'] && $this['end_date']) {
+            $format_date = Date::formatDateTime($this);
+
+            $this->merge(['start_date' => $format_date['start_date'], 'end_date' => $format_date['end_date']]);
+        }
+
+        if ($this['date_to_complete']) {
+
+            $format_date = Date::formatDate($this);
+            $this->merge(['date_to_complete' => $format_date]);
+        }
     }
 
     public function validated()

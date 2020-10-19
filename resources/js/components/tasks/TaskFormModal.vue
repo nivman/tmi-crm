@@ -77,44 +77,42 @@
               </div>
             </div>
           </div>
-
           <div class="columns">
             <div class="column">
               <div class="field">
-                <label class="label" for="start_date">זמן התחלה</label>
+                <label class="label" for="date_to_complete">תאריך לביצוע</label>
                 <flat-pickr
                     class="input"
-                    id="start_date"
-                    name="start_date"
-                    :config="config"
-                    v-validate="'required'"
-                    v-model="form.start_date"
-                    :class="{ 'is-danger': errors.has('start_date') }">
+                    id="date_to_complete"
+                    name="date_to_complete"
+                    :config="config_to_complete"
+                    v-model="form.date_to_complete">
                 </flat-pickr>
-                <div class="help is-danger">
-                  {{ errors.first('start_date') }}
-                </div>
               </div>
             </div>
             <div class="column">
               <div class="field">
-                <label class="label" for="end_date">זמן סיום</label>
-                <flat-pickr
+                <label class="label" for="estimated_time">זמן משוער בדקות</label>
+                <input
+                    id="estimated_time"
+                    type="text"
+                    name="estimated_time"
                     class="input"
-                    id="end_date"
-                    name="end_date"
-                    enableTime="true"
-                    :config="config"
-                    v-model="form.end_date"
-                    :class="{ 'is-danger': errors.has('end_date') }"
-                ></flat-pickr>
-                <div class="help is-danger">
-                  {{ errors.first('end_date') }}
-                </div>
+                    v-model="form.estimated_time"/>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label" for="actual_time">זמן בפועל בדקות</label>
+                <input
+                    id="actual_time"
+                    type="text"
+                    name="actual_time"
+                    class="input"
+                    v-model="form.actual_time"/>
               </div>
             </div>
           </div>
-
           <div class="columns">
             <div class="column">
               <div class="field">
@@ -162,20 +160,65 @@
                 </div>
               </div>
             </div>
-
-            <div class="column">
-              <div class="field">
-                <label class="label" for="notification_time">תזכורת לפני בשעות</label>
-                <input
-                    type="text"
-                    id="notification_time"
-                    class="input"
-                    name="notification_time"
-                    v-model="form.notification_time"/>
-              </div>
-            </div>
           </div>
 
+          <div class="columns">
+            <div class="modal-card test">
+              <header class="modal-card-head">
+                <p class="modal-card-title">
+                  תזכורות
+                </p>
+              </header>
+              <section class="modal-card-body">
+                <div class="columns">
+                  <div class="column">
+                    <div class="field">
+                      <label class="label" for="start_date">זמן התחלה</label>
+                      <flat-pickr
+                          class="input"
+                          id="start_date"
+                          name="start_date"
+                          :config="config"
+                          v-model="form.start_date"
+                          :class="{ 'is-danger': errors.has('start_date') }">
+                      </flat-pickr>
+                      <div class="help is-danger">
+                        {{ errors.first('start_date') }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <div class="field">
+                      <label class="label" for="end_date">זמן סיום</label>
+                      <flat-pickr
+                          class="input"
+                          id="end_date"
+                          name="end_date"
+                          enableTime="true"
+                          :config="config"
+                          v-model="form.end_date"
+                          :class="{'is-danger': errors.has('end_date'),}"
+                      ></flat-pickr>
+                      <div class="help is-danger">
+                        {{ errors.first('end_date') }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <div class="field">
+                      <label class="label" for="notification_time">תזכורת לפני בשעות</label>
+                      <input
+                          type="text"
+                          id="notification_time"
+                          class="input"
+                          name="notification_time"
+                          v-model="form.notification_time"/>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
           <div v-if="attributes.length > 0">
             <h5 class="cf">שדות נוספים</h5>
             <div class="columns is-multiline">
@@ -233,26 +276,34 @@ export default {
         name: '',
         details: '',
         notification_time: '',
-        start_date: '',
-        end_date: '',
+        start_date: null,
+        end_date: null,
         status: '',
-        priority:'',
+        priority: '',
+        estimated_time: '',
+        actual_time: '',
+        date_to_complete: ''
       }),
       config: {
         altInput: true,
         enableTime: true,
-        altFormat: "d/m/Y H:i",
-        dateFormat: "d/m/Y H:i",
+        altFormat: 'd/m/Y H:i',
+        dateFormat: 'd/m/Y H:i',
       },
+      config_to_complete: {
+        altInput: true,
+        altFormat: 'd/m/Y',
+        dateFormat: 'd/m/Y',
+      }
     }
   },
   created () {
-    let moment = require('moment-timezone');
-    moment().tz("Asia/Jerusalem").format();
+    let moment = require('moment-timezone')
+    moment().tz('Asia/Jerusalem').format()
 
-    this.form.start_date = moment(new Date()).format("DD/MM/YYYY H:mm");
-    this.form.end_date =  moment(new Date()).add(30, 'm').format("DD/MM/YYYY H:mm");
-
+    //this.form.start_date = moment(new Date()).format("DD/MM/YYYY H:mm");
+    //this.form.end_date =  moment(new Date()).add(30, 'm').format("DD/MM/YYYY H:mm");
+    this.form.date_to_complete = moment(new Date()).format('DD/MM/YYYY')
     this.$http
         .get('app/tasks')
         .then(res => {
@@ -267,7 +318,7 @@ export default {
                   this.priorities = res.data.priorities.map(item => {
                     return item
                   })
-                  this.attributes = res.data.attributes;
+                  this.attributes = res.data.attributes
                   this.optionsStatuses = res.data.statuses
                   this.loading = false
                 })
@@ -277,6 +328,30 @@ export default {
           }
         })
         .catch(err => this.$event.fire('appError', err.response))
+  },
+  watch: {
+    'form.end_date': function () {
+      if (!this.form.start_date) {
+        const fp = flatpickr('#end_date', this.config)
+
+        setTimeout(function () {
+          fp.clear()
+        }, 100)
+
+        this.$event.fire('missingData', 'יש להכניס זמן התחלה')
+
+      }
+    },
+    'form.notification_time': function () {
+      if (!this.form.end_date) {
+
+        setTimeout(function () {
+          this.form.notification_time = ''
+        }, 100)
+        this.$event.fire('missingData', 'יש להכניס זמן התחלה וסיום')
+
+      }
+    }
   },
   methods: {
     submit () {
@@ -322,7 +397,7 @@ export default {
             this.form = new this.$form(res.data.task)
             let taskStatus = res.data.task.status
             this.optionsStatuses = res.data.statuses
-            this.priorities = res.data.priorities;
+            this.priorities = res.data.priorities
             this.form.status = taskStatus.length > 0 ? taskStatus[0] : ''
             this.loading = false
           })
@@ -342,7 +417,7 @@ export default {
 
       this.$modal.show('event-form-modal', { customerId: this.$route.params.id })
     },
-    searchTasks(search) {
+    searchTasks (search) {
 
       if (search === '') {
         return

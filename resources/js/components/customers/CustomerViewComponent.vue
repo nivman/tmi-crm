@@ -14,6 +14,14 @@
 
                 </a>
               </p>
+                <p class="control tooltip">
+                  <a
+                      @click="addEvent"
+                      class="fas fa-thumbtack is-small button is-primary">
+                    <span class="tooltip-text bottom"> משימה חדשה</span>
+
+                  </a>
+                </p>
               </template>
             </header>
             <section class="modal-card-body is-radius-bottom">

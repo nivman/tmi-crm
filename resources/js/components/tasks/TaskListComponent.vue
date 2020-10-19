@@ -13,6 +13,7 @@
       </div>
       <div class="panel-block table-body-br">
         <v-server-table
+            id="tasks-table"
             :url="url"
             :columns="columns"
             :options="options"
@@ -24,14 +25,22 @@
 
             </div>
           </template>
+
+          <template slot="details" slot-scope="props" class="test">
+            <textarea
+                rows="3"
+                name="details"
+                :id="'details-textarea-'+ props.row.id"
+                class="textarea details-textarea"
+                @keyup="editDetails"
+                v-model="props.row.details">
+                </textarea>
+          </template>
           <template slot="start_date" slot-scope="props">
             <date-format-component :date="props.row.start_date"></date-format-component>
           </template>
           <template slot="end_date" slot-scope="props">
             <date-format-component :date="props.row.end_date"></date-format-component>
-          </template>
-          <template slot="created_at" slot-scope="props">
-              <date-format-component :date="props.row.created_at"></date-format-component>
           </template>
           <template slot="priority" slot-scope="props">
             <div class="has-text-centered" :style="{background: props.row.priority ? props.row.priority.color : ''}">
@@ -90,39 +99,58 @@ export default {
   data() {
     return {
 
-      columns: ['name', 'customer', 'start_date','end_date','created_at','details', 'priority', 'status','actions'],
+      columns: ['name', 'customer', 'date_to_complete', 'estimated_time', 'actual_time','details', 'priority', 'status', 'start_date','end_date' ,'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
+
       options: {
         orderBy: { ascending: true, column: 'name' },
-        sortable: ['name', 'start_date', 'end_date', 'created_at','priority'],
+        sortable: ['name', 'start_date', 'end_date', 'priority'],
+        editableColumns:['details'],
         perPage: 10,
         columnsClasses: {
           id: 'w50 has-text-centered',
           receivable: 'w125 has-text-right',
           actions: 'w175 has-text-centered p-x-none',
+          details: 'details-td'
         },
-        filterable: ['name', 'start_date','end_date','created_at','details'],
+        filterable: ['name', 'start_date','end_date','details'],
         headings: {
           name: 'נושא',
           details: 'תוכן',
-          start_date : 'זמן התחלה',
-          end_date: 'זמן סיום',
-          created_at : 'זמן יצירה',
+          start_date : 'תאריך לביצוע',
+          end_date: 'סיום תאריך לביצוע',
           customer : 'לקוח',
           priority : 'עדיפות',
           status: 'סטטוס',
+          date_to_complete: 'תאריך לביצוע',
+          estimated_time: 'זמן משוער לביצוע',
+          actual_time: 'זמן בפועל לביצוע',
           actions : 'פעולות'
         },
       },
     };
   },
   methods: {
-    format_date(value){
-      if (value) {
-        return moment(String(value)).format('DD/MM/YYYY hh:mm')
-      }
+    editDetails(val) {
+      let id = val.target.id.replace ( /[^\d.]/g, '' );
+      this.$http(`app/tasks/details/${val.target.value}/${id}`).then();
+
     }
   },
   components: { DateFormatComponent },
 };
 </script>
+<style>
+table td .details-textarea {
+  width: 100%;
+  height: 100%;
+
+}
+#tasks-table table {
+  width: 100%;
+  height: 100%;
+}
+.details-td {
+  padding: 0px !important;
+}
+</style>

@@ -8,13 +8,15 @@ use App\Traits\AttributableModel;
 use App\Traits\LogActivity;
 use App\Traits\Restrictable;
 use App\Traits\VueTable;
+use Illuminate\Support\Facades\DB;
 
 class Task extends ModelForm
 {
     use AttributableModel, LogActivity, Restrictable, VueTable;
 
-    public static $columns = ['id', 'name', 'details', 'start_date', 'end_date'];
-    protected $fillable = ['id', 'name', 'details', 'start_date', 'end_date','customer_id', 'priority_id', 'status_id'];
+    public static $columns = ['id', 'name', 'details', 'start_date', 'end_date', 'estimated_time', 'actual_time', 'date_to_complete'];
+    protected $fillable = ['id', 'name', 'details', 'start_date', 'end_date','customer_id', 'priority_id', 'status_id', 'estimated_time', 'actual_time', 'date_to_complete'];
+    protected $hidden   = ['created_at', 'updated_at'];
 
     public function customer()
     {

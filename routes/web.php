@@ -46,6 +46,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('events/list/add', 'EventsController@list');
     Route::get('events/eventsTypes', 'EventsController@eventsTypes');
     Route::resource('events', 'EventsController');
+    Route::get('tasks/details/{term}/{id}', 'TasksController@details');
     Route::post('tasks/add', 'TasksController@store');
     Route::resource('tasks', 'TasksController');
 
@@ -113,6 +114,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::delete('statuses/delete/{status}', 'StatusController@destroy');
         Route::delete('customers/delete/{customer}', 'CustomersController@destroy');
         Route::delete('tasks/delete/{task}', 'TasksController@destroy');
+        Route::get('tasks/details', 'TasksController@details');
         Route::get('statuses/{status}', 'StatusController@edit');
         Route::get('templates/{template?}', 'EmailTemplateController@show');
         Route::put('templates/{template?}', 'EmailTemplateController@update');

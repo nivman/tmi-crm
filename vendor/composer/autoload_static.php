@@ -948,6 +948,7 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'App\\Http\\Middleware\\TrustHosts' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustHosts.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Http\\ModelForm' => __DIR__ . '/../..' . '/app/Http/ModelForm.php',
         'App\\Http\\Requests\\AccountRequest' => __DIR__ . '/../..' . '/app/Http/Requests/AccountRequest.php',
         'App\\Http\\Requests\\CustomerRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CustomerRequest.php',
         'App\\Http\\Requests\\ExpenseRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ExpenseRequest.php',

@@ -57,9 +57,10 @@ class TasksController extends Controller
     {
 
         $v = $request->validated();
-        $v['customer_id'] = $request->request->get('customer')['id'];
-        $v['priority_id'] = $request->request->get('priority')['id'];
-        $v['status_id'] = $request->request->get('status')['id'];
+        $v['customer_id'] = $request->request->get('customer') ? $request->request->get('customer')['id'] : null;
+        $v['priority_id'] = $request->request->get('priority') ? $request->request->get('priority')['id'] : null;
+
+        $v['status_id'] = $request->request->get('status') ? $request->request->get('status')['id'] : null;
         $task =  new Task();
         Task::create($v);
 
@@ -130,5 +131,14 @@ class TasksController extends Controller
     {
         $task->delete();
         return response(['success' => true], 204);
+    }
+
+    public function details(TaskRequest $request, $term, $id)
+    {
+        $v = $request->validated();
+        $v['details'] = $term;
+        $task = Task::find($id);
+        $task->update($v);
+        return $task;
     }
 }

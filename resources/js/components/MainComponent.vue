@@ -150,6 +150,20 @@ export default {
         console.error(res);
       }
     });
+    this.$event.listen('missingData', (res) => {
+
+      this.$modal.show('dialog', {
+        title: '<div style="text-align: center">' + res + '</div>',
+        buttons: [
+          {
+            title: 'OK',
+            handler: () => {
+              this.$modal.hide('dialog');
+            },
+          },
+        ],
+      });
+    });
   },
   watch: {
     $route(to, from) {

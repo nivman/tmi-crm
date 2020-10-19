@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 class Date
 {
-        public static function formatDate ($request) {
+        public static function formatDateTime ($request) {
 
             $start_date = $request['start_date'];
             $end_date = $request['end_date'];
@@ -18,4 +18,9 @@ class Date
 
             return ['start_date' => $start, 'end_date' => $end];
         }
+
+    public static function formatDate($request) {
+
+        return Carbon::createFromFormat('d/m/Y', $request['date_to_complete'])->format('Y-m-d');
+    }
 }

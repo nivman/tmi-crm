@@ -165,6 +165,7 @@ return array(
     'App\\Http\\Middleware\\TrustHosts' => $baseDir . '/app/Http/Middleware/TrustHosts.php',
     'App\\Http\\Middleware\\TrustProxies' => $baseDir . '/app/Http/Middleware/TrustProxies.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
+    'App\\Http\\ModelForm' => $baseDir . '/app/Http/ModelForm.php',
     'App\\Http\\Requests\\AccountRequest' => $baseDir . '/app/Http/Requests/AccountRequest.php',
     'App\\Http\\Requests\\CustomerRequest' => $baseDir . '/app/Http/Requests/CustomerRequest.php',
     'App\\Http\\Requests\\ExpenseRequest' => $baseDir . '/app/Http/Requests/ExpenseRequest.php',
