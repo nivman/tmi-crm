@@ -154,7 +154,7 @@ class TasksController extends Controller
             $requestOrderBy = $request->query->get('orderBy');
             $orderBy = $requestOrderBy === 'priority' ? 'priority_id' : $requestOrderBy;
             $request->query->set('orderBy', $orderBy);
- 
+
             return response()->json(Task::where('customer_id', $customerId)->orderBy($orderBy, $ascending)->with(['customer', 'priority', 'status'])->mine()->vueTable(Task::$columns));
         }
        return response()->json(Task::where('customer_id', $customerId)->with(['customer', 'priority', 'status'])->mine()->vueTable(Task::$columns));
