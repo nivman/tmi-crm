@@ -2,14 +2,21 @@
   <div class="wrapper">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <button class="button is-primary is-small is-pulled-right m-l-sm is-hidden-desktop" @click="filtering = !filtering">
-          <i class="fas fa-cog" />
+
+        <button @click="goBack" v-if="customerName" class="button is-primary is-small is-pulled-right">
+          <p class="back-title"> חזרה </p>
+          <i class="fas fa-backward"/>
         </button>
-        <router-link to="/tasks/add" class="button is-link is-small is-pulled-right">
-          <i class="fas fa-plus m-l-sm" /> הוספת משימה
+        <button class="button is-primary is-small is-pulled-right m-l-sm is-hidden-desktop"
+                @click="filtering = !filtering">
+          <i class="fas fa-cog"/>
+        </button>
+        <router-link :to="addRoute" class="button is-link is-small is-pulled-right">
+          <i class="fas fa-plus m-l-sm"/> הוספת משימה
         </router-link>
         משימות
-        <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
+        <span v-if="customerId"> עבור : <strong>{{customerName}}</strong> </span>
+
       </div>
       <div class="panel-block table-body-br">
         <v-server-table
@@ -37,10 +44,13 @@
                 </textarea>
           </template>
           <template slot="start_date" slot-scope="props">
-            <date-format-component :date="props.row.start_date"></date-format-component>
+            <date-format-component :dateTime="props.row.start_date"></date-format-component>
           </template>
           <template slot="end_date" slot-scope="props">
-            <date-format-component :date="props.row.end_date"></date-format-component>
+            <date-format-component :dateTime="props.row.end_date"></date-format-component>
+          </template>
+          <template slot="date_to_complete" slot-scope="props">
+            <date-format-component :date="props.row.date_to_complete"></date-format-component>
           </template>
           <template slot="priority" slot-scope="props">
             <div class="has-text-centered" :style="{background: props.row.priority ? props.row.priority.color : ''}">
@@ -58,7 +68,7 @@
             <div class="buttons has-addons is-centered">
               <p class="control tooltip">
                 <router-link :to="'/tasks/' + props.row.id" class="button is-primary is-small">
-                  <i class="fas fa-file-alt" />
+                  <i class="fas fa-file-alt"/>
                   <span class="tooltip-text">View</span>
                 </router-link>
               </p>
@@ -86,26 +96,32 @@
         @hide-panel-filters="filtering = false"
     ></panel-filters-component>
     <router-view></router-view>
+
   </div>
 </template>
 
 <script>
-import mId from '../../mixins/Mid';
-import tBus from '../../mixins/Tbus';
-import DateFormatComponent from "../helpers/DateFormatComponent";
+import mId from '../../mixins/Mid'
+import tBus from '../../mixins/Tbus'
+import DateFormatComponent from '../helpers/DateFormatComponent'
 
 export default {
   mixins: [mId, tBus('app/tasks')],
-  data() {
+  props: [
+    'modal',
+    'customerId',
+    'customerName'
+  ],
+  data () {
     return {
-
-      columns: ['name', 'customer', 'date_to_complete', 'estimated_time', 'actual_time','details', 'priority', 'status', 'start_date','end_date' ,'actions'],
+      showTaskForm: false,
+      columns: ['name', 'customer', 'date_to_complete', 'estimated_time', 'actual_time', 'details', 'priority', 'status', 'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
-
+      addRoute: null,
       options: {
         orderBy: { ascending: true, column: 'name' },
         sortable: ['name', 'start_date', 'end_date', 'priority'],
-        editableColumns:['details'],
+        editableColumns: ['details'],
         perPage: 10,
         columnsClasses: {
           id: 'w50 has-text-centered',
@@ -113,44 +129,68 @@ export default {
           actions: 'w175 has-text-centered p-x-none',
           details: 'details-td'
         },
-        filterable: ['name', 'start_date','end_date','details'],
+        filterable: ['name', 'start_date', 'end_date', 'details'],
         headings: {
           name: 'נושא',
           details: 'תוכן',
-          start_date : 'תאריך לביצוע',
-          end_date: 'סיום תאריך לביצוע',
-          customer : 'לקוח',
-          priority : 'עדיפות',
+          // start_date : 'תאריך לביצוע',
+          // end_date: 'סיום תאריך לביצוע',
+          customer: 'לקוח',
+          priority: 'עדיפות',
           status: 'סטטוס',
           date_to_complete: 'תאריך לביצוע',
           estimated_time: 'זמן משוער לביצוע',
           actual_time: 'זמן בפועל לביצוע',
-          actions : 'פעולות'
+          actions: 'פעולות'
         },
       },
-    };
-  },
-  methods: {
-    editDetails(val) {
-      let id = val.target.id.replace ( /[^\d.]/g, '' );
-      this.$http(`app/tasks/details/${val.target.value}/${id}`).then();
-
     }
   },
+
+  methods: {
+    editDetails (val) {
+      let id = val.target.id.replace(/[^\d.]/g, '')
+      this.$http(`app/tasks/details/${val.target.value}/${id}`).then()
+
+    },
+    goBack() {
+      this.$emit("showCustomerList", true);
+    },
+  },
+  created () {
+
+    this.addRoute = !this.customerId ? '/tasks/add' : `/tasks/add?customerId=${this.customerId}`;;
+  },
+  computed: {
+    url: {
+      get () {
+        return !this.customerId ? 'app/tasks' : `app/customers/tasks/${this.customerId}`;
+      },
+
+    },
+
+  },
   components: { DateFormatComponent },
-};
+
+}
 </script>
-<style>
+<style scoped>
 table td .details-textarea {
   width: 100%;
   height: 100%;
 
 }
+
 #tasks-table table {
   width: 100%;
   height: 100%;
 }
+
 .details-td {
   padding: 0px !important;
+}
+
+.back-title{
+  padding: 5px;
 }
 </style>

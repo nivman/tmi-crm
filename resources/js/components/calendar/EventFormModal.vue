@@ -197,7 +197,7 @@ export default {
       let moment = require('moment-timezone');
       moment().tz("Asia/Jerusalem").format();
 
-      let formatDate = moment(new Date()).format("DD/MM/YYYY H:m");
+      this.form.start_date  = moment(new Date()).format("DD/MM/YYYY H:m");
 
       this.fetchTypes();
       if (e.params.event) {
@@ -209,7 +209,7 @@ export default {
         }
         this.form = new this.$form({
           id: '',
-          start_date: formatDate,
+          start_date: '',
           end_date: '',
           title: '',
           details: '',

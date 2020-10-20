@@ -161,6 +161,11 @@ const router = new VueRouter({
                     meta: { title: "Add Task", admin: false, modal: true }
                 },
                 {
+                    path: "customer/add/:id",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskFormModal.vue"),
+                    meta: { title: "Add Task", admin: false, modal: true }
+                },
+                {
                     path: "edit/:id",
                     component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskFormModal.vue"),
                     meta: { title: "Edit Task", admin: true, modal: true }
@@ -225,6 +230,11 @@ const router = new VueRouter({
         {
             path: "/customers/transactions/:id",
             component: () => import(/* webpackChunkName: "components" */ "./components/customers/TransactionsComponent.vue"),
+            meta: { title: "List Customer Transactions", admin: true }
+        },
+        {
+            path: "/customers/tasks/:id",
+            component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskListComponent.vue"),
             meta: { title: "List Customer Transactions", admin: true }
         },
         {

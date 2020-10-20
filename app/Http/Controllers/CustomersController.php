@@ -38,6 +38,7 @@ class CustomersController extends Controller
 
     public function search(Request $request)
     {
+
         $v = $request->validate(['query' => 'required|string']);
         $results = Customer::search($v['query'])->select(
             \DB::raw("*, id as value,

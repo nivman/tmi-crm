@@ -47,6 +47,8 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('events/eventsTypes', 'EventsController@eventsTypes');
     Route::resource('events', 'EventsController');
     Route::get('tasks/details/{term}/{id}', 'TasksController@details');
+    Route::get('tasks/customers/{id}', 'TasksController@getCustomer');
+    Route::get('customers/tasks/{id}', 'TasksController@getCustomerTasks');
     Route::post('tasks/add', 'TasksController@store');
     Route::resource('tasks', 'TasksController');
 

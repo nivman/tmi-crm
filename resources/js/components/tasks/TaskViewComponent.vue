@@ -3,7 +3,7 @@
     <div class="modal-background"></div>
     <div class="modal-card is-medium animated fastest zoomIn">
       <header class="modal-card-head is-radius-top">
-        <p class="modal-card-title">Product Details</p>
+        <p class="modal-card-title">פרטי משימה</p>
         <button type="button" class="delete" @click="$router.go(-1)"></button>
       </header>
       <section class="modal-card-body is-radius-bottom">

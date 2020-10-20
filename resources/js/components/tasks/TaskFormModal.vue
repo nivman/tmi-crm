@@ -38,7 +38,7 @@
                 item-text="name"
                 class="rtl-direction"
                 :options="customers"
-                @search="searchTasks"
+                @search="searchCustomers"
                 v-model="form.customer">
             </v-select>
           </div>
@@ -261,6 +261,10 @@
 import EventFormModal from '../calendar/EventFormModal.vue'
 
 export default {
+  props: [
+    'modal',
+    'cusId'
+  ],
   data () {
     return {
       customers: [],
@@ -273,7 +277,7 @@ export default {
       customerId: null,
       form: new this.$form({
         id: '',
-        name: '',
+        name: 'משימה',
         details: '',
         notification_time: '',
         start_date: null,
@@ -298,20 +302,29 @@ export default {
     }
   },
   created () {
-    let moment = require('moment-timezone')
-    moment().tz('Asia/Jerusalem').format()
 
-    //this.form.start_date = moment(new Date()).format("DD/MM/YYYY H:mm");
-    //this.form.end_date =  moment(new Date()).add(30, 'm').format("DD/MM/YYYY H:mm");
-    this.form.date_to_complete = moment(new Date()).format('DD/MM/YYYY')
+    let route = this.setRoute();
     this.$http
-        .get('app/tasks')
+        .get(route)
         .then(res => {
+          if(this.$route.query.customerId) {
+            this.form.customer = res.data;
+            this.customerId = this.$route.query.customerId;
+          }
+          if (this.modal === 'customers') {
 
-          if (this.$route.params.id) {
-            this.fetchTask(this.$route.params.id)
-            this.customerId = this.$route.params.id
+            this.form.customer = res.data;
+            this.customerId = this.cusId;
+
+          }
+          if (this.$route.params.id && !this.modal && !this.$route.query.customerId) {
+
+            this.fetchTask(this.$route.params.id);
+            this.customerId = this.$route.params.id;
+
           } else {
+
+            this.setDateTime();
             this.$http
                 .get(`app/tasks/create`)
                 .then(res => {
@@ -331,6 +344,7 @@ export default {
   },
   watch: {
     'form.end_date': function () {
+
       if (!this.form.start_date) {
         const fp = flatpickr('#end_date', this.config)
 
@@ -346,7 +360,7 @@ export default {
       if (!this.form.end_date) {
 
         setTimeout(function () {
-          this.form.notification_time = ''
+         this.form.notification_time = ''
         }, 100)
         this.$event.fire('missingData', 'יש להכניס זמן התחלה וסיום')
 
@@ -354,8 +368,29 @@ export default {
     }
   },
   methods: {
+    format_date (value) {
+
+      if (value) {
+        return moment(String(value)).format('DD/MM/YYYY hh:mm')
+      }
+    },
+    setRoute() {
+      let route = !this.modal ? 'app/tasks' : `app/tasks/${this.modal}/${this.cusId}`;
+      if(this.$route.query.customerId) {
+        route = `app/tasks/customers/${this.$route.query.customerId}`
+      }
+      return route;
+    },
+    setDateTime() {
+      let moment = require('moment-timezone')
+      moment().tz('Asia/Jerusalem').format()
+      this.form.start_date = moment(new Date()).format("DD/MM/YYYY H:mm");
+      this.form.end_date =  moment(new Date()).add(30, 'm').format("DD/MM/YYYY H:mm");
+      this.form.date_to_complete = moment(new Date()).format('DD/MM/YYYY');
+    },
     submit () {
       this.isSaving = true
+      let route = !this.modal ? '/tasks' : `/${this.modal}`;
       if (this.form.id && this.form.id !== '') {
 
         this.form
@@ -366,7 +401,8 @@ export default {
                   'success',
                   'Customer has been successfully updated.'
               )
-              this.$router.push('/tasks')
+
+              this.$router.push(route);
             })
             .catch(err => this.$event.fire('appError', err.response))
             .finally(() => (this.isSaving = false))
@@ -380,7 +416,8 @@ export default {
                   'success',
                   'Customer has been successfully added.'
               )
-              this.$router.push('/tasks')
+
+              this.$router.push(route)
             })
             .catch(err => this.$event.fire('appError', err.response))
             .finally(() => (this.isSaving = false))
@@ -398,7 +435,11 @@ export default {
             let taskStatus = res.data.task.status
             this.optionsStatuses = res.data.statuses
             this.priorities = res.data.priorities
-            this.form.status = taskStatus.length > 0 ? taskStatus[0] : ''
+            this.form.status = taskStatus.length > 0 ? taskStatus[0] : '';
+            this.form.end_date = this.format_date(res.data.task.end_date);
+            this.form.start_date = this.format_date(res.data.task.start_date);
+            this.form.date_to_complete = this.format_date(res.data.task.date_to_complete);
+            this.form.notification_time = res.data.task.notification_time;
             this.loading = false
           })
           .catch(err => this.$event.fire('appError', err.response))
@@ -417,7 +458,7 @@ export default {
 
       this.$modal.show('event-form-modal', { customerId: this.$route.params.id })
     },
-    searchTasks (search) {
+    searchCustomers (search) {
 
       if (search === '') {
         return

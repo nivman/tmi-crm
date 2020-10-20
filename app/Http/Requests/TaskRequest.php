@@ -31,6 +31,7 @@ class TaskRequest extends FormRequest
             'estimated_time' => 'nullable',
             'actual_time' => 'nullable',
             'date_to_complete' => 'nullable|date_format:Y-m-d',
+            'notification_time' => 'nullable'
         ];
 
         $task = new Task;

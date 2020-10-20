@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Customer;
 use App\Helpers\Date;
 use App\Http\Requests\TaskRequest;
 use App\Status;
@@ -112,10 +113,9 @@ class TasksController extends Controller
      */
     public function update(TaskRequest $request, Task $task)
     {
-
         $v = $request->validated();
         $v['status_id'] = $request->request->get('status') ? $request->request->get('status')['id'] : null;
-        $v['priority_id'] = $request->request->get('priority') ? $request->request->get('priority')['id'] : null;
+        $v['priority_id'] = $request->request->get('priority') ? $request->request->get('priority')[0]['id'] : null;
         $v['customer_id'] = $request->request->get('customer') ? $request->request->get('customer')['id'] : null;
         $task->update($v);
         return $task;
@@ -140,5 +140,23 @@ class TasksController extends Controller
         $task = Task::find($id);
         $task->update($v);
         return $task;
+    }
+
+    public function getCustomer($id)
+    {
+       return Customer::find($id);
+    }
+
+    public function getCustomerTasks(Request $request ,$customerId)
+    {
+        if($request->query->get('byColumn')) {
+            $ascending = $request->request->get('ascending') == 1 ? 'DESC' : 'ASC';
+            $requestOrderBy = $request->query->get('orderBy');
+            $orderBy = $requestOrderBy === 'priority' ? 'priority_id' : $requestOrderBy;
+            $request->query->set('orderBy', $orderBy);
+ 
+            return response()->json(Task::where('customer_id', $customerId)->orderBy($orderBy, $ascending)->with(['customer', 'priority', 'status'])->mine()->vueTable(Task::$columns));
+        }
+       return response()->json(Task::where('customer_id', $customerId)->with(['customer', 'priority', 'status'])->mine()->vueTable(Task::$columns));
     }
 }

@@ -1,5 +1,9 @@
 <template>
-  <div class="has-text-centered">{{ format_date(date) }}</div>
+  <span>
+  <div v-if="dateTime" class="has-text-centered">{{ format_date_time(dateTime) }}</div>
+  <div v-if="date" class="has-text-centered">{{ format_date(date) }}</div>
+  </span>
+
 </template>
 
 <script>
@@ -7,18 +11,24 @@
 export default {
   name: 'DateFormatComponent',
   props: {
+    dateTime: String,
     date: String
   },
   created: function () {
   },
   methods: {
-    format_date (value) {
+    format_date_time (value) {
 
       if (value) {
         return moment(String(value)).format('DD/MM/YYYY hh:mm')
       }
     },
+    format_date(value) {
 
+      if (value) {
+        return moment(String(value)).format('DD/MM/YYYY')
+      }
+    },
   },
 }
 </script>

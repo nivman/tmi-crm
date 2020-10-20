@@ -16,7 +16,7 @@
               </p>
                 <p class="control tooltip">
                   <a
-                      @click="addEvent"
+                      @click="addTask"
                       class="fas fa-thumbtack is-small button is-primary">
                     <span class="tooltip-text bottom"> משימה חדשה</span>
 
@@ -77,18 +77,27 @@
             </section>
         </div>
         <button class="modal-close is-large is-hidden-mobile" aria-label="close" @click="$router.go(-1)"></button>
+      <div v-if="show">
+        <task-form-modal :cusId=customerId modal="customers"></task-form-modal>
+      </div>
+
     </div>
+
 </template>
 
 <script>
+import TaskFormModal from "../tasks/TaskFormModal";
 export default {
     data() {
         return {
+            show:false,
             loading: true,
             customer: null,
+            customerId: null
         };
     },
     created() {
+      this.customerId = this.$route.params.id
 
       let route = 'app/customers/';
       if(this.$route.name === 'contact') {
@@ -112,6 +121,12 @@ export default {
 
         this.$modal.show("event-form-modal", {customerId: this.$route.params.id});
       },
+      addTask() {
+        this.show = true;
+      },
     },
+  components: {
+    TaskFormModal
+  }
 };
 </script>
