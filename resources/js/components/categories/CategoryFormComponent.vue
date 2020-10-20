@@ -15,20 +15,33 @@
                 </header>
                 <section class="modal-card-body is-radius-bottom">
                     <div class="field">
-                        <label class="label" for="name">Name</label>
+                        <label class="label" for="name">שם</label>
                         <input
                             id="name"
                             name="name"
                             type="text"
                             class="input"
                             v-model="form.name"
-                            v-validate="'required'"
-                            :class="{ 'is-danger': errors.has('name') }"
-                        />
+                            v-validate="'required'"/>
                         <div class="help is-danger">
                             {{ errors.first("name") }}
                         </div>
                     </div>
+                  <div class="field">
+                    <label class="label" for="type">סוג</label>
+                    <div class="select is-fullwidth">
+                      <select
+                          v-model="form.entity_name"
+                          id="type">
+                        <option value="App\Customer">לקוח</option>
+                        <option value="App\Task">משימה</option>
+                        <option value="App\Lead">ליד</option>
+                      </select>
+                    </div>
+                    <div class="help is-danger">
+                      {{ errors.first("type") }}
+                    </div>
+                  </div>
                     <div class="field">
                         <button
                             type="submit"
@@ -55,7 +68,7 @@ export default {
     data() {
         return {
             isSaving: false,
-            form: new this.$form({ id: "", name: "" })
+            form: new this.$form({ id: "", name: "", entity_name: "" })
         };
     },
     created() {

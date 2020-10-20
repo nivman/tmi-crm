@@ -22,7 +22,7 @@
                     <div class="columns">
                         <div class="column is-half">
                             <div class="field">
-                                <label class="label" for="name">Name</label>
+                                <label class="label" for="name">שם</label>
                                 <input
                                     id="name"
                                     type="text"
@@ -37,7 +37,7 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="type">Type</label>
+                                <label class="label" for="type">סוג</label>
                                 <div class="select is-fullwidth">
                                     <select
                                         v-model="form.entity_name"

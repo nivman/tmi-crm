@@ -28,6 +28,7 @@ class TaskRequest extends FormRequest
             'priority_id' => 'nullable',
             'event_id' => 'nullable',
             'status_id' => 'nullable',
+            'category_id' => 'nullable',
             'estimated_time' => 'nullable',
             'actual_time' => 'nullable',
             'date_to_complete' => 'nullable|date_format:Y-m-d',

@@ -28,4 +28,30 @@ class ModelForm extends  Model
         $this->status = (new Status)->getStatusById($statusId);
         return $this->status;
     }
+
+    public static function convertEntityName($data)
+    {
+        $result = array_map(
+            function($key, $value) {
+                $entityName = $value->entity_name;
+                switch ($entityName) {
+                    case 'App\Customer':
+                        $value->entity_name = 'לקוח';
+                        break;
+                    case 'App\Task':
+                        $value->entity_name = 'משימה';
+                        break;
+                    case 'App\Lead':
+                        $value->entity_name = 'ליד';
+                        break;
+                }
+                return $value;
+            },
+            array_keys($data->data),
+            array_values($data->data)
+        );
+
+        return json_encode(array('data' => $result, 'count' => count($result)));
+
+    }
 }

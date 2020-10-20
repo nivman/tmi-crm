@@ -11,6 +11,7 @@ class CategoriesController extends Controller
     {
         return $request->validate([
             'name' => 'required',
+            'entity_name' => 'nullable'
         ]);
     }
 
@@ -35,8 +36,9 @@ class CategoriesController extends Controller
         if (!auth()->user()->hasRole('admin')) {
             abort(403, 'Access denied!');
         }
-
-        return response()->json(Category::vueTable(Category::$columns));
+        $categories = response()->json(Category::vueTable(Category::$columns));
+        $entityConvert = Category::convertEntityName($categories->getData());
+        return response($entityConvert);
     }
 
     public function show(Category $category)

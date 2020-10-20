@@ -257,10 +257,10 @@
                             <router-link to="/taxes" exact @click.native="hideMenu">List Taxes</router-link>
                         </li>
                         <li>
-                            <router-link to="/categories" exact @click.native="hideMenu">List Categories</router-link>
+                            <router-link to="/categories" exact @click.native="hideMenu">רשימת קטגוריות</router-link>
                         </li>
                         <li>
-                            <router-link to="/settings/fields" @click.native="hideMenu">List Custom Fields</router-link>
+                            <router-link to="/settings/fields" @click.native="hideMenu">רשימת שדות דינמיים</router-link>
                         </li>
                       <li>
                             <router-link to="/settings/statuses" @click.native="hideMenu">רשימת סטטוסים</router-link>

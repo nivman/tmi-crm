@@ -92,13 +92,17 @@
             </div>
             <div class="column">
               <div class="field">
-                <label class="label" for="estimated_time">זמן משוער בדקות</label>
-                <input
-                    id="estimated_time"
-                    type="text"
-                    name="estimated_time"
-                    class="input"
-                    v-model="form.estimated_time"/>
+                <label class="label" for="categories">קטגוריה</label>
+                <v-select
+                    label="name"
+                    id="categories"
+                    name="categories"
+                    class="rtl-direction"
+                    item-value="id"
+                    item-text="name"
+                    :options="categories"
+                    v-model="form.category">
+                </v-select>
               </div>
             </div>
             <div class="column">
@@ -135,115 +139,116 @@
                       marginLeft:'-20px',
                       marginRight:'-20px'
                     } "></div>
-                  </template>
-                </v-select>
+                    </template>
+                  </v-select>
+                </div>
               </div>
-            </div>
-            <div class="column">
-              <div class="field">
-                <label class="label" for="status">סטטוס</label>
+              <div class="column">
+                <div class="field">
+                  <label class="label" for="status">סטטוס</label>
 
-                <v-select
-                    label="name"
-                    id="status"
-                    name="status"
-                    class="rtl-direction"
-                    item-value="id"
-                    item-text="name"
-                    return-object
-                    single-line
-                    :options="optionsStatuses"
-                    v-model="form.status">
-                </v-select>
-                <div class="help is-danger">
-                  {{ errors.first('status') }}
+                  <v-select
+                      label="name"
+                      id="status"
+                      name="status"
+                      class="rtl-direction"
+                      item-value="id"
+                      item-text="name"
+                      return-object
+                      single-line
+                      :options="optionsStatuses"
+                      v-model="form.status">
+                  </v-select>
+                  <div class="help is-danger">
+                    {{ errors.first('status') }}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="columns">
-            <div class="modal-card test">
-              <header class="modal-card-head">
-                <p class="modal-card-title">
-                  תזכורות
-                </p>
-              </header>
-              <section class="modal-card-body">
-                <div class="columns">
-                  <div class="column">
-                    <div class="field">
-                      <label class="label" for="start_date">זמן התחלה</label>
-                      <flat-pickr
-                          class="input"
-                          id="start_date"
-                          name="start_date"
-                          :config="config"
-                          v-model="form.start_date"
-                          :class="{ 'is-danger': errors.has('start_date') }">
-                      </flat-pickr>
-                      <div class="help is-danger">
-                        {{ errors.first('start_date') }}
+            <div class="columns">
+              <div class="modal-card test">
+                <header class="modal-card-head">
+                  <p class="modal-card-title">
+                    תזכורות
+                  </p>
+                </header>
+                <section class="modal-card-body">
+                  <div class="columns">
+                    <div class="column">
+                      <div class="field">
+                        <label class="label" for="start_date">זמן התחלה</label>
+                        <flat-pickr
+                            class="input"
+                            id="start_date"
+                            name="start_date"
+                            :config="config"
+                            v-model="form.start_date"
+                            :class="{ 'is-danger': errors.has('start_date') }">
+                        </flat-pickr>
+                        <div class="help is-danger">
+                          {{ errors.first('start_date') }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="column">
+                      <div class="field">
+                        <label class="label" for="end_date">זמן סיום</label>
+                        <flat-pickr
+                            class="input"
+                            id="end_date"
+                            name="end_date"
+                            enableTime="true"
+                            :config="config"
+                            v-model="form.end_date"
+                            :class="{'is-danger': errors.has('end_date'),}"
+                        ></flat-pickr>
+                        <div class="help is-danger">
+                          {{ errors.first('end_date') }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="column">
+                      <div class="field">
+                        <label class="label" for="notification_time">תזכורת לפני בשעות</label>
+                        <input
+                            type="text"
+                            id="notification_time"
+                            class="input"
+                            name="notification_time"
+                            v-model="form.notification_time"/>
                       </div>
                     </div>
                   </div>
-                  <div class="column">
-                    <div class="field">
-                      <label class="label" for="end_date">זמן סיום</label>
-                      <flat-pickr
-                          class="input"
-                          id="end_date"
-                          name="end_date"
-                          enableTime="true"
-                          :config="config"
-                          v-model="form.end_date"
-                          :class="{'is-danger': errors.has('end_date'),}"
-                      ></flat-pickr>
-                      <div class="help is-danger">
-                        {{ errors.first('end_date') }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="column">
-                    <div class="field">
-                      <label class="label" for="notification_time">תזכורת לפני בשעות</label>
-                      <input
-                          type="text"
-                          id="notification_time"
-                          class="input"
-                          name="notification_time"
-                          v-model="form.notification_time"/>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
-          <div v-if="attributes.length > 0">
-            <h5 class="cf">שדות נוספים</h5>
-            <div class="columns is-multiline">
-              <div
-                  class="column is-half"
-                  v-for="attr in attributes"
-                  :key="attr.slug">
-                <custom-field-component
-                    :attr="attr"
-                    v-model="form[attr.slug]"
-                ></custom-field-component>
+                </section>
               </div>
             </div>
-          </div>
-          <div class="columns">
-            <div class="column">
-              <button
-                  type="submit"
-                  class="button is-link is-fullwidth"
-                  :class="{ 'is-loading': isSaving }"
-                  :disabled="errors.any() || isSaving">
-                הוספה
-              </button>
+            <div v-if="attributes.length > 0">
+              <h5 class="cf">שדות נוספים</h5>
+              <div class="columns is-multiline">
+                <div
+                    class="column is-half"
+                    v-for="attr in attributes"
+                    :key="attr.slug">
+                  <custom-field-component
+                      :attr="attr"
+                      v-model="form[attr.slug]"
+                  ></custom-field-component>
+                </div>
+              </div>
             </div>
-          </div>
+            <div class="columns">
+              <div class="column">
+                <button
+                    type="submit"
+                    class="button is-link is-fullwidth"
+                    :class="{ 'is-loading': isSaving }"
+                    :disabled="errors.any() || isSaving">
+                  הוספה
+                </button>
+              </div>
+            </div>
+
         </section>
       </div>
     </form>
@@ -270,6 +275,7 @@ export default {
       customers: [],
       loading: true,
       attributes: [],
+      categories: [],
       status: [],
       priorities: [],
       optionsStatuses: [],
@@ -286,7 +292,8 @@ export default {
         priority: '',
         estimated_time: '',
         actual_time: '',
-        date_to_complete: ''
+        date_to_complete: '',
+        category: ''
       }),
       config: {
         altInput: true,
@@ -303,28 +310,28 @@ export default {
   },
   created () {
 
-    let route = this.setRoute();
+    let route = this.setRoute()
     this.$http
         .get(route)
         .then(res => {
-          if(this.$route.query.customerId) {
-            this.form.customer = res.data;
-            this.customerId = this.$route.query.customerId;
+          if (this.$route.query.customerId) {
+            this.form.customer = res.data
+            this.customerId = this.$route.query.customerId
           }
           if (this.modal === 'customers') {
 
-            this.form.customer = res.data;
-            this.customerId = this.cusId;
+            this.form.customer = res.data
+            this.customerId = this.cusId
 
           }
           if (this.$route.params.id && !this.modal && !this.$route.query.customerId) {
 
-            this.fetchTask(this.$route.params.id);
-            this.customerId = this.$route.params.id;
+            this.fetchTask(this.$route.params.id)
+            this.customerId = this.$route.params.id
 
           } else {
 
-            this.setDateTime();
+            this.setDateTime()
             this.$http
                 .get(`app/tasks/create`)
                 .then(res => {
@@ -333,6 +340,7 @@ export default {
                   })
                   this.attributes = res.data.attributes
                   this.optionsStatuses = res.data.statuses
+                  this.categories = res.data.categories;
                   this.loading = false
                 })
                 .catch(err =>
@@ -360,7 +368,7 @@ export default {
       if (!this.form.end_date) {
 
         setTimeout(function () {
-         this.form.notification_time = ''
+          this.form.notification_time = ''
         }, 100)
         this.$event.fire('missingData', 'יש להכניס זמן התחלה וסיום')
 
@@ -374,23 +382,23 @@ export default {
         return moment(String(value)).format('DD/MM/YYYY hh:mm')
       }
     },
-    setRoute() {
-      let route = !this.modal ? 'app/tasks' : `app/tasks/${this.modal}/${this.cusId}`;
-      if(this.$route.query.customerId) {
+    setRoute () {
+      let route = !this.modal ? 'app/tasks' : `app/tasks/${this.modal}/${this.cusId}`
+      if (this.$route.query.customerId) {
         route = `app/tasks/customers/${this.$route.query.customerId}`
       }
-      return route;
+      return route
     },
-    setDateTime() {
+    setDateTime () {
       let moment = require('moment-timezone')
       moment().tz('Asia/Jerusalem').format()
-      this.form.start_date = moment(new Date()).format("DD/MM/YYYY H:mm");
-      this.form.end_date =  moment(new Date()).add(30, 'm').format("DD/MM/YYYY H:mm");
-      this.form.date_to_complete = moment(new Date()).format('DD/MM/YYYY');
+      this.form.start_date = moment(new Date()).format('DD/MM/YYYY H:mm')
+      this.form.end_date = moment(new Date()).add(30, 'm').format('DD/MM/YYYY H:mm')
+      this.form.date_to_complete = moment(new Date()).format('DD/MM/YYYY')
     },
     submit () {
       this.isSaving = true
-      let route = !this.modal ? '/tasks' : `/${this.modal}`;
+      let route = !this.modal ? '/tasks' : `/${this.modal}`
       if (this.form.id && this.form.id !== '') {
 
         this.form
@@ -402,7 +410,7 @@ export default {
                   'Customer has been successfully updated.'
               )
 
-              this.$router.push(route);
+              this.$router.push(route)
             })
             .catch(err => this.$event.fire('appError', err.response))
             .finally(() => (this.isSaving = false))
@@ -433,13 +441,14 @@ export default {
             delete res.data.task.attributes
             this.form = new this.$form(res.data.task)
             let taskStatus = res.data.task.status
-            this.optionsStatuses = res.data.statuses
-            this.priorities = res.data.priorities
-            this.form.status = taskStatus.length > 0 ? taskStatus[0] : '';
-            this.form.end_date = this.format_date(res.data.task.end_date);
-            this.form.start_date = this.format_date(res.data.task.start_date);
-            this.form.date_to_complete = this.format_date(res.data.task.date_to_complete);
-            this.form.notification_time = res.data.task.notification_time;
+            this.optionsStatuses = res.data.statuses;
+            this.priorities = res.data.priorities;
+            this.categories = res.data.categories;
+            this.form.status = taskStatus.length > 0 ? taskStatus[0] : ''
+            this.form.end_date = this.format_date(res.data.task.end_date)
+            this.form.start_date = this.format_date(res.data.task.start_date)
+            this.form.date_to_complete = this.format_date(res.data.task.date_to_complete)
+            this.form.notification_time = res.data.task.notification_time
             this.loading = false
           })
           .catch(err => this.$event.fire('appError', err.response))

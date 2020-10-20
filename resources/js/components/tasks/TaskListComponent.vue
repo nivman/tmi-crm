@@ -43,12 +43,15 @@
                 v-model="props.row.details">
                 </textarea>
           </template>
-          <template slot="start_date" slot-scope="props">
-            <date-format-component :dateTime="props.row.start_date"></date-format-component>
+          <template slot="category" slot-scope="props">
+            {{ props.row.category ? props.row.category.name : '' }}
           </template>
-          <template slot="end_date" slot-scope="props">
-            <date-format-component :dateTime="props.row.end_date"></date-format-component>
-          </template>
+<!--          <template slot="start_date" slot-scope="props">-->
+<!--            <date-format-component :dateTime="props.row.start_date"></date-format-component>-->
+<!--          </template>-->
+<!--          <template slot="end_date" slot-scope="props">-->
+<!--            <date-format-component :dateTime="props.row.end_date"></date-format-component>-->
+<!--          </template>-->
           <template slot="date_to_complete" slot-scope="props">
             <date-format-component :date="props.row.date_to_complete"></date-format-component>
           </template>
@@ -115,7 +118,7 @@ export default {
   data () {
     return {
       showTaskForm: false,
-      columns: ['name', 'customer', 'date_to_complete', 'estimated_time', 'actual_time', 'details', 'priority', 'status', 'actions'],
+      columns: ['name', 'customer', 'category','date_to_complete', 'actual_time', 'details', 'priority', 'status', 'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       addRoute: null,
       options: {
@@ -139,9 +142,9 @@ export default {
           priority: 'עדיפות',
           status: 'סטטוס',
           date_to_complete: 'תאריך לביצוע',
-          estimated_time: 'זמן משוער לביצוע',
           actual_time: 'זמן בפועל לביצוע',
-          actions: 'פעולות'
+          actions: 'פעולות',
+          category: 'קטגוריה'
         },
       },
     }
