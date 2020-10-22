@@ -97,7 +97,7 @@ class Customer extends ModelForm
 
                     $attributes[] = $attribute;
 
-                    $customer->customerField =[$attribute['attributeName'] => $attribute['content']];
+                    $customer->customerField = [$attribute['attributeName'] => $attribute['content']];
                 }
             }
         }

@@ -38,4 +38,11 @@ class Category extends ModelForm
             ->where('entity_name', $entityName)
             ->get();
     }
+
+    public function getCategoryById($categoryId)
+    {
+        return DB::table('categories')->select('id', 'name')
+            ->where('id', $categoryId)
+            ->get();
+    }
 }

@@ -52,8 +52,10 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::post('tasks/add', 'TasksController@store');
     Route::resource('tasks', 'TasksController');
 
-    Route::resource('projects', 'ProjectsController');
+    Route::get('projects/', 'ProjectsController@edit');
     Route::post('projects/add', 'ProjectsController@store');
+    Route::get('projects/search', 'ProjectsController@search');
+    Route::resource('projects', 'ProjectsController');
     Route::resource('companies', 'CompaniesController')->only(['show']);
     Route::post('users/change_password', 'UsersController@changePassword');
     Route::resource('incomes', 'IncomesController')->except(['update', 'destroy']);

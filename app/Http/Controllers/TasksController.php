@@ -32,9 +32,9 @@ class TasksController extends Controller
             $orderBy = $requestOrderBy === 'priority' ? 'priority_id' : $requestOrderBy;
             $request->query->set('orderBy', $orderBy);
 
-            return response()->json(Task::orderBy($orderBy, $ascending)->with(['customer', 'priority', 'status','category'])->mine()->vueTable(Task::$columns));
+            return response()->json(Task::orderBy($orderBy, $ascending)->with(['customer', 'project', 'priority', 'status','category'])->mine()->vueTable(Task::$columns));
         }
-        return response()->json(Task::with(['customer', 'priority', 'status','category'])->mine()->vueTable(Task::$columns));
+        return response()->json(Task::with(['customer',  'project', 'priority', 'status','category'])->mine()->vueTable(Task::$columns));
     }
 
     public function create()
@@ -64,6 +64,7 @@ class TasksController extends Controller
         $v['priority_id'] = $request->request->get('priority') ? $request->request->get('priority')['id'] : null;
         $v['category_id'] = $request->request->get('category') ? $request->request->get('category')['id'] : null;
         $v['status_id'] = $request->request->get('status') ? $request->request->get('status')['id'] : null;
+        $v['project_id'] = $request->request->get('project') ? $request->request->get('project')['id'] : null;
         $task =  new Task();
         Task::create($v);
 
@@ -81,8 +82,11 @@ class TasksController extends Controller
         $task->status = $task->getStatus($task->getAttribute('status_id'));
         $task->priority = $task->getPriority($task->getAttribute('priority_id'));
         $task->customer = $task->getCustomer($task->getAttribute('customer_id'));
+        $task->category = $task->getCategory($task->getAttribute('category_id'));
+        $task->project = $task->getProject($task->getAttribute('project_id'));
 
         $tasksStatuses = (new Status)->getAllEntityStatus('App\Task');
+        $tasksCategory = (new Category())->getAllEntityCategories('App\Task');
         $priorities = (new TaskPriority)->getAllTaskPriority()->toArray();
         $task->load($task->attributes->pluck('slug')->toArray());
 
@@ -92,7 +96,10 @@ class TasksController extends Controller
             'priority' =>$task->priority,
             'customer' => $task->customer,
             'statuses' => $tasksStatuses,
-            'priorities' => $priorities
+            'priorities' => $priorities,
+            'categories' => $tasksCategory,
+            'category' => $task->category,
+            'project' => $task->project
         ];
     }
 
@@ -119,6 +126,8 @@ class TasksController extends Controller
         $v['status_id'] = $request->request->get('status') ? $request->request->get('status')['id'] : null;
         $v['priority_id'] = $request->request->get('priority') ? $request->request->get('priority')[0]['id'] : null;
         $v['customer_id'] = $request->request->get('customer') ? $request->request->get('customer')['id'] : null;
+        $v['category_id'] = $request->request->get('category') ? $request->request->get('category')[0]['id'] : null;
+        $v['project_id'] = $request->request->get('project') ? $request->request->get('project')['id'] : null;
         $task->update($v);
         return $task;
     }

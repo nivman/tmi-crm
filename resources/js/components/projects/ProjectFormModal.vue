@@ -78,6 +78,21 @@
               <div class="field">
 
                 <div class="field">
+                  <label class="label" for="expenses">הוצאות </label>
+
+                  <input
+                      id="expenses"
+                      type="text"
+                      name="expenses"
+                      class="input"
+                      v-model="form.expenses"/>
+                </div>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+
+                <div class="field">
                   <label class="label" for="type">סוג פרויקט</label>
 
                   <v-select
@@ -185,7 +200,6 @@
 
 <script>
 
-
 export default {
 
   data () {
@@ -202,7 +216,8 @@ export default {
         start_date: null,
         end_date: null,
         price: '',
-        type: ''
+        type: '',
+        expenses: '',
       }),
       config: {
         altInput: true,
@@ -221,7 +236,7 @@ export default {
 
           if (this.$route.params.id) {
 
-            // this.fetchTask(this.$route.params.id)
+            this.fetchProject(this.$route.params.id)
             this.customerId = this.$route.params.id
 
           } else {
@@ -232,7 +247,7 @@ export default {
                 .then(res => {
 
                   this.attributes = res.data.attributes
-                  console.log(this.attributes)
+
                   this.types = res.data.projectTypes
                   this.loading = false
                 })
@@ -272,10 +287,10 @@ export default {
         this.form
             .put(`app/projects/${this.form.id}`)
             .then(() => {
-              this.$event.fire('refreshTasksTable')
+              this.$event.fire('refreshProjectsTable')
               this.notify(
                   'success',
-                  'Customer has been successfully updated.'
+                  'פרוייקט עודכן'
               )
 
               this.$router.push(route)
@@ -290,7 +305,7 @@ export default {
               this.$event.fire('refreshProjectsTable')
               this.notify(
                   'success',
-                  'Customer has been successfully added.'
+                  'בום עוד פרוייקט'
               )
 
               this.$router.push(route)
@@ -299,24 +314,23 @@ export default {
             .finally(() => (this.isSaving = false))
       }
     },
-    fetchTask (id) {
+    fetchProject (id) {
 
       this.$http
           .get(`app/projects/${id}`)
           .then(res => {
 
-            this.attributes = res.data.task.attributes
-            delete res.data.task.attributes
-            this.form = new this.$form(res.data.task)
-            let taskStatus = res.data.task.status
-            this.optionsStatuses = res.data.statuses
-            this.priorities = res.data.priorities
-            this.categories = res.data.categories
-            this.form.status = taskStatus.length > 0 ? taskStatus[0] : ''
-            this.form.end_date = this.format_date(res.data.task.end_date)
-            this.form.start_date = this.format_date(res.data.task.start_date)
-            this.form.date_to_complete = this.format_date(res.data.task.date_to_complete)
-            this.form.notification_time = res.data.task.notification_time
+            this.attributes = res.data.project.attributes
+            delete res.data.project.attributes
+            this.form = new this.$form(res.data.project)
+
+            this.types = res.data.projectTypes
+
+            this.form.type = res.data.project.type[0];
+            this.form.end_date = this.format_date(res.data.project.end_date)
+            this.form.start_date = this.format_date(res.data.project.start_date)
+            this.form.date_to_complete = this.format_date(res.data.project.date_to_complete)
+
             this.loading = false
           })
           .catch(err => this.$event.fire('appError', err.response))
@@ -345,7 +359,11 @@ export default {
           .catch(err => {
             this.$event.fire('appError', err.response)
           })
-    }
+    },
+    addEvent () {
+
+      this.$modal.show('event-form-modal', { customerId: this.$route.params.id })
+    },
   },
 
 }

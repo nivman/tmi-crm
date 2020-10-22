@@ -28,20 +28,41 @@
         </header>
         <section class="modal-card-body is-radius-bottom">
           <loading v-if="loading"></loading>
-          <div class="field">
-            <label class="label" for="customer">לקוח</label>
-            <v-select
-                label="name"
-                id="customer"
-                name="customer"
-                item-value="id"
-                item-text="name"
-                class="rtl-direction"
-                :options="customers"
-                @search="searchCustomers"
-                v-model="form.customer">
-            </v-select>
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label" for="customer">לקוח</label>
+                <v-select
+                    label="name"
+                    id="customer"
+                    name="customer"
+                    item-value="id"
+                    item-text="name"
+                    class="rtl-direction"
+                    :options="customers"
+                    @search="searchCustomers"
+                    v-model="form.customer">
+                </v-select>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label" for="project">פרויקט</label>
+                <v-select
+                    label="name"
+                    id="project"
+                    name="project"
+                    item-value="id"
+                    item-text="name"
+                    class="rtl-direction"
+                    :options="projects"
+                    @search="searchProjects"
+                    v-model="form.project">
+                </v-select>
+              </div>
+            </div>
           </div>
+
           <div class="columns">
             <div class="column">
               <div class="field">
@@ -139,115 +160,115 @@
                       marginLeft:'-20px',
                       marginRight:'-20px'
                     } "></div>
-                    </template>
-                  </v-select>
-                </div>
+                  </template>
+                </v-select>
               </div>
-              <div class="column">
-                <div class="field">
-                  <label class="label" for="status">סטטוס</label>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label" for="status">סטטוס</label>
 
-                  <v-select
-                      label="name"
-                      id="status"
-                      name="status"
-                      class="rtl-direction"
-                      item-value="id"
-                      item-text="name"
-                      return-object
-                      single-line
-                      :options="optionsStatuses"
-                      v-model="form.status">
-                  </v-select>
-                  <div class="help is-danger">
-                    {{ errors.first('status') }}
-                  </div>
+                <v-select
+                    label="name"
+                    id="status"
+                    name="status"
+                    class="rtl-direction"
+                    item-value="id"
+                    item-text="name"
+                    return-object
+                    single-line
+                    :options="optionsStatuses"
+                    v-model="form.status">
+                </v-select>
+                <div class="help is-danger">
+                  {{ errors.first('status') }}
                 </div>
               </div>
             </div>
+          </div>
 
-            <div class="columns">
-              <div class="modal-card test">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">
-                    תזכורות
-                  </p>
-                </header>
-                <section class="modal-card-body">
-                  <div class="columns">
-                    <div class="column">
-                      <div class="field">
-                        <label class="label" for="start_date">זמן התחלה</label>
-                        <flat-pickr
-                            class="input"
-                            id="start_date"
-                            name="start_date"
-                            :config="config"
-                            v-model="form.start_date"
-                            :class="{ 'is-danger': errors.has('start_date') }">
-                        </flat-pickr>
-                        <div class="help is-danger">
-                          {{ errors.first('start_date') }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="column">
-                      <div class="field">
-                        <label class="label" for="end_date">זמן סיום</label>
-                        <flat-pickr
-                            class="input"
-                            id="end_date"
-                            name="end_date"
-                            enableTime="true"
-                            :config="config"
-                            v-model="form.end_date"
-                            :class="{'is-danger': errors.has('end_date'),}"
-                        ></flat-pickr>
-                        <div class="help is-danger">
-                          {{ errors.first('end_date') }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="column">
-                      <div class="field">
-                        <label class="label" for="notification_time">תזכורת לפני בשעות</label>
-                        <input
-                            type="text"
-                            id="notification_time"
-                            class="input"
-                            name="notification_time"
-                            v-model="form.notification_time"/>
+          <div class="columns">
+            <div class="modal-card test">
+              <header class="modal-card-head">
+                <p class="modal-card-title">
+                  תזכורות
+                </p>
+              </header>
+              <section class="modal-card-body">
+                <div class="columns">
+                  <div class="column">
+                    <div class="field">
+                      <label class="label" for="start_date">זמן התחלה</label>
+                      <flat-pickr
+                          class="input"
+                          id="start_date"
+                          name="start_date"
+                          :config="config"
+                          v-model="form.start_date"
+                          :class="{ 'is-danger': errors.has('start_date') }">
+                      </flat-pickr>
+                      <div class="help is-danger">
+                        {{ errors.first('start_date') }}
                       </div>
                     </div>
                   </div>
-                </section>
-              </div>
-            </div>
-            <div v-if="attributes.length > 0">
-              <h5 class="cf">שדות נוספים</h5>
-              <div class="columns is-multiline">
-                <div
-                    class="column is-half"
-                    v-for="attr in attributes"
-                    :key="attr.slug">
-                  <custom-field-component
-                      :attr="attr"
-                      v-model="form[attr.slug]"
-                  ></custom-field-component>
+                  <div class="column">
+                    <div class="field">
+                      <label class="label" for="end_date">זמן סיום</label>
+                      <flat-pickr
+                          class="input"
+                          id="end_date"
+                          name="end_date"
+                          enableTime="true"
+                          :config="config"
+                          v-model="form.end_date"
+                          :class="{'is-danger': errors.has('end_date'),}"
+                      ></flat-pickr>
+                      <div class="help is-danger">
+                        {{ errors.first('end_date') }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <div class="field">
+                      <label class="label" for="notification_time">תזכורת לפני בשעות</label>
+                      <input
+                          type="text"
+                          id="notification_time"
+                          class="input"
+                          name="notification_time"
+                          v-model="form.notification_time"/>
+                    </div>
+                  </div>
                 </div>
+              </section>
+            </div>
+          </div>
+          <div v-if="attributes.length > 0">
+            <h5 class="cf">שדות נוספים</h5>
+            <div class="columns is-multiline">
+              <div
+                  class="column is-half"
+                  v-for="attr in attributes"
+                  :key="attr.slug">
+                <custom-field-component
+                    :attr="attr"
+                    v-model="form[attr.slug]"
+                ></custom-field-component>
               </div>
             </div>
-            <div class="columns">
-              <div class="column">
-                <button
-                    type="submit"
-                    class="button is-link is-fullwidth"
-                    :class="{ 'is-loading': isSaving }"
-                    :disabled="errors.any() || isSaving">
-                  הוספה
-                </button>
-              </div>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <button
+                  type="submit"
+                  class="button is-link is-fullwidth"
+                  :class="{ 'is-loading': isSaving }"
+                  :disabled="errors.any() || isSaving">
+                הוספה
+              </button>
             </div>
+          </div>
 
         </section>
       </div>
@@ -273,6 +294,7 @@ export default {
   data () {
     return {
       customers: [],
+      projects: [],
       loading: true,
       attributes: [],
       categories: [],
@@ -340,7 +362,7 @@ export default {
                   })
                   this.attributes = res.data.attributes
                   this.optionsStatuses = res.data.statuses
-                  this.categories = res.data.categories;
+                  this.categories = res.data.categories
                   this.loading = false
                 })
                 .catch(err =>
@@ -441,9 +463,9 @@ export default {
             delete res.data.task.attributes
             this.form = new this.$form(res.data.task)
             let taskStatus = res.data.task.status
-            this.optionsStatuses = res.data.statuses;
-            this.priorities = res.data.priorities;
-            this.categories = res.data.categories;
+            this.optionsStatuses = res.data.statuses
+            this.priorities = res.data.priorities
+            this.categories = res.data.categories
             this.form.status = taskStatus.length > 0 ? taskStatus[0] : ''
             this.form.end_date = this.format_date(res.data.task.end_date)
             this.form.start_date = this.format_date(res.data.task.start_date)
@@ -477,6 +499,21 @@ export default {
           .then(res => {
 
             this.customers = res.data
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+    },
+    searchProjects (search) {
+
+      if (search === '') {
+        return
+      }
+      this.$http
+          .get('app/projects/search?query=' + search)
+          .then(res => {
+
+            this.projects = res.data
           })
           .catch(err => {
             this.$event.fire('appError', err.response)

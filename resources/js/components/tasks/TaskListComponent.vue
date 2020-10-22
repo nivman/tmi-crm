@@ -32,7 +32,12 @@
 
             </div>
           </template>
+          <template slot="project" slot-scope="props">
+            <div class="has-text-centered">
+              {{ props.row.project ? props.row.project.name : '' }}
 
+            </div>
+          </template>
           <template slot="details" slot-scope="props" class="test">
             <textarea
                 rows="3"
@@ -118,7 +123,7 @@ export default {
   data () {
     return {
       showTaskForm: false,
-      columns: ['name', 'customer', 'category','date_to_complete', 'actual_time', 'details', 'priority', 'status', 'actions'],
+      columns: ['name', 'customer', 'project', 'category','date_to_complete', 'actual_time', 'details', 'priority', 'status', 'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       addRoute: null,
       options: {
@@ -135,10 +140,12 @@ export default {
         filterable: ['name', 'start_date', 'end_date', 'details'],
         headings: {
           name: 'נושא',
+          customer: 'לקוח',
+          project: 'פרוייקט',
           details: 'תוכן',
           // start_date : 'תאריך לביצוע',
           // end_date: 'סיום תאריך לביצוע',
-          customer: 'לקוח',
+
           priority: 'עדיפות',
           status: 'סטטוס',
           date_to_complete: 'תאריך לביצוע',

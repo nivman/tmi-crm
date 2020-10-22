@@ -12,13 +12,30 @@ class ProjectsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $projects = Project::with(['customer', 'type'])->mine()->vueTable(Project::$columns);
+        $percentageDone = (new Project)->getPercentageDone($projects);
+
+        return response()->json($percentageDone);
+
     }
 
+    public function search(Request $request)
+    {
+
+        $v = $request->validate(['query' => 'required|string']);
+
+        $results = Project::search($v['query'])->select(
+            \DB::raw("*, id as value,
+                if (`name` LIKE '{$v['query']}%', 20, if (`name` LIKE '%{$v['query']}%', 10, 0))
+       
+                as weight")
+        )->orderBy('weight', 'desc')->limit(10)->get();
+        return $results;
+    }
 
     public function create()
     {
@@ -36,30 +53,40 @@ class ProjectsController extends Controller
         $v = $request->validated();
         $v['customer_id'] = $request->request->get('customer') ? $request->request->get('customer')['id'] : null;
         $v['type_id'] = $request->request->get('type') ? $request->request->get('type')['id'] : null;
-        new Project();
+        $project =  new Project();
         Project::create($v);
+        return $project;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Project  $project
-     * @return \Illuminate\Http\Response
-     */
     public function show(Project $project)
     {
-        //
+        $project->attributes = $project->attributes();
+        $project->type = $project->getType($project->getAttribute('type_id'));
+        $project->customer = $project->getCustomer($project->getAttribute('customer_id'));
+        $projectTypes = ProjectTypes::all();
+        $project->load($project->attributes->pluck('slug')->toArray());
+        return [
+            'project' => $project,
+            'customer' => $project->customer,
+            'projectTypes' => $projectTypes,
+            'type' => $project->type
+        ];
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Project  $project
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Project $project)
     {
-        //
+//        dd($project);
+//        $project->attributes = $project->attributes();
+//        $project->type = $project->getType($project->getAttribute('type_id'));
+//        $project->customer = $project->getCustomer($project->getAttribute('customer_id'));
+//        $types = (new ProjectTypes())->getAllProjectTypes()->toArray();
+//        return [
+//            'project' => $project,
+//            'customer' => $project->customer,
+//            'types' => $types,
+//
+//        ];
+
     }
 
     /**
@@ -69,9 +96,14 @@ class ProjectsController extends Controller
      * @param  \App\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Project $project)
+    public function update(ProjectRequest $request, Project $project)
     {
-        //
+        $v = $request->validated();
+
+        $v['type_id'] = $request->request->get('type') ? $request->request->get('type')['id'] : null;
+        $v['customer_id'] = $request->request->get('customer') ? $request->request->get('customer')['id'] : null;
+        $project->update($v);
+        return $project;
     }
 
     /**

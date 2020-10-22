@@ -20,71 +20,55 @@
       </div>
       <div class="panel-block table-body-br">
         <v-server-table
-            id="tasks-table"
+            id="projects-table"
             :url="url"
             :columns="columns"
             :options="options"
-            ref="tasksTable"
-            name="tasksTable">
+            ref="projectsTable"
+            name="projectsTable">
           <template slot="customer" slot-scope="props">
             <div class="has-text-centered">
               {{ props.row.customer ? props.row.customer.name : '' }}
-
             </div>
           </template>
 
-          <template slot="details" slot-scope="props" class="test">
-            <textarea
-                rows="3"
-                name="details"
-                :id="'details-textarea-'+ props.row.id"
-                class="textarea details-textarea"
-                @keyup="editDetails"
-                v-model="props.row.details">
-                </textarea>
+          <template slot="start_date" slot-scope="props">
+            <date-format-component :dateTime="props.row.start_date"></date-format-component>
           </template>
-          <template slot="category" slot-scope="props">
-            {{ props.row.category ? props.row.category.name : '' }}
+          <template slot="end_date" slot-scope="props">
+            <date-format-component :dateTime="props.row.end_date"></date-format-component>
           </template>
-<!--          <template slot="start_date" slot-scope="props">-->
-<!--            <date-format-component :dateTime="props.row.start_date"></date-format-component>-->
-<!--          </template>-->
-<!--          <template slot="end_date" slot-scope="props">-->
-<!--            <date-format-component :dateTime="props.row.end_date"></date-format-component>-->
-<!--          </template>-->
-          <template slot="date_to_complete" slot-scope="props">
-            <date-format-component :date="props.row.date_to_complete"></date-format-component>
-          </template>
-          <template slot="priority" slot-scope="props">
-            <div class="has-text-centered" :style="{background: props.row.priority ? props.row.priority.color : ''}">
-              {{ props.row.priority ? props.row.priority.name : '' }}
-
+          <template slot="type" slot-scope="props">
+            <div class="has-text-centered">
+              {{ props.row.type ? props.row.type.name : '' }}
             </div>
           </template>
-          <template slot="status" slot-scope="props">
-            <div class="has-text-centered" :style="{background: props.row.status ? props.row.status.color : ''}">
-              {{ props.row.status ? props.row.status.name : '' }}
+          <template slot="percentage_done" slot-scope="props">
+            <div class="has-text-centered">
 
+              {{ percentageCalculation(props.row.actual_time, props.row.price) }}
             </div>
           </template>
+          percentageCalculation
+
           <template slot="actions" slot-scope="props">
             <div class="buttons has-addons is-centered">
               <p class="control tooltip">
-                <router-link :to="'/tasks/' + props.row.id" class="button is-primary is-small">
+                <router-link :to="'/projects/' + props.row.id" class="button is-primary is-small">
                   <i class="fas fa-file-alt"/>
-                  <span class="tooltip-text">View</span>
+                  <span class="tooltip-text">צפייה</span>
                 </router-link>
               </p>
               <p class="control tooltip" v-if="$store.getters.admin">
-                <router-link :to="'/tasks/edit/' + props.row.id" class="button is-warning is-small">
+                <router-link :to="'/projects/edit/' + props.row.id" class="button is-warning is-small">
                   <i class="fas fa-edit"></i>
-                  <span class="tooltip-text">Edit</span>
+                  <span class="tooltip-text">עריכה</span>
                 </router-link>
               </p>
               <p class="control tooltip" v-if="$store.getters.superAdmin">
                 <button type="button" class="button is-danger is-small" @click="deleteRecord(props.row.id)">
                   <i class="fas fa-trash"></i>
-                  <span class="tooltip-text">Delete</span>
+                  <span class="tooltip-text">מחיקה</span>
                 </button>
               </p>
             </div>
@@ -109,7 +93,7 @@ import tBus from '../../mixins/Tbus'
 import DateFormatComponent from '../helpers/DateFormatComponent'
 
 export default {
-  mixins: [mId, tBus('app/tasks')],
+  mixins: [mId, tBus('app/projects')],
   props: [
     'modal',
     'customerId',
@@ -117,8 +101,8 @@ export default {
   ],
   data () {
     return {
-      showTaskForm: false,
-      columns: ['name', 'customer', 'category','date_to_complete', 'actual_time', 'details', 'priority', 'status', 'actions'],
+      showProjectForm: false,
+      columns: ['name', 'customer', 'start_date','end_date', 'price', 'expenses', 'type','percentage_done' ,'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       addRoute: null,
       options: {
@@ -134,17 +118,15 @@ export default {
         },
         filterable: ['name', 'start_date', 'end_date', 'details'],
         headings: {
-          name: 'נושא',
-          details: 'תוכן',
-          // start_date : 'תאריך לביצוע',
-          // end_date: 'סיום תאריך לביצוע',
+          name: 'שם',
           customer: 'לקוח',
-          priority: 'עדיפות',
-          status: 'סטטוס',
-          date_to_complete: 'תאריך לביצוע',
-          actual_time: 'זמן בפועל לביצוע',
+          type: 'סוג',
+          date_to_complete: 'תאריך התחלה',
+          actual_time: 'תאריך סיום',
+          price: 'מחיר',
+          expenses: 'הוצאות',
           actions: 'פעולות',
-          category: 'קטגוריה'
+          percentage_done: 'אחוז מהעבודה עד כה'
         },
       },
     }
@@ -153,21 +135,36 @@ export default {
   methods: {
     editDetails (val) {
       let id = val.target.id.replace(/[^\d.]/g, '')
-      this.$http(`app/tasks/details/${val.target.value}/${id}`).then()
+      this.$http(`app/projects/details/${val.target.value}/${id}`).then()
 
     },
     goBack() {
       this.$emit("showCustomerList", true);
     },
+    percentageCalculation(tasksTime, price) {
+      if (tasksTime) {
+
+        let sumTasksTime = tasksTime.reduce((a, b) => a + b, 0)
+        let HourlyWage = 100;
+        let convertToHours = (sumTasksTime / 60)
+        let totalTimeAsAmount = convertToHours *  HourlyWage;
+
+        let percentage = totalTimeAsAmount / price
+
+        if (Number.isFinite(percentage)) {
+          return ' % ' + percentage * 100 ;
+        }
+      }
+    }
   },
   created () {
 
-    this.addRoute = !this.customerId ? '/tasks/add' : `/tasks/add?customerId=${this.customerId}`;;
+    this.addRoute = !this.customerId ? '/projects/add' : `/projects/add?customerId=${this.customerId}`;
   },
   computed: {
     url: {
       get () {
-        return !this.customerId ? 'app/tasks' : `app/customers/tasks/${this.customerId}`;
+        return !this.customerId ? 'app/projects' : `app/customers/projects/${this.customerId}`;
       },
 
     },
