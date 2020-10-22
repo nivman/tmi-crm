@@ -178,6 +178,33 @@ const router = new VueRouter({
             ]
         },
         {
+            path: "/projects",
+            component: () => import("./components/projects/ProjectListComponent.vue"),
+            meta: { title: "Projects", admin: false },
+            children: [
+                {
+                    path: "add",
+                    component: () => import("./components/projects/ProjectFormModal.vue"),
+                    meta: { title: "Add Project", admin: false, modal: true }
+                },
+                {
+                    path: "customer/add/:id",
+                    component: () => import("./components/projects/ProjectFormModal.vue"),
+                    meta: { title: "Add Project", admin: false, modal: true }
+                },
+                {
+                    path: "edit/:id",
+                    component: () => import("./components/projects/ProjectFormModal.vue"),
+                    meta: { title: "Edit Project", admin: true, modal: true }
+                },
+                {
+                    path: ":id",
+                    component: () => import("./components/projects/ProjectViewComponent.vue"),
+                    meta: { title: "View Project", admin: false, modal: true }
+                }
+            ]
+        },
+        {
             path: "/categories",
             component: () => import(/* webpackChunkName: "components" */ "./components/categories/CategoryListComponent.vue"),
             meta: { title: "Categories", admin: true },

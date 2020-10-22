@@ -85,7 +85,7 @@
             </side-bar-menu-component>
           <side-bar-menu-component :expand="subIsActive(['/events'])">
                 <span class="icon is-small m-l-sm">
-                    <i class="fas fa-fw fa-users"></i>
+                    <i class="fas fa-fw fa-handshake"></i>
                 </span>
             התקשרויות
             <template slot="submenu">
@@ -103,7 +103,7 @@
           </side-bar-menu-component>
           <side-bar-menu-component :expand="subIsActive(['/tasks'])">
                 <span class="icon is-small m-l-sm">
-                    <i class="fas fa-fw fa-users"></i>
+                    <i class="fas fa-fw fa-tasks"></i>
                 </span>
             משימות
             <template slot="submenu">
@@ -114,9 +114,22 @@
               <li>
                 <router-link to="/tasks/add" @click.native="hideMenu">יצירת משימה</router-link>
               </li>
-
-
             </template>
+          </side-bar-menu-component>
+            <side-bar-menu-component :expand="subIsActive(['/projects'])">
+                <span class="icon is-small m-l-sm">
+                    <i class="fas fa-fw fa-project-diagram"></i>
+                </span>
+              פרוייקטים
+              <template slot="submenu">
+                <li>
+                  <router-link to="/projects" exact @click.native="hideMenu">רשימת פרוייקטים</router-link>
+                </li>
+                <li>
+                <li>
+                  <router-link to="/projects/add" @click.native="hideMenu">יצירת פרוייקט</router-link>
+                </li>
+              </template>
           </side-bar-menu-component>
             <side-bar-menu-component :expand="subIsActive(['/vendors'])">
                 <span class="icon is-small m-l-sm">
@@ -137,13 +150,13 @@
                 <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-money-check"></i>
                 </span>
-                Incomes
+                הכנסות
                 <template slot="submenu">
                     <li>
-                        <router-link to="/incomes" exact @click.native="hideMenu">List Incomes</router-link>
+                        <router-link to="/incomes" exact @click.native="hideMenu">רשימת הכנסות</router-link>
                     </li>
                     <li>
-                        <router-link to="/incomes/add" @click.native="hideMenu">Add New Income</router-link>
+                        <router-link to="/incomes/add" @click.native="hideMenu">הוספת הכנסה</router-link>
                     </li>
                 </template>
             </side-bar-menu-component>
@@ -152,13 +165,13 @@
                 <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-money-check-alt"></i>
                 </span>
-                Expenses
+                הוצאות
                 <template slot="submenu">
                     <li>
-                        <router-link to="/expenses" exact @click.native="hideMenu">List Expenses</router-link>
+                        <router-link to="/expenses" exact @click.native="hideMenu">רשימת הוצאות</router-link>
                     </li>
                     <li>
-                        <router-link to="/expenses/add" @click.native="hideMenu">Add New Expense</router-link>
+                        <router-link to="/expenses/add" @click.native="hideMenu">הוספת הוצאה</router-link>
                     </li>
                 </template>
             </side-bar-menu-component>
@@ -167,13 +180,13 @@
                 <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-dollar-sign"></i>
                 </span>
-                Payments
+                תשלומים
                 <template slot="submenu">
                     <li>
-                        <router-link to="/payments" exact @click.native="hideMenu">List Payments</router-link>
+                        <router-link to="/payments" exact @click.native="hideMenu">רשימת תשלומים</router-link>
                     </li>
                     <li>
-                        <router-link to="/payments/add" @click.native="hideMenu">Add New Payment</router-link>
+                        <router-link to="/payments/add" @click.native="hideMenu">הוספת תשלום</router-link>
                     </li>
                 </template>
             </side-bar-menu-component>
@@ -237,7 +250,7 @@
                     <template slot="submenu">
                         <span v-if="$store.getters.superAdmin">
                             <li>
-                                <router-link class="navbar-item" to="/settings" exact @click.native="hideMenu">App Settings</router-link>
+                                <router-link class="navbar-item" to="/settings" exact @click.native="hideMenu">הגדרות מערכת</router-link>
                             </li>
                             <li>
                                 <router-link class="navbar-item" to="/settings/invoice_settings" @click.native="hideMenu">
@@ -250,7 +263,7 @@
                                 </router-link>
                             </li>
                             <li>
-                                <router-link to="/settings/email_templates" @click.native="hideMenu">Email Templates</router-link>
+                                <router-link to="/settings/email_templates" @click.native="hideMenu">תבניות לאמייל</router-link>
                             </li>
                         </span>
                         <li>

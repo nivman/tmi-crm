@@ -33,7 +33,26 @@ class CustomersController extends Controller
 
     public function index()
     {
-        return response()->json(Customer::with(['journal','status'])->mine()->vueTable(Customer::$columns));
+
+        $customers = Customer::with(['journal', 'status'])->mine()->vueTable(Customer::$columns);
+        $attributes = (new Customer)->getCustomFields($customers);
+
+        foreach ($customers['data'] as $key => $customer) {
+
+            foreach ($attributes['attributes'] as $item) {
+
+                if (isset($item['entity_id']) && $item['entity_id'] == $customer['id']) {
+
+                    $customer['custom'][$item['attributeName']] = $item['content'];
+                    $customers['data'][$key] = $customer;
+                }
+            }
+
+        }
+
+        $customers['attributesNames'] = $attributes['attributesNames'];
+
+        return response()->json($customers);
     }
 
     public function search(Request $request)
@@ -65,21 +84,15 @@ class CustomersController extends Controller
 
     public function getCustomerByContactId($contactId)
     {
-
         $customer = (new Customer())->getContactByCustomer($contactId);
         if ($customer) {
 
-
             $customer->attributes = $customer->attributes();
-
             $customer->status = $customer->getStatus($customer->getAttribute('status_id'));
-
-
             $customer->load($customer->attributes->pluck('slug')->toArray());
         }
         $customerStatuses = (new Status)->getAllEntityStatus('App\Customer');
         return ['customer' => $customer, 'statuses' => $customerStatuses];
-
     }
 
 

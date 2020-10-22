@@ -18,7 +18,7 @@ class CreateAttributeVarcharValuesTable extends Migration
         Schema::create(config('rinvex.attributes.tables.attribute_varchar_values'), function (Blueprint $table) {
             // Columns
             $table->id();
-            $table->string('content');
+            $table->string('content')->nullable();
             $table->integer('attribute_id')->unsigned();
             $table->integer('entity_id')->unsigned();
             $table->string('entity_type');

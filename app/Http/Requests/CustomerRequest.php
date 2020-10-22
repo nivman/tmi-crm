@@ -30,6 +30,7 @@ class CustomerRequest extends FormRequest
 
         $customer = new Customer;
         $this->attributes = $customer->attributes();
+
         foreach ($this->attributes as $key => $attribute) {
             $rules = Arr::add($rules, $key, ($attribute->is_required ? 'required' : 'nullable'));
         }
@@ -42,14 +43,21 @@ class CustomerRequest extends FormRequest
         $rules = $this->container->call([$this, 'rules']);
 
         $validated = $this->only(collect($rules)->keys()->map(function ($rule) {
+
             return str_contains($rule, '.') ? explode('.', $rule)[0] : $rule;
         })->unique()->toArray());
 
         foreach ($this->attributes as $attribute) {
+
+            if (!isset($validated[$attribute->slug])) {
+
+                $validated[$attribute->slug] = '---';
+            }
             if ($attribute->type == 'datetime' && !empty($validated[$attribute->slug])) {
                 $validated[$attribute->slug] = \Carbon\Carbon::parse($validated[$attribute->slug]);
             }
         }
+
         return $validated;
     }
 }

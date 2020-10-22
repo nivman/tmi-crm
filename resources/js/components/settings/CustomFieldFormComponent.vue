@@ -7,8 +7,8 @@
                     <p class="modal-card-title">
                         {{
                             form.id
-                                ? "Edit Custom Field"
-                                : "Add New Custom Field"
+                                ? "עריכת שדה דינמי"
+                                : "הוספת שדה דינמי"
                         }}
                     </p>
                     <button
@@ -21,7 +21,7 @@
                     <div class="columns">
                         <div class="column is-half">
                             <div class="field">
-                                <label class="label" for="name">Name</label>
+                                <label class="label" for="name">שם</label>
                                 <input
                                     id="name"
                                     type="text"
@@ -36,7 +36,7 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="slug">Slug</label>
+                                <label class="label" for="slug">מזהה</label>
                                 <input
                                     id="slug"
                                     name="slug"
@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="type">Type</label>
+                                <label class="label" for="type">סוג</label>
                                 <div class="select is-fullwidth">
                                     <select
                                         v-model="form.type"
@@ -60,13 +60,11 @@
                                             'is-danger': errors.has('type')
                                         }"
                                     >
-                                        <option value="varchar">String</option>
-                                        <option value="text">Text</option>
-                                        <option value="boolean">Boolean</option>
-                                        <option value="datetime"
-                                            >Datetime</option
-                                        >
-                                        <option value="integer">Integer</option>
+                                        <option value="varchar">טקסט מקוצר</option>
+                                        <option value="text">טקסט</option>
+                                        <option value="boolean">כן\לא</option>
+                                        <option value="datetime">תאריך ושעה</option>
+                                        <option value="integer">מספר</option>
                                     </select>
                                 </div>
                                 <div class="help is-danger">
@@ -74,9 +72,7 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="is_required"
-                                    >Required</label
-                                >
+                                <label class="label" for="is_required">שדה חובה</label>
                                 <div class="select is-fullwidth">
                                     <select
                                         v-model="form.is_required"
@@ -87,8 +83,8 @@
                                             )
                                         }"
                                     >
-                                        <option value="0">No</option>
-                                        <option value="1">Yes</option>
+                                        <option value="0">לא</option>
+                                        <option value="1">כן</option>
                                     </select>
                                 </div>
                                 <div class="help is-danger">
@@ -97,7 +93,7 @@
                             </div>
                             <div class="field">
                                 <label class="label" for="sort_order"
-                                    >Sort Order</label
+                                    >סדר מיון</label
                                 >
                                 <input
                                     type="number"
@@ -117,45 +113,23 @@
                         </div>
                         <div class="column is-half">
                             <div class="field">
-                                <label class="label" for="entities"
-                                    >Entities</label
-                                >
+                                <label class="label" for="entities">סוג טבלה</label>
                                 <div class="select is-fullwidth is-multiple">
                                     <select
                                         size="5"
                                         multiple
                                         id="entities"
                                         v-model="form.entities"
-                                        v-validate="'required'"
-                                        :class="{
-                                            'is-danger': errors.has('entities')
-                                        }"
-                                    >
-                                        <option value="App\Account"
-                                            >Accounts</option
-                                        >
-                                        <option value="App\Customer"
-                                            >Customer</option
-                                        >
-                                        <option value="App\Expense"
-                                            >Expenses</option
-                                        >
-                                        <option value="App\Income"
-                                            >Income</option
-                                        >
-                                        <option value="App\Invoice"
-                                            >Invoice</option
-                                        >
-                                        <option value="App\Product"
-                                            >Products</option
-                                        >
-                                        <option value="App\Purchase"
-                                            >Purchase</option
-                                        >
-                                        <!-- <option value="App\Seller">Sellers</option> -->
-                                        <option value="App\Vendor"
-                                            >Vendor</option
-                                        >
+                                        v-validate="'required'">
+                                        <option value="App\Account">חשבון</option>
+                                        <option value="App\Customer">לקוח</option>
+                                        <option value="App\Expense">הוצאות</option>
+                                        <option value="App\Income" >הכנסות</option>
+                                        <option value="App\Invoice">חשבוניות</option>
+                                        <option value="App\Product" >מוצרים</option>
+                                        <option value="App\Purchase">רכישות</option>
+                                        <option value="App\Vendor">ספקים</option>
+                                        <option value="App\Project">פרוייקטים</option>
                                     </select>
                                 </div>
                                 <div class="help is-danger">
@@ -163,23 +137,17 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="description"
-                                    >Description</label
-                                >
+                                <label class="label" for="description">תיאור</label>
                                 <textarea
                                     rows="4"
                                     type="text"
                                     id="description"
                                     class="textarea"
                                     name="description"
-                                    v-model="form.description"
-                                    :class="{
-                                        'is-danger': errors.has('description')
-                                    }"
-                                ></textarea>
-                                <div class="help is-danger">
-                                    {{ errors.first("description") }}
-                                </div>
+                                    v-model="form.description">
+
+                                </textarea>
+
                             </div>
                         </div>
                     </div>
@@ -187,9 +155,8 @@
                         <button
                             type="submit"
                             class="button is-link is-fullwidth"
-                            :disabled="errors.any()"
-                        >
-                            Submit
+                            :disabled="errors.any()">
+                            הכנסה
                         </button>
                     </div>
                 </section>

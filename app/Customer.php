@@ -8,6 +8,8 @@ use App\Traits\LogActivity;
 use App\Traits\Restrictable;
 use App\Traits\AccountingJournal;
 use App\Traits\AttributableModel;
+use Illuminate\Database\Eloquent\Builder;
+use Rinvex\Attributes\Models\Attribute;
 
 class Customer extends ModelForm
 {
@@ -23,10 +25,13 @@ class Customer extends ModelForm
         parent::boot();
 
         static::created(function ($customer) {
+
             $customer->initJournal();
             if ($ob = $customer->opening_balance) {
                 $customer->refresh()->journal->creditDollars($ob, 'opening_balance');
             }
+
+
         });
     }
 
@@ -62,6 +67,43 @@ class Customer extends ModelForm
     {
         return $this->belongsTo(Status::class);
     }
+
+    public function getCustomFields($customers)
+    {
+        $attributes = [];
+        $attributesNames = [];
+        $customersIds = array_column($customers["data"], 'id');
+
+        foreach ($customersIds as $key => $customersId) {
+            /** @var Customer $customer */
+            $customer = Customer::find($customersId);
+            $customerAttributeRelations = array_keys($customer->entityAttributeRelations);
+
+            foreach ($customerAttributeRelations as $customerAttributeRelation) {
+
+                $customFieldsSlugs = collect(CustomField::whereSlug($customerAttributeRelation));
+                $customFieldsName = json_decode($customFieldsSlugs->first()->name);
+
+                $attributesNames[$customFieldsName->en] = $customFieldsName->en;
+                $customer->$customerAttributeRelation;
+
+                if ($customer->getRelations()[$customerAttributeRelation]) {
+
+                    $attribute = $customer->getRelations()[$customerAttributeRelation]->getAttributes();
+
+                    $customFieldsSlugs = collect(CustomField::find($attribute['attribute_id']-1)->pluck('name')->get($attribute['attribute_id']-1));
+
+                    $attribute['attributeName'] = $customFieldsSlugs->first();
+
+                    $attributes[] = $attribute;
+
+                    $customer->customerField =[$attribute['attributeName'] => $attribute['content']];
+                }
+            }
+        }
+
+       return ['attributes' => $attributes, 'attributesNames' => $attributesNames];
+   }
 
     public function getContactByCustomer($id)
     {

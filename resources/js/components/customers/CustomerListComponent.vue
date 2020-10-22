@@ -21,6 +21,7 @@
               @loaded="onLoaded"
               ref="customersTable"
               name="customersTable"
+              :slots="slots"
           >
             <template slot="status" slot-scope="props">
               <div class="has-text-centered" :style="{background: props.row.status ? props.row.status.color : ''} ">
@@ -32,6 +33,22 @@
                 {{ props.row.journal ? props.row.journal.balance.amount : 0 | formatJournalBalance }}
               </div>
             </template>
+            <template v-for="(slot,i) in customColumn" :slot=customColumn[i]  slot-scope="props">
+            {{setCustomFieldValue(props.row.custom, i, slot)}}
+<!--              {{ props.row.custom}}-->
+
+            </template>
+
+
+              <template :slot="customColumn" slot-scope="props">
+
+                {{ props.row.status ? props.row.custom : '' }}
+                <div class="has-text-right">
+
+                </div>
+              </template>
+
+
             <template slot="actions" slot-scope="props">
               <div class="buttons has-addons is-centered">
                 <p class="control tooltip">
@@ -91,6 +108,7 @@
             <template slot="afterBody">
               <table-filters-component :filters="filters" :amount="totalAmount"></table-filters-component>
             </template>
+
           </v-server-table>
         </div>
       </div>
@@ -118,14 +136,18 @@
 import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import TaskListComponent from '../tasks/TaskListComponent'
+import { customer } from '../../store/getters'
 
 export default {
   mixins: [mId, tBus('app/customers')],
   data () {
     return {
+      loaded: false,
+      slots: '',
       customerId: null,
       customerName: null,
       showTaskList: false,
+      customColumn : [],
       totalAmount: 0,
       columns: ['name', 'company', 'email', 'phone', 'receivable', 'status', 'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
@@ -143,12 +165,53 @@ export default {
     }
   },
   methods: {
+    setCustomFieldValue(customField, i, slot) {
+
+      if (customField) {
+
+         let t =  Object.entries(customField)
+
+
+        if(customField) {
+
+          if( t[i]) {
+            return  t[i][1]
+          }
+        }
+
+     //   console.log(t[i])
+      }
+
+
+    },
     onLoaded (data) {
-      let table = data.data.data
+
+
+      let table = data.data.data;
+      let attributesNames = data.data.attributesNames;
+       attributesNames = Object.keys(attributesNames).map((k) => attributesNames[k])
+      this.slots= attributesNames;
+
       let totalAmount = Object.keys(table).reduce(function (sum, key) {
         return sum + parseFloat(table[key].journal.balance.amount)
       }, 0)
       this.totalAmount = parseFloat(totalAmount / 100)
+
+
+      let em = this;
+      this.customColumn = attributesNames
+      if ( !this.loaded) {
+
+        setTimeout(function () {
+          attributesNames.forEach((item) => {
+
+            em.columns.push(item)
+
+          });
+        }, 400)
+      }
+      this.loaded = true;
+
     },
     showTasks (customerId, customerName) {
 
