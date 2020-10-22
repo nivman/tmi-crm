@@ -466,6 +466,7 @@ export default {
             this.optionsStatuses = res.data.statuses
             this.priorities = res.data.priorities
             this.categories = res.data.categories
+            this.form.category = res.data.task.category[0];
             this.form.status = taskStatus.length > 0 ? taskStatus[0] : ''
             this.form.end_date = this.format_date(res.data.task.end_date)
             this.form.start_date = this.format_date(res.data.task.start_date)
@@ -514,6 +515,18 @@ export default {
           .then(res => {
 
             this.projects = res.data
+            this.getCustomersById(this.projects)
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+    },
+    getCustomersById(projects) {
+      let result = projects.map(a => a.customer_id);
+      this.$http
+          .post('app/project-customers/' + result)
+          .then(res => {
+            this.customers = res.data
           })
           .catch(err => {
             this.$event.fire('appError', err.response)

@@ -120,4 +120,10 @@ class CustomersController extends Controller
         return $customer;
     }
 
+    public function getCustomersByIds($ids)
+    {
+
+        return (new Customer)->getCustomersByIds($ids);
+
+    }
 }

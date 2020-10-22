@@ -34,6 +34,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('vendors/search', 'VendorsController@search');
     Route::put('vendor/{vendor}', 'VendorsController@update');
     Route::get('customers/search', 'CustomersController@search');
+    Route::post('project-customers/{ids}', 'CustomersController@getCustomersByIds');
     Route::put('customer/{customer}', 'CustomersController@update');
     Route::get('contacts/{customerId}', 'ContactsController@getContactByCustomerId');
     Route::get('contacts/search/{term}', 'ContactsController@getContactBySearchTerm');

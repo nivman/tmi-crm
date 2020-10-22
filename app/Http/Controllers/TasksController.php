@@ -31,10 +31,14 @@ class TasksController extends Controller
             $requestOrderBy = $request->query->get('orderBy');
             $orderBy = $requestOrderBy === 'priority' ? 'priority_id' : $requestOrderBy;
             $request->query->set('orderBy', $orderBy);
-
-            return response()->json(Task::orderBy($orderBy, $ascending)->with(['customer', 'project', 'priority', 'status','category'])->mine()->vueTable(Task::$columns));
+            $tasks = Task::orderBy($orderBy, $ascending)->with(['customer', 'project', 'priority', 'status','category'])->mine()->vueTable(Task::$columns);
+            $tasksPercentage = (new Task())->getPercentage($tasks);
+            return response()->json($tasksPercentage);
         }
-        return response()->json(Task::with(['customer',  'project', 'priority', 'status','category'])->mine()->vueTable(Task::$columns));
+
+        $tasks = Task::with(['customer',  'project', 'priority', 'status','category'])->mine()->vueTable(Task::$columns);
+        $tasksPercentage = (new Task())->getPercentage($tasks);
+        return response()->json($tasksPercentage);
     }
 
     public function create()
@@ -126,8 +130,8 @@ class TasksController extends Controller
         $v['status_id'] = $request->request->get('status') ? $request->request->get('status')['id'] : null;
         $v['priority_id'] = $request->request->get('priority') ? $request->request->get('priority')[0]['id'] : null;
         $v['customer_id'] = $request->request->get('customer') ? $request->request->get('customer')['id'] : null;
-        $v['category_id'] = $request->request->get('category') ? $request->request->get('category')[0]['id'] : null;
-        $v['project_id'] = $request->request->get('project') ? $request->request->get('project')['id'] : null;
+        $v['category_id'] = $request->request->get('category') ? $request->request->get('category')['id'] : null;
+        $v['project_id'] = $request->request->get('project') ? $request->request->get('project')[0]['id'] : null;
         $task->update($v);
         return $task;
     }

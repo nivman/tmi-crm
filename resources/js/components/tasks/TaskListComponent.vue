@@ -51,6 +51,13 @@
           <template slot="category" slot-scope="props">
             {{ props.row.category ? props.row.category.name : '' }}
           </template>
+          <template slot="workingHours" slot-scope="props">
+            {{ props.row.actual_time ?  parseFloat(props.row.actual_time / 60).toFixed(2)  : '' }}
+          </template>
+
+          <template slot="amountPerHours" slot-scope="props">
+            {{ props.row.actual_time ?  parseFloat(props.row.actual_time / 60 * 100).toFixed(2) : '' }}
+          </template>
 <!--          <template slot="start_date" slot-scope="props">-->
 <!--            <date-format-component :dateTime="props.row.start_date"></date-format-component>-->
 <!--          </template>-->
@@ -72,6 +79,22 @@
 
             </div>
           </template>
+          <template slot="percentageOfProject" slot-scope="props">
+            <div>
+              <ul style="font-size: 12px">
+                <li class="has-text-centered" v-if="props.row.actual_time">
+                <strong>  מחיר פרוייקט</strong>
+                </li>
+                <li class="has-text-centered" >
+                  <strong>{{ props.row.actual_time ? props.row.projectPrice : '' }} </strong>
+                </li>
+              </ul>
+              <div class="has-text-centered">
+                {{ props.row.actual_time ? calculatePercentage( props.row.actual_time, props.row.projectPrice) : '' }}
+              </div>
+            </div>
+          </template>
+
           <template slot="actions" slot-scope="props">
             <div class="buttons has-addons is-centered">
               <p class="control tooltip">
@@ -123,7 +146,20 @@ export default {
   data () {
     return {
       showTaskForm: false,
-      columns: ['name', 'customer', 'project', 'category','date_to_complete', 'actual_time', 'details', 'priority', 'status', 'actions'],
+      columns: [
+        'name',
+        'customer',
+        'project',
+        'category',
+        'date_to_complete',
+        'actual_time',
+        'details',
+        'priority',
+        'status',
+        'workingHours',
+        'amountPerHours',
+        'percentageOfProject',
+        'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       addRoute: null,
       options: {
@@ -145,7 +181,9 @@ export default {
           details: 'תוכן',
           // start_date : 'תאריך לביצוע',
           // end_date: 'סיום תאריך לביצוע',
-
+          workingHours: 'שעות עבודה',
+          AmountPerHours: 'סכום שעות העבודה',
+          percentageOfProject : 'אחוז עבודה ביחס למחיר הפרוייקט',
           priority: 'עדיפות',
           status: 'סטטוס',
           date_to_complete: 'תאריך לביצוע',
@@ -166,6 +204,23 @@ export default {
     goBack() {
       this.$emit("showCustomerList", true);
     },
+    calculatePercentage(tasksTime, price) {
+      if (tasksTime) {
+
+        let convertToHours = (tasksTime / 60)
+        let HourlyWage = convertToHours * 100; // how mush per hour need to be dynamic
+
+        let totalTimeAsAmount = HourlyWage * 100 / price;
+
+        let percentage = totalTimeAsAmount / price
+
+        if (Number.isFinite(percentage)) {
+
+          return ' % ' + totalTimeAsAmount ;
+        }
+      }
+    }
+
   },
   created () {
 

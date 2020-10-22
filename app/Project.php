@@ -68,6 +68,7 @@ class Project extends ModelForm
         $projectsTasks = DB::table('tasks')->select('id', 'name', 'actual_time', 'project_id')
             ->whereIn('project_id', $projectsIds)
             ->get();
+
         foreach ($projectsTasks as $projectTask) {
             foreach ($projects['data'] as $key => $project) {
 

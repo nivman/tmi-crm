@@ -9,6 +9,7 @@ use App\Traits\Restrictable;
 use App\Traits\AccountingJournal;
 use App\Traits\AttributableModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Rinvex\Attributes\Models\Attribute;
 
 class Customer extends ModelForm
@@ -114,5 +115,14 @@ class Customer extends ModelForm
     public function getCustomerById($id)
     {
         return Customer::find($id);
+    }
+
+    public function getCustomersByIds($ids)
+    {
+        $fruits_ar = explode(',', $ids);
+
+         return DB::table('customers')->select('*')
+            ->whereIn('id', $fruits_ar)
+            ->get();
     }
 }
