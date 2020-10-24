@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Modern Invoicing System') }}</title>
+    <title>{{ config('app.name', 'מערכת לניהול tmi') }}</title>
     <link rel="icon" href="/icon-48.png">
     <link rel="manifest" href="/manifest">
     <meta name="theme-color" content="#3273dc">
@@ -29,8 +29,8 @@
         <div class="preloaderapp" ref="preloaderapp">
             <div class="cbf"></div>
             <div class="has-text-centered" style="margin-top:2rem;font-size:1.2rem;color:#3273dc">
-                <span class="wait-title">Please wait,<br></span>
-                <span class="wait-message" style="color:#ff3860">Application is being loaded...</span>
+
+                <span class="wait-message" style="color:#ff3860">אפליקציה נטענת</span>
             </div>
         </div>
         @yield('content')

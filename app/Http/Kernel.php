@@ -38,7 +38,6 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\RedirectIfNotAjaxRequest::class,
-//            \App\Http\Middleware\RedirectIfNotInstalled::class,
             \App\Http\Middleware\AppSettings::class,
         ],
 
@@ -67,6 +66,5 @@ class Kernel extends HttpKernel
         'throttle'         => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified'         => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role'             => \App\Http\Middleware\RoleMiddleware::class,
-//        'install'          => \App\Http\Middleware\CanInstall::class,
     ];
 }

@@ -10,7 +10,7 @@ class AppSettings
 {
     public function handle($request, Closure $next)
     {
-      $setting = $request->session()->get('appSettings');
+        $setting = $request->session()->get('appSettings');
         $input = $request->except(['_token', '_method']);
 
       //  $settings =   Storage::disk('local')->put('settings.json', json_encode($input, JSON_PRETTY_PRINT));

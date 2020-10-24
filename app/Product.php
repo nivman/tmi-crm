@@ -21,7 +21,7 @@ class Product extends Model
 
     protected $fillable = ['code', 'name', 'cost', 'price', 'details', 'image'];
 
-    protected $with     = ['categories', 'taxes', 'stock', 'eav'];
+    protected $with     = ['categories', 'taxes', 'stock'];
 
     protected static function boot()
     {

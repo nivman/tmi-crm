@@ -135,13 +135,13 @@
                 <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-user-friends"></i>
                 </span>
-                Vendors
+              ספקים
                 <template slot="submenu">
                     <li>
-                        <router-link to="/vendors" exact @click.native="hideMenu">List Vendors</router-link>
+                        <router-link to="/vendors" exact @click.native="hideMenu">רשימת ספקים</router-link>
                     </li>
                     <li>
-                        <router-link to="/vendors/add" @click.native="hideMenu">Add New Vendor</router-link>
+                        <router-link to="/vendors/add" @click.native="hideMenu">הכנסת ספק חדש</router-link>
                     </li>
                 </template>
             </side-bar-menu-component>

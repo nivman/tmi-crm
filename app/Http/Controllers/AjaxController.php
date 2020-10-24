@@ -32,13 +32,11 @@ class AjaxController extends Controller
                 'vendor_id'   => $user->vendor_id,
             ] : null,
             'settings' => [
-                'ac'      => app_config(),
-                'short_name'  => $settings['short_name'],
+                'ac'      => true,
                 'dateformat' => $settings['dateformat'],
-                'country' => $settings['country'],
                 'noRows' => isset($settings['noRows']) ? $settings['noRows'] : 10,
-                'navPosition' => isset($settings['navPosition']) ? $settings['navPosition'] : 'left',
-                'idColumn' => isset($settings['idColumn']) ? $settings['idColumn'] : false,
+//                'navPosition' => isset($settings['navPosition']) ? $settings['navPosition'] : 'left',
+//                'idColumn' => isset($settings['idColumn']) ? $settings['idColumn'] : false,
                 'select' => isset($settings['select']) ? $settings['select'] : false,
                 'baseURL' => url('/'),
                 'app'     => ['name' => config('app.name')],
@@ -69,7 +67,6 @@ class AjaxController extends Controller
     public function manifest()
     {
         return [
-            'short_name'       => app_config('short_name'),
             'name'             => config('app.name'),
             'background_color' => '#3273dc',
             'orientation'      => 'portrait-primary',
@@ -88,15 +85,6 @@ class AjaxController extends Controller
             ],
         ];
     }
-
-    public function states(Request $request)
-    {
-        return collect(Geographer::findOneByCode($request->country)->getStates()->sortBy('name')->toArray())
-        ->transform(function ($item, $key) {
-            return ['value' => $item['isoCode'], 'label' => $item['name']];
-        });
-    }
-
     public function token(Request $request)
     {
         return ['token' => csrf_token()];

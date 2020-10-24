@@ -23,7 +23,7 @@ class EventsController extends Controller
             'end_date'   => 'nullable|date_format:Y-m-d H:i|after_or_equal:start_date',
             'color'      => 'nullable',
             'details'    => 'nullable',
-            'contact_id' => 'required',
+            'contact' => 'required',
             'type_id'    => 'required',
         ]);
     }
@@ -88,7 +88,7 @@ class EventsController extends Controller
 
         $v = $this->isValid($request);
 
-        $v['contact_id'] = $request->request->get('contact_id');
+        $v['contact_id'] = $request->request->get('contact')['id'];
         $v['type_id'] = $request->request->get('type_id')['id'];
         return $request->user()->events()->create($v);
     }

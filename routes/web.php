@@ -17,7 +17,7 @@ Route::get('/paypal/{hash}/completed', 'PublicController@completed');
 // App
 Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('products/search', 'ProductsController@search');
-    // Route::get('transactions', 'TransactionsController@index');
+    // Route::get('transactions', 'TransactionsController@index');settings
 
     Route::get('dashboard/vendor', 'DashboardController@vendor');
     Route::get('charts/pie_chart', 'DashboardController@pieChart');
@@ -34,10 +34,11 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('vendors/search', 'VendorsController@search');
     Route::put('vendor/{vendor}', 'VendorsController@update');
     Route::get('customers/search', 'CustomersController@search');
+    Route::get('contacts/search', 'ContactsController@search');
     Route::post('project-customers/{ids}', 'CustomersController@getCustomersByIds');
     Route::put('customer/{customer}', 'CustomersController@update');
     Route::get('contacts/{customerId}', 'ContactsController@getContactByCustomerId');
-    Route::get('contacts/search/{term}', 'ContactsController@getContactBySearchTerm');
+
     Route::get('customer/contact/{customerId}', 'CustomersController@getCustomerByContactId');
     Route::resource('categories', 'CategoriesController')->only(['index', 'show']);
 

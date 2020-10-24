@@ -59,7 +59,7 @@ class CustomersController extends Controller
     {
 
         $v = $request->validate(['query' => 'required|string']);
-        $results = Customer::search($v['query'])->select(
+        return Customer::search($v['query'])->select(
             \DB::raw("*, id as value,
                 if (`name` LIKE '{$v['query']}%', 20, if (`name` LIKE '%{$v['query']}%', 10, 0))
                 + if (`company` LIKE '%{$v['query']}%', 5,  0)
@@ -67,7 +67,7 @@ class CustomersController extends Controller
                 + if (`email` LIKE '%{$v['query']}%', 3,  0)
                 as weight")
         )->orderBy('weight', 'desc')->limit(10)->get();
-        return $results;
+
     }
 
     public function show(Customer $customer)

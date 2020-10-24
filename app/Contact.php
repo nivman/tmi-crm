@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class Contact extends Model
 {
-    use LogActivity, Restrictable, VueTable;
+    use AccountingJournal, AttributableModel, LogActivity, Restrictable, VueTable;
 
     public static $columns = ['id', 'first_name', 'last_name', 'email', 'phone'];
 
@@ -44,12 +44,15 @@ class Contact extends Model
             ->get();
     }
 
-    public function getContactByName($search)
+    public function scopeSearch($query, $search)
     {
-        return DB::table('contacts')->select('id', DB::raw('CONCAT(first_Name, " ", last_Name) As full_name'))
-            ->where('first_name','LIKE', '%'.$search.'%')
-            ->orWhere('last_name','LIKE', '%'.$search.'%')
-            ->get();
+        if (!empty($search)) {
+            $query->where(function ($query) use ($search) {
+                $query->where('first_name', 'LIKE', "%$search%")
+                    ->orWhere('last_name', 'LIKE', "%$search%");
+            });
+        }
+        return $query;
     }
 
     public function getContactById($id)

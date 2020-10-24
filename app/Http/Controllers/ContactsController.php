@@ -25,11 +25,6 @@ class ContactsController extends Controller
         return (new Contact)->getContactByCustomer($id);
     }
 
-    public function getContactBySearchTerm($search)
-    {
-        return (new Contact)->getContactByName($search);
-    }
-
     public function index()
     {
 
@@ -37,6 +32,15 @@ class ContactsController extends Controller
 
     public function search(Request $request)
     {
+        $v = $request->validate(['query' => 'required|string']);
+
+        return Contact::search($v['query'])->select(
+            \DB::raw("*, id as value,
+                if (`first_name` LIKE '{$v['query']}%', 20, if (`first_name` LIKE '%{$v['query']}%', 10, 0))
+                + if (`last_name` LIKE '%{$v['query']}%', 5,  0)
+                as weight"),
+            \DB::raw( 'CONCAT(first_Name, " ", last_Name) As full_name')
+        )->orderBy('weight', 'desc')->limit(10)->get();
 
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use Install\Helpers\Install;
+
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        Install::routes();
+
         // Schema::defaultStringLength(191);
         \App\Income::observe(\App\Observers\IncomeObserver::class);
         \App\Expense::observe(\App\Observers\ExpenseObserver::class);

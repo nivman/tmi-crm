@@ -24,9 +24,11 @@
           <div class="field">
             <label class="label" for="contact">איש קשר</label>
             <v-select
-                label="contact"
+                label="full_name"
                 id="contact"
                 name="contact"
+                item-value="id"
+                item-text="first_name"
                 class="rtl-direction"
                 :options="contacts"
                 @search="searchContacts"
@@ -187,7 +189,7 @@ export default {
       },
       loading: false,
       isSaving: false,
-      contact_id: null,
+      //contact_id: null,
       type_id: null,
       type: '',
     }
@@ -215,7 +217,7 @@ export default {
           details: '',
           color: '',
           contact: '',
-          contact_id: null,
+         // contact_id: null,
           type: '',
           type_id: null
         })
@@ -227,15 +229,17 @@ export default {
         return
       }
       this.$http
-          .get(`app/contacts/search/${search}`)
+
+          .get('app/contacts/search?query=' + search)
           .then(res => {
 
-            const contacts = res.data.map(item => {
-              return item.full_name
-            })
-            this.form.contact = res.data[0].full_name
-            this.contacts = contacts
-            this.form.contact_id = res.data[0].id
+          //   const contacts = res.data.map(item => {
+          // //   console.log(item)
+          //     return item.first_name + ' ' + item.last_name + ' /// ' + item.id
+          //   })
+            console.log(res.data)
+
+            this.contacts = res.data
 
           })
           .catch(err => {
@@ -262,9 +266,9 @@ export default {
           .get(`app/contacts/${customer_id}`)
           .then(res => {
 
-            this.form.contact = res.data[0].full_name
+            this.form.contact = res.data[0].first_name
             this.form.contact_id = res.data[0].id
-            debugger
+
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
@@ -279,7 +283,7 @@ export default {
               this.$event.fire('refreshEvents')
               this.notify(
                   'success',
-                  'Event has been successfully updated.'
+                  'עודכן בהצלחה'
               )
               this.$modal.hide('event-form-modal')
             })
@@ -292,7 +296,7 @@ export default {
               this.$event.fire('refreshEvents')
               this.notify(
                   'success',
-                  'Event has been successfully added.'
+                  'התקשרות נוצרה בהצלחה.'
               )
               this.$modal.hide('event-form-modal')
             })
@@ -312,12 +316,12 @@ export default {
     },
     deleteEvent () {
       this.$modal.show('dialog', {
-        title: 'Delete Event!',
+        title: 'מחיקת התקשרות',
         text:
-            'This action will have permanent effect that can\'t be reversed.',
+            '',
         buttons: [
           {
-            title: 'Yes, please delete',
+            title: 'מחיקה',
             class:
                 'button is-danger is-radiusless is-radius-bottom-left',
             handler: () => {
@@ -327,7 +331,7 @@ export default {
                     this.$event.fire('refreshEvents')
                     this.notify(
                         'success',
-                        'Event has been successfully deleted.'
+                        'התקשרות נמחקה'
                     )
                     this.$modal.hide('event-form-modal')
                     this.$modal.hide('dialog')
@@ -338,7 +342,7 @@ export default {
             }
           },
           {
-            title: 'No, please cancel',
+            title: 'לא',
             class:
                 'button is-warning is-radiusless is-radius-bottom-right'
           }

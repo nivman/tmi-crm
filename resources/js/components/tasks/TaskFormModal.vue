@@ -429,7 +429,7 @@ export default {
               this.$event.fire('refreshTasksTable')
               this.notify(
                   'success',
-                  'Customer has been successfully updated.'
+                  'משימה עוכנה'
               )
 
               this.$router.push(route)
@@ -444,7 +444,7 @@ export default {
               this.$event.fire('refreshTasksTable')
               this.notify(
                   'success',
-                  'Customer has been successfully added.'
+                  'משימה נוצרה'
               )
 
               this.$router.push(route)
