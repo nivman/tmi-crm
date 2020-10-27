@@ -1,24 +1,11 @@
 {
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
-    "/js/components.8d646ca4fe53772bd08e.js": "/js/components.8d646ca4fe53772bd08e.js",
+    "/js/components.8be200fb53f8a7b8d074.js": "/js/components.8be200fb53f8a7b8d074.js",
     "/js/vendors~components.7f81fda9d396c1a9b298.js": "/js/vendors~components.7f81fda9d396c1a9b298.js",
     "/css/loader.css": "/css/loader.css",
     "/css/message.css": "/css/message.css",
     "/css/minimal.css": "/css/minimal.css",
     "/css/modern.css": "/css/modern.css",
-    "/css/simple.css": "/css/simple.css",
-    "/js/components.1855020829125c393812.js": "/js/components.1855020829125c393812.js",
-    "/js/components.9353a254b43bf193d3a1.js": "/js/components.9353a254b43bf193d3a1.js",
-    "/js/components.ced54f4c1399cc2fbc27.js": "/js/components.ced54f4c1399cc2fbc27.js",
-    "/js/components.f5f477b0570ab694763d.js": "/js/components.f5f477b0570ab694763d.js",
-    "/js/components.0e6e37d366ccba00ecce.js": "/js/components.0e6e37d366ccba00ecce.js",
-    "/js/components.a424293beed281fc64b3.js": "/js/components.a424293beed281fc64b3.js",
-    "/js/components.a84a3aa6b0fc588d27bc.js": "/js/components.a84a3aa6b0fc588d27bc.js",
-    "/js/components.4c4bdf107fb051e3fbb1.js": "/js/components.4c4bdf107fb051e3fbb1.js",
-    "/js/components.76b33235f2f3f56454a5.js": "/js/components.76b33235f2f3f56454a5.js",
-    "/js/vendors~components.699f303d669c8f5ee09b.js": "/js/vendors~components.699f303d669c8f5ee09b.js",
-    "/js/components.f6e9072a24c92e0d0830.js": "/js/components.f6e9072a24c92e0d0830.js",
-    "/js/vendors~components.1c9dd51d6e90ee3ecd73.js": "/js/vendors~components.1c9dd51d6e90ee3ecd73.js",
-    "/js/components.01dd9878e628f298aea8.js": "/js/components.01dd9878e628f298aea8.js"
+    "/css/simple.css": "/css/simple.css"
 }

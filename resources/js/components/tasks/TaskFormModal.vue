@@ -141,14 +141,16 @@
           <div class="columns">
             <div class="column">
               <div class="field">
-                <label class="label" for="priorities">דחיפות</label>
+                <label class="label" for="priority">דחיפות</label>
                 <v-select
                     label="name"
-                    id="priorities"
-                    name="priorities"
+                    id="priority"
+                    name="priority"
                     class="rtl-direction"
                     item-value="id"
                     item-text="name"
+                    return-object
+                    single-line
                     :options="priorities"
                     v-model="form.priority">
                   <template v-slot:option="priorities">
@@ -303,8 +305,11 @@ export default {
       optionsStatuses: [],
       isSaving: false,
       customerId: null,
+      projectSelected: false,
+      customerSelected: false,
       form: new this.$form({
         id: '',
+        customer: '',
         name: 'משימה',
         details: '',
         notification_time: '',
@@ -395,6 +400,21 @@ export default {
         this.$event.fire('missingData', 'יש להכניס זמן התחלה וסיום')
 
       }
+    },
+    'form.project': function () {
+      this.projectSelected = !this.projectSelected
+      if (this.projects.length > 0) {
+        this.getCustomersById(this.projects)
+      }
+    },
+    'form.customer': function () {
+
+      this.customerSelected = !this.customerSelected
+      if (this.form.customer) {
+        this.getProjectsByCustomerId([this.form.customer])
+      } else {
+        this.customerSelected = false
+      }
     }
   },
   methods: {
@@ -466,7 +486,9 @@ export default {
             this.optionsStatuses = res.data.statuses
             this.priorities = res.data.priorities
             this.categories = res.data.categories
-            this.form.category = res.data.task.category[0];
+            this.form.category = res.data.task.category[0]
+            this.form.priority = res.data.task.priority[0]
+            this.form.project = res.data.task.project[0]
             this.form.status = taskStatus.length > 0 ? taskStatus[0] : ''
             this.form.end_date = this.format_date(res.data.task.end_date)
             this.form.start_date = this.format_date(res.data.task.start_date)
@@ -495,11 +517,16 @@ export default {
       if (search === '') {
         return
       }
+
       this.$http
           .get('app/customers/search?query=' + search)
           .then(res => {
 
             this.customers = res.data
+            if (this.customers.length > 0) {
+              this.getProjectsByCustomerId(this.customers)
+            }
+
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
@@ -507,7 +534,7 @@ export default {
     },
     searchProjects (search) {
 
-      if (search === '') {
+      if (search === '' || this.customerSelected) {
         return
       }
       this.$http
@@ -515,22 +542,42 @@ export default {
           .then(res => {
 
             this.projects = res.data
-            this.getCustomersById(this.projects)
+
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
           })
     },
-    getCustomersById(projects) {
-      let result = projects.map(a => a.customer_id);
+    getCustomersById (projects) {
+      let customer_id = projects.map(a => a.customer_id)
       this.$http
-          .post('app/project-customers/' + result)
+          .post('app/project-customers/' + customer_id)
           .then(res => {
-            this.customers = res.data
+
+            this.form.customer = res.data[0]
+
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
           })
+    },
+    getProjectsByCustomerId (customers) {
+
+      let id = customers.map(a => a.id)
+
+      this.$http
+          .post('app/customers-projects/' + id)
+          .then(res => {
+            this.projects = []
+            if (res.data.length > 0) {
+              this.projects = res.data
+            }
+
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+
     }
   },
   components: { EventFormModal },

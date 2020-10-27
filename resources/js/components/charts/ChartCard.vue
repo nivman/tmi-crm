@@ -1,119 +1,173 @@
 <template>
-    <div class="panel panel-default is-centered" @refresh="get" v-if="config">
-        <div class="panel-heading">
+  <div class="panel panel-default is-centered" @refresh="get" v-if="config">
+    <div class="panel-heading">
             <span v-if="!params.hideFilter">
                 <button type="button" class="button is-primary is-small is-pulled-right m-l-sm" @click="download()">
                     <i class="fas fa-download"></i>
                 </button>
                 <div class="select is-small is-pulled-right m-l-sm">
                     <select @change="$emit('yearChanged', $event.target.value)">
-                        <option v-for="year in years" :value="year" :key="year" :selected="params.year == year"> {{ year }}</option>
+                        <option v-for="year in years" :value="year" :key="year" :selected="params.year == year"> {{
+                            year
+                          }}</option>
                     </select>
                 </div>
                 <div class="select is-small is-pulled-right" v-if="params.month">
                     <select @change="$emit('monthChanged', $event.target.value)">
-                        <option v-for="month in months" :value="month" :key="month" :selected="params.month == month"> {{ month }}</option>
+                        <option v-for="month in months" :value="month" :key="month" :selected="params.month == month"> {{
+                            month
+                          }}</option>
                     </select>
                 </div>
             </span>
-            {{ config.title }}
-        </div>
-        <div class="panel-body">
-            <loading v-if="loading"></loading>
-            <div class="columns">
-                <div class="column has-text-centered">
-                    <chart
-                        ref="chart"
-                        :data="config.data"
-                        :type="config.type"
-                        :options="config.options"
-                        class="has-padding-medium inline-block"
-                        :style="{ width: width, height: height }"
-                    />
-                </div>
-            </div>
-        </div>
+      {{ config.title }}
     </div>
+    <div class="panel-body">
+      <loading v-if="loading"></loading>
+      <div class="columns">
+        <div class="column has-text-centered">
+          <chart
+              ref="chart"
+              :data="config.data"
+              :type="config.type"
+              :options="config.options"
+              class="has-padding-medium inline-block"
+              :style="{ width: width, height: height }"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import Chart from './Chart.vue';
-import _times from 'lodash/times';
-import { saveAs } from 'file-saver';
+import Chart from './Chart.vue'
+import _times from 'lodash/times'
+import { saveAs } from 'file-saver'
 
 export default {
-    components: { Chart },
-    props: {
-        width: { default: '100%' },
-        height: { default: '400px' },
-        params: { type: Object, default: null },
-        source: { type: String, required: true },
+  components: { Chart },
+  props: {
+    width: { default: '100%' },
+    height: { default: '400px' },
+    params: { type: Object, default: null },
+    source: { type: String, required: true },
+  },
+  data () {
+    return {
+      loading: false,
+      config: null,
+    }
+  },
+  computed: {
+    months () {
+      let date = new Date()
+      let months = this.params.year == date.getFullYear() ? date.getMonth() + 1 : 12
+      return _times(months).map(i =>
+          this.$moment()
+              .month(i)
+              .format('MM')
+      )
     },
-    data() {
-        return {
-            loading: false,
-            config: null,
-        };
+    years () {
+      let years = []
+      let date = new Date()
+      let year = date.getFullYear()
+      for (let y = 2017; y <= year; y++) {
+        years.push(y)
+      }
+      return years
     },
-    computed: {
-        months() {
-            let date = new Date();
-            let months = this.params.year == date.getFullYear() ? date.getMonth() + 1 : 12;
-            return _times(months).map(i =>
-                this.$moment()
-                    .month(i)
-                    .format('MM')
-            );
-        },
-        years() {
-            let years = [];
-            let date = new Date();
-            let year = date.getFullYear();
-            for (let y = 2017; y <= year; y++) {
-                years.push(y);
-            }
-            return years;
-        },
+  },
+  watch: {
+    params: {
+      handler () {
+        this.get()
+      },
+      deep: true,
     },
-    watch: {
-        params: {
-            handler() {
-                this.get();
-            },
-            deep: true,
-        },
+  },
+  mounted () {
+    this.get()
+  },
+  methods: {
+    get () {
+      if (this.$store.getters.user) {
+        this.loading = true
+        this.$http
+            .get(this.source, { params: this.params })
+            .then(({ data }) => {
+              this.translateTerm(data)
+              this.config = data
+              this.loading = false
+            })
+            .catch(err => {
+              this.loading = false
+              this.$event.fire('appError', err.response)
+            })
+      }
     },
-    mounted() {
-        this.get();
+    translateTerm (data) {
+    //TODO refactor this
+      data.data.datasets.forEach((element, index) => {
+        if (element.label) {
+         this.translate(data.data.datasets,index)
+        }
+      })
+
+      data.data.labels.forEach((element, index) => {
+
+        switch (element) {
+          case 'Invoices':
+            data.data.labels[index] = 'חשבוניות'
+            break
+          case 'Purchases':
+            data.data.labels[index] = 'רכישות'
+            break
+          case 'Incomes':
+            data.data.labels[index] = 'הכנסות'
+            break
+          case 'Expenses':
+            data.data.labels[index] = 'הוצאות'
+            break
+          default:
+            // code block
+        }
+      })
+
     },
-    methods: {
-        get() {
-            if (this.$store.getters.user) {
-                this.loading = true;
-                this.$http
-                    .get(this.source, { params: this.params })
-                    .then(({ data }) => {
-                        this.config = data;
-                        this.loading = false;
-                    })
-                    .catch(err => {
-                        this.loading = false;
-                        this.$event.fire('appError', err.response);
-                    });
-            }
-        },
-        download() {
-            this.$refs.chart.$el.toBlob(blob => saveAs(blob, `${this.config.title}.png`));
-        },
+    translate(data, index) {
+      //TODO refactor this
+      switch (data[index].label) {
+        case 'Invoices':
+          data[index].label = 'חשבוניות'
+          break
+        case 'Purchases':
+          data[index].label = 'רכישות'
+          break
+        case 'Incomes':
+          data[index].label = 'הכנסות'
+          break
+        case 'Expenses':
+          data[index].label = 'הוצאות'
+          break
+        default:
+
+      }
     },
-};
+    download () {
+      this.$refs.chart.$el.toBlob(blob => saveAs(blob, `${this.config.title}.png`))
+    },
+  },
+}
 </script>
 
 <style lang="scss" scoped>
 .panel-body {
-    position: relative;
+  position: relative;
 }
+
 .inline-block {
-    display: inline-block !important;
+  display: inline-block !important;
 }
 </style>

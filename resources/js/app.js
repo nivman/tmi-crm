@@ -31,7 +31,8 @@ Vue.use(ServerTable, {
     serverMultiSorting: true,
     debounce: 500,
     pagination: { chunk: 5, dropdown: false },
-    texts: { filter: 'Search:', limit: 'Show:' },
+    texts: { filter: ' חיפוש: ', limit: ' מספר שורות: ' },
+
     skin: 'table is-fullwidth is-bordered is-striped is-hoverable is-rounded m-t-sm m-b-sm',
     requestFunction: function(data) {
         return window.axios.get(this.url, { params: data }).catch(err => {
@@ -165,33 +166,7 @@ axios
                             return Promise.reject(error);
                         }
                     );
-                    window['isUpdateAvailable']
-                        .then(isAvailable => {
-                            if (isAvailable) {
-                                this.$modal.show('dialog', {
-                                    title: 'Update available!',
-                                    text: 'A new update available for application.',
-                                    buttons: [
-                                        {
-                                            title: 'Update',
-                                            class: 'button is-primary is-radiusless is-radius-bottom-left',
-                                            handler: () => {
-                                                this.$modal.hide('dialog');
-                                                window.location.reload(true);
-                                            },
-                                        },
-                                        {
-                                            title: 'Close',
-                                            class: 'button is-warning is-radiusless is-radius-bottom-right',
-                                            handler: () => {
-                                                this.$modal.hide('dialog');
-                                            },
-                                        },
-                                    ],
-                                });
-                            }
-                        })
-                        .catch(err => console.error);
+
                 },
             });
         } else {

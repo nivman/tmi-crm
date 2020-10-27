@@ -3,7 +3,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">
 
-        <button @click="goBack" v-if="customerName" class="button is-primary is-small is-pulled-right">
+        <button @click="goBack" v-if="customerName || projectName" class="button is-primary is-small is-pulled-right">
           <p class="back-title"> חזרה </p>
           <i class="fas fa-backward"/>
         </button>
@@ -15,9 +15,10 @@
           <i class="fas fa-plus m-l-sm"/> הוספת משימה
         </router-link>
         משימות
-        <span v-if="customerId"> עבור : <strong>{{customerName}}</strong> </span>
+        <span v-if="customerId || projectId"> עבור : <strong>{{customerName || projectName}}</strong> </span>
 
       </div>
+
       <div class="panel-block table-body-br">
         <v-server-table
             id="tasks-table"
@@ -58,12 +59,6 @@
           <template slot="amountPerHours" slot-scope="props">
             {{ props.row.actual_time ?  parseFloat(props.row.actual_time / 60 * 100).toFixed(2) : '' }}
           </template>
-<!--          <template slot="start_date" slot-scope="props">-->
-<!--            <date-format-component :dateTime="props.row.start_date"></date-format-component>-->
-<!--          </template>-->
-<!--          <template slot="end_date" slot-scope="props">-->
-<!--            <date-format-component :dateTime="props.row.end_date"></date-format-component>-->
-<!--          </template>-->
           <template slot="date_to_complete" slot-scope="props">
             <date-format-component :date="props.row.date_to_complete"></date-format-component>
           </template>
@@ -86,6 +81,7 @@
                 <strong>  מחיר פרוייקט</strong>
                 </li>
                 <li class="has-text-centered" >
+
                   <strong>{{ props.row.actual_time ? props.row.projectPrice : '' }} </strong>
                 </li>
               </ul>
@@ -100,19 +96,19 @@
               <p class="control tooltip">
                 <router-link :to="'/tasks/' + props.row.id" class="button is-primary is-small">
                   <i class="fas fa-file-alt"/>
-                  <span class="tooltip-text">View</span>
+                  <span class="tooltip-text">פרטי משימה</span>
                 </router-link>
               </p>
               <p class="control tooltip" v-if="$store.getters.admin">
                 <router-link :to="'/tasks/edit/' + props.row.id" class="button is-warning is-small">
                   <i class="fas fa-edit"></i>
-                  <span class="tooltip-text">Edit</span>
+                  <span class="tooltip-text">עריכה</span>
                 </router-link>
               </p>
               <p class="control tooltip" v-if="$store.getters.superAdmin">
                 <button type="button" class="button is-danger is-small" @click="deleteRecord(props.row.id)">
                   <i class="fas fa-trash"></i>
-                  <span class="tooltip-text">Delete</span>
+                  <span class="tooltip-text">מחיקה</span>
                 </button>
               </p>
             </div>
@@ -141,7 +137,9 @@ export default {
   props: [
     'modal',
     'customerId',
-    'customerName'
+    'customerName',
+    'projectId',
+    'projectName'
   ],
   data () {
     return {
@@ -160,11 +158,13 @@ export default {
         'amountPerHours',
         'percentageOfProject',
         'actions'],
-      filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
+      filters: new this.$form({ name: '', customer: '', project: ''}),
       addRoute: null,
       options: {
-        orderBy: { ascending: true, column: 'name' },
-        sortable: ['name', 'start_date', 'end_date', 'priority'],
+        filterByColumn:true,
+       listColumns: ['customer','name'],
+        orderBy: { ascending: false, column: 'date_to_complete' },
+        sortable: ['name','priority','customer','date_to_complete', 'project', 'status', 'category'],
         editableColumns: ['details'],
         perPage: 10,
         columnsClasses: {
@@ -173,16 +173,14 @@ export default {
           actions: 'w175 has-text-centered p-x-none',
           details: 'details-td'
         },
-        filterable: ['name', 'start_date', 'end_date', 'details'],
+        filterable: ['name', 'start_date', 'end_date', 'details','customer', 'project'],
         headings: {
           name: 'נושא',
           customer: 'לקוח',
           project: 'פרוייקט',
           details: 'תוכן',
-          // start_date : 'תאריך לביצוע',
-          // end_date: 'סיום תאריך לביצוע',
           workingHours: 'שעות עבודה',
-          AmountPerHours: 'סכום שעות העבודה',
+          amountPerHours: 'סכום שעות העבודה',
           percentageOfProject : 'אחוז עבודה ביחס למחיר הפרוייקט',
           priority: 'עדיפות',
           status: 'סטטוס',
@@ -202,7 +200,11 @@ export default {
 
     },
     goBack() {
-      this.$emit("showCustomerList", true);
+      if(this.customerId) {
+        this.$emit("showCustomerList", true);
+      }else if (this.projectId) {
+        this.$emit("showProjectsList", true);
+      }
     },
     calculatePercentage(tasksTime, price) {
       if (tasksTime) {
@@ -224,12 +226,21 @@ export default {
   },
   created () {
 
-    this.addRoute = !this.customerId ? '/tasks/add' : `/tasks/add?customerId=${this.customerId}`;;
+
+    this.addRoute = !this.customerId ? '/tasks/add' : `/tasks/add?customerId=${this.customerId}`;
   },
   computed: {
     url: {
       get () {
-        return !this.customerId ? 'app/tasks' : `app/customers/tasks/${this.customerId}`;
+        let route = 'app/tasks';
+        if (this.customerId) {
+          route = `app/customers/tasks/${this.customerId}`;
+        }
+        else if (this.projectId) {
+
+          route = `app/projects/tasks/${this.projectId}`;
+        }
+        return route;
       },
 
     },

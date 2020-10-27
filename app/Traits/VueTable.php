@@ -12,10 +12,11 @@ trait VueTable
      * @param Builder $data
      * @param $fields
      * @param false $special_field
+     * @param bool $joinTables
      * @return array
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public static function scopeVueTable($data, $fields, $special_field = false)
+    public static function scopeVueTable($data, $fields, $special_field = false, $joinTables = false)
     {
         $byColumn = null;
         $request = app()->make('request');
@@ -29,7 +30,7 @@ trait VueTable
                 $filters_query = json_decode($filters);
                 static::filterByColumn($data, $filters_query);
             } else {
-                static::filter($data, $query, $fields);
+                static::filter($data, $query, $fields, $joinTables);
             }
         }
 
@@ -59,7 +60,8 @@ trait VueTable
 
     protected static function filterByColumn($data, $fields)
     {
-        $optionals = ['taxes'];
+
+        $optionals = ['taxes', 'tasks'];
         $filterable = [
             'id', 'code', 'name', 'reference', 'categories', 'customer', 'vendor', 'phone', 'user',
             'taxes', 'draft', 'date', 'gateway', 'price', 'cost', 'range', 'email', 'company', 'title', 'amount',
@@ -101,22 +103,76 @@ trait VueTable
         return $data;
     }
 
-    protected static function filter($data, $query, $fields)
+    /**   * @param Builder $data */
+    protected static function filter($data, $query, $fields, $joinTables = false)
     {
-        $data->where(function ($q) use ($query, $fields) {
+        $queryFields = json_decode($query, true);
+        $data->where(function ($q) use ($query, $fields, $joinTables, $data, $queryFields) {
+
+
             foreach ($fields as $index => $field) {
                 $relation = explode('.', $field);
+
                 if (isset($relation[0]) && isset($relation[1])) {
+
                     $method = $index ? 'orWhereHas' : 'whereHas';
-                    $q->{$method}($relation[0], function ($qu) use ($relation, $query) {
-                        $qu->where($relation[1], 'like', "%{$query}%");
+                    $q->{$method}($relation[0], function ($qu) use ($relation, $query, $data, $joinTables, $queryFields) {
+
+                        if (count($queryFields) > 0 && $joinTables) {
+                            foreach ($queryFields as $key => $queryField) {
+
+                                if ($data->getModel()->checkRelation($key)) {
+                                    $qu->where($joinTables . '.' . $key, 'like', "%{$queryField}%");
+                                }
+                            }
+                        } else {
+                            $qu->where($relation[1], 'like', "%{$query}%");
+                        }
                     });
                 } else {
-                    $method = $index ? 'orWhere' : 'where';
-                    $q->{$method}($field, 'LIKE', "%{$query}%");
+                    $queryFields = json_decode($query, true);
+                    $method = (!$queryFields && $index) ? 'orWhere' : 'where';
+
+                    if ($queryFields  && $joinTables) {
+
+                        self::runOverFields($queryFields, $data, $method, $q, $joinTables);
+                    }
+                    else {
+                        if ($queryFields) {
+                             self::runOverFields($queryFields, $data, $method, $q, $joinTables);
+                        } else {
+
+                            $q->{$method}($field, 'LIKE', "%{$query}%");
+                        }
+
+                    }
                 }
             }
         });
         return $data;
+    }
+
+    /**
+     * @param $queryFields
+     * @param Builder $data
+     * @param string $method
+     * @param $q
+     * @param $joinTables
+     * @return array
+     */
+    protected static function runOverFields($queryFields, Builder $data, string $method, $q, $joinTables): array
+    {
+        if(!is_array($queryFields)) {
+            return [];
+        }
+        foreach ($queryFields as $key => $queryField) {
+
+            if ($data->getModel()->checkRelation($key)) {
+
+                $q->{$method}($joinTables . '.' . $key, 'LIKE', "%{$queryField}%");
+
+            }
+        }
+        return array($key, $queryField);
     }
 }

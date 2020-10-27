@@ -81,4 +81,13 @@ class Project extends ModelForm
         }
         return $projects;
     }
+
+    public function getProjectsCustomersByIds($customerIds)
+    {
+        $ids = explode(',', $customerIds);
+
+        return DB::table('projects')->select('*')
+            ->whereIn('customer_id', $ids)
+            ->get();
+    }
 }

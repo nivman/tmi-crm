@@ -25,7 +25,6 @@ class ProjectsController extends Controller
 
     public function search(Request $request)
     {
-
         $v = $request->validate(['query' => 'required|string']);
 
         $results = Project::search($v['query'])->select(
@@ -35,6 +34,11 @@ class ProjectsController extends Controller
                 as weight")
         )->orderBy('weight', 'desc')->limit(10)->get();
         return $results;
+    }
+
+    public function getProjectsCustomersByIds($customersIds)
+    {
+        return (new Project)->getProjectsCustomersByIds($customersIds);
     }
 
     public function create()
@@ -75,17 +79,6 @@ class ProjectsController extends Controller
 
     public function edit(Project $project)
     {
-//        dd($project);
-//        $project->attributes = $project->attributes();
-//        $project->type = $project->getType($project->getAttribute('type_id'));
-//        $project->customer = $project->getCustomer($project->getAttribute('customer_id'));
-//        $types = (new ProjectTypes())->getAllProjectTypes()->toArray();
-//        return [
-//            'project' => $project,
-//            'customer' => $project->customer,
-//            'types' => $types,
-//
-//        ];
 
     }
 

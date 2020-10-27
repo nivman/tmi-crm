@@ -1,5 +1,6 @@
 <template>
-  <div class="wrapper">
+  <div>
+  <div class="wrapper"  v-if="!showTaskList">
     <div class="panel panel-default">
       <div class="panel-heading">
 
@@ -59,6 +60,14 @@
                   <span class="tooltip-text">צפייה</span>
                 </router-link>
               </p>
+              <p class="control tooltip">
+                <a
+                    @click="showTasks(props.row.id, props.row.name)"
+                    class="fas fa-list button is-info is-small">
+                  <span class="tooltip-text bottom"> רשימת משימות</span>
+
+                </a>
+              </p>
               <p class="control tooltip" v-if="$store.getters.admin">
                 <router-link :to="'/projects/edit/' + props.row.id" class="button is-warning is-small">
                   <i class="fas fa-edit"></i>
@@ -85,13 +94,22 @@
     <router-view></router-view>
 
   </div>
+    <div v-if="showTaskList">
+      <task-list-component
+          :projectName="projectName"
+          :projectId="projectId"
+
+          @showProjectsList="showProjectsList"
+          modal="projects"></task-list-component>
+    </div>
+  </div>
 </template>
 
 <script>
 import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import DateFormatComponent from '../helpers/DateFormatComponent'
-
+import TaskListComponent from '../tasks/TaskListComponent'
 export default {
   mixins: [mId, tBus('app/projects')],
   props: [
@@ -101,7 +119,10 @@ export default {
   ],
   data () {
     return {
+      showTaskList: false,
       showProjectForm: false,
+      projectId: null,
+      projectName: null,
       columns: ['name', 'customer', 'start_date','end_date', 'price', 'expenses', 'type','percentage_done' ,'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       addRoute: null,
@@ -120,6 +141,8 @@ export default {
         headings: {
           name: 'שם',
           customer: 'לקוח',
+          start_date :'תחילת עסודה',
+          end_date : 'סיום עבודה',
           type: 'סוג',
           date_to_complete: 'תאריך התחלה',
           actual_time: 'תאריך סיום',
@@ -133,13 +156,22 @@ export default {
   },
 
   methods: {
+    showTasks (projectId, projectName) {
+
+       this.projectId = projectId
+       this.projectName = projectName
+       this.showTaskList = true
+    },
+    showProjectsList: function () {
+      this.showTaskList = false
+    },
     editDetails (val) {
       let id = val.target.id.replace(/[^\d.]/g, '')
       this.$http(`app/projects/details/${val.target.value}/${id}`).then()
 
     },
     goBack() {
-      this.$emit("showCustomerList", true);
+      //this.$emit("showCustomerList", true);
     },
     percentageCalculation(tasksTime, price) {
       if (tasksTime) {
@@ -158,7 +190,7 @@ export default {
     }
   },
   created () {
-
+    this.showTaskList = false
     this.addRoute = !this.customerId ? '/projects/add' : `/projects/add?customerId=${this.customerId}`;
   },
   computed: {
@@ -170,7 +202,7 @@ export default {
     },
 
   },
-  components: { DateFormatComponent },
+  components: { DateFormatComponent,TaskListComponent },
 
 }
 </script>

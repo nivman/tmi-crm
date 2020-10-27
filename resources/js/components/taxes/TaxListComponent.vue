@@ -10,9 +10,9 @@
                     <i class="fas fa-cog" />
                 </button>
                 <router-link to="/taxes/add" class="button is-link is-small is-pulled-right">
-                    <i class="fas fa-plus m-r-sm" /> Add Tax
+                    <i class="fas fa-plus m-r-sm" /> הוספת מס
                 </router-link>
-                Taxes
+                מיסים
                 <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
             </div>
             <div class="panel-block">

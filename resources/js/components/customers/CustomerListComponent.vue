@@ -33,20 +33,20 @@
                 {{ props.row.journal ? props.row.journal.balance.amount : 0 | formatJournalBalance }}
               </div>
             </template>
-            <template v-for="(slot,i) in customColumn" :slot=customColumn[i]  slot-scope="props">
-            {{setCustomFieldValue(props.row.custom, i, slot)}}
-<!--              {{ props.row.custom}}-->
+            <template v-for="(slot,i) in customColumn" :slot=customColumn[i] slot-scope="props">
+              {{ setCustomFieldValue(props.row.custom, i, slot) }}
+              <!--              {{ props.row.custom}}-->
 
             </template>
 
 
-              <template :slot="customColumn" slot-scope="props">
+            <template :slot="customColumn" slot-scope="props">
 
-                {{ props.row.status ? props.row.custom : '' }}
-                <div class="has-text-right">
+              {{ props.row.status ? props.row.custom : '' }}
+              <div class="has-text-right">
 
-                </div>
-              </template>
+              </div>
+            </template>
 
 
             <template slot="actions" slot-scope="props">
@@ -78,29 +78,23 @@
                 <!--                                </router-link>-->
                 <!--                            </p>-->
                 <p class="control tooltip" v-if="$store.getters.admin">
-                  <router-link
-                      :to="
-                                        '/payments/add?payer=customer&payer_id=' +
-                                            props.row.id +
-                                            '&amount=' +
-                                            parseFloat(props.row.journal.balance.amount / 100)
-                                    "
-                      class="button is-success is-small"
-                  >
+                  <router-link :to="'/payments/add?payer=customer&payer_id=' +
+                           props.row.id + '&amount=' +  parseFloat(props.row.journal.balance.amount / 100)"
+                      class="button is-success is-small">
                     <i class="fas fa-money-bill-alt"></i>
-                    <span class="tooltip-text">Add Payment</span>
+                    <span class="tooltip-text">הוספת תשלום</span>
                   </router-link>
                 </p>
                 <p class="control tooltip" v-if="$store.getters.admin">
                   <router-link :to="'/customers/edit/' + props.row.id" class="button is-warning is-small">
                     <i class="fas fa-edit"></i>
-                    <span class="tooltip-text">Edit</span>
+                    <span class="tooltip-text">עריכה</span>
                   </router-link>
                 </p>
                 <p class="control tooltip" v-if="$store.getters.superAdmin">
                   <button type="button" class="button is-danger is-small" @click="deleteRecord(props.row.id)">
                     <i class="fas fa-trash"></i>
-                    <span class="tooltip-text">Delete</span>
+                    <span class="tooltip-text">מחיקה</span>
                   </button>
                 </p>
               </div>
@@ -136,7 +130,7 @@
 import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import TaskListComponent from '../tasks/TaskListComponent'
-import { customer } from '../../store/getters'
+
 
 export default {
   mixins: [mId, tBus('app/customers')],
@@ -147,9 +141,9 @@ export default {
       customerId: null,
       customerName: null,
       showTaskList: false,
-      customColumn : [],
+      customColumn: [],
       totalAmount: 0,
-      columns: ['name', 'company', 'email', 'phone', 'receivable', 'status', 'actions'],
+      columns: ['name', 'company', 'email', 'phone', 'status', 'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       options: {
         orderBy: { ascending: true, column: 'name' },
@@ -161,65 +155,63 @@ export default {
           actions: 'w175 has-text-centered p-x-none',
         },
         filterable: ['id', 'name', 'company', 'email', 'phone'],
+        headings: {
+          name: 'שם',
+          company: 'חברה',
+          email: 'אימייל',
+          phone: 'טלפון',
+          status: 'סטטוס',
+          actions: 'פעולות',
+
+        },
       },
     }
   },
   methods: {
-    setCustomFieldValue(customField, i, slot) {
+    setCustomFieldValue (customField, i) {
 
       if (customField) {
+        let customRow = Object.entries(customField)
+        if (customField) {
 
-         let t =  Object.entries(customField)
-
-
-        if(customField) {
-
-          if( t[i]) {
-            return  t[i][1]
+          if (customRow[i]) {
+            return customRow[i][1]
           }
         }
-
-     //   console.log(t[i])
       }
-
-
     },
     onLoaded (data) {
 
-
-      let table = data.data.data;
-      let attributesNames = data.data.attributesNames;
-       attributesNames = Object.keys(attributesNames).map((k) => attributesNames[k])
-      this.slots= attributesNames;
+      let table = data.data.data
+      let attributesNames = data.data.attributesNames
+      attributesNames = Object.keys(attributesNames).map((k) => attributesNames[k])
+      this.slots = attributesNames
 
       let totalAmount = Object.keys(table).reduce(function (sum, key) {
         return sum + parseFloat(table[key].journal.balance.amount)
       }, 0)
       this.totalAmount = parseFloat(totalAmount / 100)
 
-
-      let em = this;
+      let em = this
       this.customColumn = attributesNames
-      if ( !this.loaded) {
+      if (!this.loaded) {
 
         setTimeout(function () {
           attributesNames.forEach((item) => {
-
-            em.columns.push(item)
-
-          });
-        }, 400)
+            em.columns.splice(6, 0, item)
+          })
+        }, 50)
       }
-      this.loaded = true;
+      this.loaded = true
 
     },
     showTasks (customerId, customerName) {
 
-      this.customerId = customerId;
-      this.customerName = customerName;
+      this.customerId = customerId
+      this.customerName = customerName
       this.showTaskList = true
     },
-    showCustomerList: function() {
+    showCustomerList: function () {
       this.showTaskList = false
     }
   },

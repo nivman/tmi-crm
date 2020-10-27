@@ -18,7 +18,7 @@ class UsersTableSeeder extends Seeder
             'username' => 'super',
             'name'     => 'Super Admin',
             'password' => bcrypt('123456'),
-            'email'    => 'super@tecdiary.com',
+            'email'    => 'super@tmi.com',
         ]);
         $super->roles()->attach($super_role);
         $super->roles()->attach($admin_role);
@@ -28,7 +28,7 @@ class UsersTableSeeder extends Seeder
             'username' => 'admin',
             'name'     => 'Site Admin',
             'password' => bcrypt('123456'),
-            'email'    => 'admin@tecdiary.com',
+            'email'    => 'admin@tmi.com',
         ]);
         $admin->roles()->attach($admin_role);
 
@@ -36,7 +36,7 @@ class UsersTableSeeder extends Seeder
             'username' => 'staff',
             'name'     => 'Sales Staff',
             'password' => bcrypt('123456'),
-            'email'    => 'staff@tecdiary.com',
+            'email'    => 'staff@tmi.com',
         ]);
         $staff->roles()->attach($staff_role);
 
@@ -44,7 +44,7 @@ class UsersTableSeeder extends Seeder
             'username' => 'customer',
             'name'     => 'Site Customer',
             'password' => bcrypt('123456'),
-            'email'    => 'customer@tecdiary.com',
+            'email'    => 'customer@tmi.com',
         ]);
         $customer->roles()->attach($customer_role);
 
@@ -52,7 +52,7 @@ class UsersTableSeeder extends Seeder
             'username' => 'vendor',
             'name'     => 'Site Vendor',
             'password' => bcrypt('123456'),
-            'email'    => 'vendor@tecdiary.com',
+            'email'    => 'vendor@tmi.com',
         ]);
         $vendor->roles()->attach($vendor_role);
 

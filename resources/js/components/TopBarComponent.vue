@@ -51,27 +51,27 @@
             <div class="navbar-end is-hidden-touch" style="font-size: .95rem;" v-if="!$store.getters.customer && !$store.getters.vendor">
                     <router-link to="/" exact class="navbar-item">
 
-                    <span class="is-hidden-touch m-l-sm">Dashboard</span>
+                    <span class="is-hidden-touch m-l-sm">עמוד הסית</span>
                   <i class="fas fa-tachometer-alt" />
                 </router-link>
                 <router-link to="/settings" exact class="navbar-item" v-if="$store.getters.superAdmin">
 
-                    <span class="is-hidden-touch m-l-sm">Settings</span>
+                    <span class="is-hidden-touch m-l-sm">הגדרות</span>
                   <i class="fas fa-cogs" />
                 </router-link>
                 <router-link to="/report" exact class="navbar-item" v-if="$store.getters.admin">
 
-                    <span class="is-hidden-touch m-l-sm">Report</span>
+                    <span class="is-hidden-touch m-l-sm">דוחות</span>
                   <i class="fas fa-chart-line" />
                 </router-link>
                 <router-link to="/calendar" exact class="navbar-item">
 
-                    <span class="is-hidden-touch m-l-sm">Calendar</span>
+                    <span class="is-hidden-touch m-l-sm">יומן</span>
                   <i class="fas fa-calendar-alt" />
                 </router-link>
                 <router-link to="/logs" exact class="navbar-item" v-if="$store.getters.superAdmin">
 
-                    <span class="is-hidden-touch m-l-sm">Logs</span>
+                    <span class="is-hidden-touch m-l-sm">רישום פעולות</span>
                   <i class="fas fa-file-alt" />
                 </router-link>
                 <div class="navbar-item has-dropdown is-hoverable" v-if="$store.getters.notifications">
@@ -80,42 +80,17 @@
                             <i class="fas fa-bell" />
                         </span>
                     </a>
-                    <div class="navbar-dropdown is-right">
-                        <router-link to="/payments?due=1" exact class="navbar-item" v-if="$store.state.notifications.payment_due > 0">
-                            {{ $store.state.notifications.payment_due }} Payments due
-                        </router-link>
-                        <router-link to="/payments?review=1" exact class="navbar-item" v-if="$store.state.notifications.payment_review > 0">
-                            {{ $store.state.notifications.payment_review }} Payments review
-                        </router-link>
-                    </div>
+
                 </div>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
-
                         <span class="is-capitalized">{{ user_name }}</span>
                       <i class="fas fa-user m-r-sm" />
                     </a>
                     <div class="navbar-dropdown is-right">
-                        <router-link to="/profile" exact class="navbar-item">{{ name }}'s Profile</router-link>
-                        <router-link to="/change_password" exact class="navbar-item">Change Password</router-link>
-                        <a class="navbar-item" @click="logout()">Logout</a>
-                    </div>
-                </div>
-            </div>
-            <div class="navbar-end is-hidden-touch" style="font-size: .95rem;" v-else>
-                <router-link to="/" exact class="navbar-item">
-                    <i class="fas fa-tachometer-alt" />
-                    <span class="is-hidden-touch m-l-sm">Dashboard</span>
-                </router-link>
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        <i class="fas fa-user m-r-sm" />
-                        <span class="is-capitalized">{{ user_name }}</span>
-                    </a>
-                    <div class="navbar-dropdown is-right">
-                        <router-link to="/profile" exact class="navbar-item">{{ name }}'s Profile</router-link>
-                        <router-link to="/change_password" exact class="navbar-item">Change Password</router-link>
-                        <a class="navbar-item" @click="logout()">Logout</a>
+                        <router-link to="/profile" exact class="navbar-item">{{ name }} פרופיל</router-link>
+                        <router-link to="/change_password" exact class="navbar-item">שינוי סיסמה </router-link>
+                        <a class="navbar-item" @click="logout()">יציאה</a>
                     </div>
                 </div>
             </div>

@@ -22,13 +22,13 @@ class DashboardController extends Controller
 
         $invoices  = chartData('App\Invoice', 'Y-m', 'm', 'toDays', $year);
         $purchases = chartData('App\Purchase', 'Y-m', 'm', 'toDays', $year);
-
+        Carbon::setLocale('he');
         for ($i = 1; $i <= 12; $i++) {
-            $labels[] = Carbon::create($year, ($i < 10 ? '0' . $i : $i))->format('M y');
+            $labels[] = Carbon::create($year, ($i < 10 ? '0' . $i : $i))->translatedFormat('M y');
         }
 
         $config = [
-            'title'    => $date->format('Y') . ' Overview',
+            'title'    => $date->translatedFormat('Y'),
             'datasets' => [
                 'Invoices'  => $invoices,
                 'Purchases' => $purchases,
@@ -57,22 +57,25 @@ class DashboardController extends Controller
 
     public function lineChart(Request $request)
     {
+
         $year  = $request->year ?: date('Y');
         $month = $request->month ?: date('m');
         $date  = Carbon::create($year, $month);
 
         $invoices  = chartData('App\Invoice', 'Y-m-d', 'd', 'toDays', $year, $month);
         $purchases = chartData('App\Purchase', 'Y-m-d', 'd', 'toDays', $year, $month);
-
+        Carbon::setLocale('he');
         for ($i = 1; $i <= $date->endOfMonth()->day; $i++) {
-            $labels[] = Carbon::create($year, $month, $i)->format('jS');
+            $labels[] = Carbon::create($year, $month, $i)->translatedFormat('jS');
         }
 
+
         $config = [
-            'title'    => $date->format('F Y') . ' Overview',
+            'title' => $date->translatedFormat('F Y'),
             'datasets' => [
                 'Invoices'  => $invoices,
                 'Purchases' => $purchases,
+
             ],
             'labels'  => $labels,
             'options' => ['responsive' => false, 'maintainAspectRatio' => false, 'legend' => ['display' => true, 'position' => 'top']],
@@ -87,9 +90,9 @@ class DashboardController extends Controller
         $year  = $request->year ?: date('Y');
         $month = $request->month ?: date('m');
         $date  = Carbon::create($year, $month);
-
+        Carbon::setLocale('he');
         $config = [
-            'title'    => $date->format('F Y') . ' Creations',
+            'title'    => $date->translatedFormat('F Y'),
             'datasets' => [
                 Invoice::mine()->monthly($year, $month)->count(),
                 Purchase::mine()->monthly($year, $month)->count(),

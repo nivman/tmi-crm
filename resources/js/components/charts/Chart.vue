@@ -46,6 +46,7 @@ export default {
     },
     methods: {
         init() {
+          let em =this;
             this.chart = new Chart(this.$el, {
                 type: this.type,
                 data: this.data,

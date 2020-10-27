@@ -34,14 +34,17 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('vendors/search', 'VendorsController@search');
     Route::put('vendor/{vendor}', 'VendorsController@update');
     Route::get('customers/search', 'CustomersController@search');
+    Route::post('customers-projects/{ids}', 'ProjectsController@getProjectsCustomersByIds');
+    Route::put('customer/{customer}', 'CustomersController@update');
+    Route::get('customer/contact/{customerId}', 'CustomersController@getCustomerByContactId');
     Route::get('contacts/search', 'ContactsController@search');
     Route::post('project-customers/{ids}', 'CustomersController@getCustomersByIds');
-    Route::put('customer/{customer}', 'CustomersController@update');
+
     Route::get('contacts/{customerId}', 'ContactsController@getContactByCustomerId');
 
-    Route::get('customer/contact/{customerId}', 'CustomersController@getCustomerByContactId');
-    Route::resource('categories', 'CategoriesController')->only(['index', 'show']);
 
+    Route::resource('categories', 'CategoriesController')->only(['index', 'show']);
+    Route::get('tasks/search', 'TasksController@search');
     Route::get('invoices/{invoice}/payments', 'InvoicesController@payments');
     Route::get('purchases/{purchase}/payments', 'PurchasesController@payments');
     Route::get('events/list', 'EventsController@list');
@@ -49,6 +52,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('events/eventsTypes', 'EventsController@eventsTypes');
     Route::resource('events', 'EventsController');
     Route::get('tasks/details/{term}/{id}', 'TasksController@details');
+
     Route::get('tasks/customers/{id}', 'TasksController@getCustomer');
     Route::get('customers/tasks/{id}', 'TasksController@getCustomerTasks');
     Route::post('tasks/add', 'TasksController@store');
@@ -57,6 +61,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('projects/', 'ProjectsController@edit');
     Route::post('projects/add', 'ProjectsController@store');
     Route::get('projects/search', 'ProjectsController@search');
+    Route::get('projects/tasks/{id}', 'TasksController@getProjectTasks');
     Route::resource('projects', 'ProjectsController');
     Route::resource('companies', 'CompaniesController')->only(['show']);
     Route::post('users/change_password', 'UsersController@changePassword');

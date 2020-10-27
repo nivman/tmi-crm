@@ -119,10 +119,10 @@ class Customer extends ModelForm
 
     public function getCustomersByIds($ids)
     {
-        $fruits_ar = explode(',', $ids);
+        $customersIds = explode(',', $ids);
 
          return DB::table('customers')->select('*')
-            ->whereIn('id', $fruits_ar)
+            ->whereIn('id', $customersIds)
             ->get();
     }
 }
