@@ -9,6 +9,12 @@ import Filters from './core/Filters.js';
 import VueProgressBar from 'vue-progressbar';
 import Notifications from 'vue-notification';
 
+ window.jQuery = require('jquery');
+ window.jQuery.moment = require('moment');
+ window.jQuery.daterangepicker = require('daterangepicker');
+ var $ = window.jQuery;
+  window.$ = $;
+
 window.Vue = Vue;
 Vue.config.performance = true;
 Vue.config.productionTip = false;

@@ -51,7 +51,7 @@
             <div class="navbar-end is-hidden-touch" style="font-size: .95rem;" v-if="!$store.getters.customer && !$store.getters.vendor">
                     <router-link to="/" exact class="navbar-item">
 
-                    <span class="is-hidden-touch m-l-sm">עמוד הסית</span>
+                    <span class="is-hidden-touch m-l-sm">עמוד הבית</span>
                   <i class="fas fa-tachometer-alt" />
                 </router-link>
                 <router-link to="/settings" exact class="navbar-item" v-if="$store.getters.superAdmin">

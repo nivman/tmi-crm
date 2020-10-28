@@ -6,7 +6,7 @@ module.exports = function () {
     listColumns: {},
     datepickerOptions: {
       locale: {
-        cancelLabel: 'Clear'
+        cancelLabel: 'ניקוי'
       }
     },
     datepickerPerColumnOptions: {},
@@ -22,23 +22,23 @@ module.exports = function () {
     templates: {},
     debounce: 250,
     dateFormat: "DD/MM/YYYY",
-    toMomentFormat: false,
+    toMomentFormat: true,
     skin: false,
     columnsDisplay: {},
     columnsDropdown: false,
     texts: {
       count: "מציג {from} מ {to} מתוך {count} רשומות|{count} רשומות|רשומה אחת",
-      first: 'First',
-      last: 'Last',
-      filter: "Filter:",
+      first: 'ראשון',
+      last: 'אחרון',
+      filter: "סינון:",
       filterPlaceholder: "חיפוש חופשי",
-      limit: "Records:",
-      page: "Page:",
-      noResults: "No matching records",
-      filterBy: "Filter by {column}",
+      limit: "רשומות:",
+      page: "עמוד:",
+      noResults: "לא נמצאו רשומות",
+      filterBy: "סינון {column}",
       loading: 'טעינה',
-      defaultOption: 'Select {column}',
-      columns: 'Columns'
+      defaultOption: 'בחירה {column}',
+      columns: 'עמודות'
     },
     sortIcon: {
       is: 'glyphicon-sort',

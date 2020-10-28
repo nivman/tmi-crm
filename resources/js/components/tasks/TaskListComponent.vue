@@ -162,7 +162,8 @@ export default {
       addRoute: null,
       options: {
         filterByColumn:true,
-       listColumns: ['customer','name'],
+        dateColumns:['date_to_complete'],
+        listColumns: ['customer','name'],
         orderBy: { ascending: false, column: 'date_to_complete' },
         sortable: ['name','priority','customer','date_to_complete', 'project', 'status', 'category'],
         editableColumns: ['details'],
@@ -173,7 +174,7 @@ export default {
           actions: 'w175 has-text-centered p-x-none',
           details: 'details-td'
         },
-        filterable: ['name', 'start_date', 'end_date', 'details','customer', 'project'],
+        filterable: ['name', 'start_date', 'end_date', 'details','customer', 'project', 'status', 'priority', 'category'],
         headings: {
           name: 'נושא',
           customer: 'לקוח',

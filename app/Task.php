@@ -108,7 +108,7 @@ class Task extends ModelForm
 
                         $q->where('tasks.'.$filterByEntity['entityType'], '=', $filterByEntity['entityId']);
 
-                        if ($params[0]['tableToJoin'] === 'statuses' || $params[0]['tableToJoin'] === 'task_priorities') {
+                        if ($params[0]['tableToJoin'] === 'categories' || $params[0]['tableToJoin'] === 'statuses' || $params[0]['tableToJoin'] === 'task_priorities') {
                             $q->OrWhere($params[$key]['orderByValue'], 'LIKE', "%{$params[$key]['query']}%")->where($params[$key]['orderBy'], '=', null);
 
                         }else {

@@ -38,7 +38,7 @@
 		"laravel-mix": "^5.0.1",
 		"laravel-mix-purgecss": "^5.0.0",
 		"lodash": "^4.17.13",
-		"moment": "^2.27.0",
+		"moment": "^2.29.1",
 		"resolve-url-loader": "^2.3.1",
 		"sass": "^1.20.1",
 		"sass-loader": "^8.0.0",
@@ -61,6 +61,9 @@
 		"vuex": "^3.5.1"
 	},
 	"dependencies": {
+		"date-range-picker": "^0.3.5",
+		"daterangepicker": "^3.1.0",
+		"jquery": "^3.5.1",
 		"moment-timezone": "^0.5.31",
 		"vue-color": "^2.7.1"
 	}
