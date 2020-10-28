@@ -45,7 +45,7 @@
                                             name="password"
                                             type="password"
                                             v-model="form.password"
-                                            v-validate="'required'"
+                                            validate="'required'"
                                             :class="{
                                                 'is-danger': errors.has(
                                                     'password'
@@ -71,7 +71,7 @@
                                             id="password_confirmation"
                                             name="password_confirmation"
                                             v-model="form.password_confirmation"
-                                            v-validate="
+                                            validate="
                                                 'required|confirmed:password'
                                             "
                                             :class="{

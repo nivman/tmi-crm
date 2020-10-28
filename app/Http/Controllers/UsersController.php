@@ -25,10 +25,6 @@ class UsersController extends Controller
             return response(['message' => 'Password cannot be same as your current password'], 422);
         }
 
-        if (demo()) {
-            return response(['message' => 'This feature is disabled on demo.'], 422);
-        }
-
         $request->user()->fill([
             'password' => Hash::make($v['password']),
         ])->save();
@@ -51,9 +47,6 @@ class UsersController extends Controller
             return response(['message' => 'User has been attached to some purchases and can not be deleted.'], 422);
         }
 
-        if (demo()) {
-            return response(['message' => 'This feature is disabled on demo.'], 422);
-        }
 
         $user->events()->delete();
         $user->delete();
@@ -145,10 +138,6 @@ class UsersController extends Controller
                 }
             }
             unset($v['roles']);
-        }
-
-        if ($user->id <= 5 && demo()) {
-            return response(['message' => 'This feature is disabled on demo.'], 422);
         }
 
         $user->update($v);
