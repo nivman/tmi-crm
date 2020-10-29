@@ -69,7 +69,7 @@ if (mix.inProduction()) {
   let paths = [glob.sync(path.join(__dirname, 'resources/js/**/*.vue')), glob.sync(path.join(__dirname, 'resources/views/**/*.blade.php'))];
   mix.purgeCss({
     content: ['resources/**/*.js', 'resources/**/*.php', 'resources/**/*.vue'],
-    whitelistPatterns: [/v-select/, /cv-/, /vs__/, /input/, /flatpickr/, /autocomplete/, /dropdown/],
+    whitelistPatterns: [/v--/,/v-select/, /cv-/, /vs__/, /input/, /flatpickr/, /autocomplete/, /dropdown/],
   });
   mix
     .version()
@@ -101,4 +101,4 @@ mix
   .sass('resources/sass/app.scss', 'public/css')
   .copy('resources/assets/css/**/*', 'public/css');
 // mix.copyDirectory("resources/assets/images", "public/images");
-// mix.browserSync("http://sbm.test/");
+
