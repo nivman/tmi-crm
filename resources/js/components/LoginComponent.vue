@@ -4,37 +4,7 @@
             <!-- <div class="has-text-centered m-b-sm">
                 <h2>{{ site_name }}</h2>
             </div> -->
-            <div
-                class="login-box is-rounded has-text-centered p-md m-b-md"
-                v-if="$store.getters.settings.demo"
-            >
-                <p class="m-b-md">
-                    <strong>Welcome to live demo site.</strong><br />
-                    Emails are disabled on this demo.
-                </p>
-                <label
-                    class="button is-outlined is-white"
-                    for="demouser"
-                    style="color:#363636;"
-                    >Login as</label
-                >
-                <div class="select m-r-sm">
-                    <select v-model="demouser" name="demouser" id="demouser">
-                        <option value="super">Super</option>
-                        <option value="admin">Admin</option>
-                        <option value="staff">Sales</option>
-                        <option value="customer">Customer</option>
-                        <option value="vendor">Vendor</option>
-                    </select>
-                </div>
-                <button
-                    type="button"
-                    class="button is-link"
-                    @click="loginDemoUser()"
-                >
-                    Login
-                </button>
-            </div>
+
             <div class="login-box is-rounded animated faster fadeInDown">
                 <div class="box-part is-paddingless is-borderless">
                     <div id="partition-register" class="partition">
@@ -45,13 +15,13 @@
                             >
                                 <i class="fas fa-plug has-text-danger" />
                                 <span class="tooltip-text left"
-                                    >You are disconnected!</span
+                                    >התנתקת מהמערכת</span
                                 >
                             </span>
-                            Please sign in
+                            התחברות למערכת
                         </div>
                         <div class="partition-form">
-                            <p>Please login to access your account</p>
+
                             <form
                                 autocomplete="off"
                                 action="#"
@@ -63,7 +33,7 @@
                                         type="text"
                                         class="input"
                                         name="username"
-                                        placeholder="Username"
+                                        placeholder="שם"
                                         v-validate="'required'"
                                         v-model="form.username"
                                         :class="{
@@ -81,7 +51,7 @@
                                         class="input"
                                         name="password"
                                         type="password"
-                                        placeholder="Password"
+                                        placeholder="סיסמה"
                                         v-model="form.password"
                                         v-validate="'required'"
                                         :class="{
@@ -98,7 +68,7 @@
                                     <checkbox-component
                                         id="remember"
                                         name="remember"
-                                        label="Remember Me"
+                                        label="זכור אותי"
                                         v-model="form.remember"
                                         :checked="form.remember"
                                     ></checkbox-component>
@@ -108,32 +78,23 @@
                                         type="submit"
                                         class="button is-fullwidth"
                                         :class="{ 'is-loading': loading }"
-                                        :disabled="errors.any() || !isOnline"
-                                    >
-                                        Sign In
+                                        :disabled="errors.any() || !isOnline">
+                                       כניסה
                                     </button>
                                 </div>
-                                <a
-                                    class="m-t-md m-b-md p-l-none"
-                                    href="/password/reset"
-                                >
-                                    Forgot Your Password?
+                                <a class="m-t-md m-b-md p-l-none"
+                                    href="/password/reset" >
+                                    שכחת סיסמה?
                                 </a>
                             </form>
                         </div>
                     </div>
                 </div>
-                <div
-                    class="box-part right is-radiusless is-radius-top-right is-radius-bottom-right"
-                >
+                <div class="box-part right is-radiusless is-radius-top-right is-radius-bottom-right" >
                     <div
                         class="bg is-radius-top-right is-radius-bottom-right"
                     ></div>
                 </div>
-            </div>
-            <div class="has-text-centered m-t-sm">
-                <i class="fas fa-copyright"></i>
-                <span class="text-muted" v-html="year + ' ' + site_name"></span>
             </div>
         </div>
     </div>
