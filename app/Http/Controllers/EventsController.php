@@ -23,13 +23,19 @@ class EventsController extends Controller
             'end_date'   => 'nullable|date_format:Y-m-d H:i|after_or_equal:start_date',
             'color'      => 'nullable',
             'details'    => 'nullable',
-            'contact' => 'required',
+            'contact_id' => 'required',
             'type_id'    => 'required',
         ]);
     }
-
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Event  $event
+     * @return \Illuminate\Http\Response
+     */
     public function destroy(Event $event)
     {
+
         $event->delete();
         return response(['success' => true], 204);
     }
@@ -85,16 +91,33 @@ class EventsController extends Controller
 
         $request->request->set('start_date', $start);
         $request->request->set('end_date', $end);
-
+        $v['contact_id'] = isset($request->request->get('contact')['id']) ? $request->request->get('contact')['id']: $request->request->get('contact_id');
+        $v['type_id'] = $request->request->get('type')['id'];
+        $request->request->set('type_id', $v['type_id']);
+        $request->request->set('contact_id', $v['contact_id']);
         $v = $this->isValid($request);
 
-        $v['contact_id'] = $request->request->get('contact')['id'];
-        $v['type_id'] = $request->request->get('type_id')['id'];
+
+
         return $request->user()->events()->create($v);
     }
 
     public function update(Request $request, Event $event)
     {
+        $start_date =  $request->request->get('start_date');
+
+        $end_date =  $request->request->get('end_date');
+
+        $start = Carbon::createFromFormat('Y-m-d H:i:s', $start_date)->format('Y-m-d H:i');
+        $end = Carbon::createFromFormat('Y-m-d H:i:s', $end_date)->format('Y-m-d H:i');
+
+        $request->request->set('start_date', $start);
+        $request->request->set('end_date', $end);
+
+        $v['type_id'] = $request->request->get('type')['id'];
+        $v['contact_id'] = isset($request->request->get('contact')['id']) ? $request->request->get('contact')['id']: $request->request->get('contact_id');
+        $request->request->set('type_id', $v['type_id']);
+        $request->request->set('contact_id', $v['contact_id']);
         $v = $this->isValid($request);
         $event->update($v);
         return $event;

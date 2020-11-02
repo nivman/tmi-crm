@@ -47,9 +47,12 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('tasks/search', 'TasksController@search');
     Route::get('invoices/{invoice}/payments', 'InvoicesController@payments');
     Route::get('purchases/{purchase}/payments', 'PurchasesController@payments');
-    Route::get('events/list', 'EventsController@list');
-    Route::get('events/list/add', 'EventsController@list');
+
+    Route::get('events/eventsList', 'EventsController@list');
+    Route::get('events/eventsList/add', 'EventsController@list');
     Route::get('events/eventsTypes', 'EventsController@eventsTypes');
+  //  Route::delete('events/eventsTypes', 'EventsController@eventsTypes');
+    Route::delete('events/delete/{event}', 'EventsController@destroy');
     Route::resource('events', 'EventsController');
     Route::get('tasks/details/{term}/{id}', 'TasksController@details');
 

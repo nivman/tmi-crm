@@ -90,7 +90,7 @@
             התקשרויות
             <template slot="submenu">
               <li>
-                <router-link to="/events/list" exact @click.native="hideMenu">רשימת התקשרויות</router-link>
+                <router-link to="/events/eventsList" exact @click.native="hideMenu">רשימת התקשרויות</router-link>
               </li>
               <li>
                 <a

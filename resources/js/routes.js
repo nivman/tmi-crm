@@ -129,7 +129,7 @@ const router = new VueRouter({
             ]
         },
         {
-            path: "/events/list",
+            path: "/events/eventsList",
             component: () => import(/* webpackChunkName: "components" */ "./components/events/EventsListComponent.vue"),
             meta: { title: "Events", admin: false },
             children: [
@@ -140,8 +140,8 @@ const router = new VueRouter({
                 // },
                 {
                     path: "edit/:id",
-                    component: () => import(/* webpackChunkName: "components" */ "./components/products/ProductFormComponent.vue"),
-                    meta: { title: "Edit Product", admin: true, modal: true }
+                    component: () => import(/* webpackChunkName: "components" */ "./components/events/EventsListComponent.vue"),
+                    meta: { title: "Edit Events", admin: true, modal: true }
                 },
                 {
                     path: ":id",

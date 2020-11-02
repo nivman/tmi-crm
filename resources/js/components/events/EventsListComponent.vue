@@ -2,10 +2,8 @@
   <div class="wrapper">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <a
-            @click="addEvent"
-            class="button is-link is-small is-pulled-right"
-        >
+        <a @click="addEvent(null)"
+            class="button is-link is-small is-pulled-right">
           <i class="fas fa-plus m-l-sm"/> התקשרות חדשה
         </a>
 
@@ -15,7 +13,7 @@
       </div>
       <div class="panel-block table-body-br">
 
-        <v-server-table name="productsTable" :url="url" :columns="columns" :options="options" ref="productsTable">
+        <v-server-table name="eventsListTable" :url="url" :columns="columns" :options="options" ref="eventsListTable">
                     <template slot="contact" slot-scope="props">
                       <div class="has-text-centered" >
 
@@ -41,11 +39,28 @@
                         {{ format_date(props.row.end_date) }}
                       </div>
                     </template>
-                    <template slot="created_at" slot-scope="props">
-                      <div class="has-text-centered" >
-                        {{ format_date(props.row.created_at) }}
-                      </div>
-                    </template>
+
+          <template slot="actions" slot-scope="props">
+            <div class="buttons has-addons is-centered">
+              <p class="control tooltip">
+                <a @click="showEvent(props.row)"
+                   class="button is-link is-small ">
+                  <i class="fas fa-edit"/>
+                  <span class="tooltip-text">עריכה</span>
+                </a>
+<!--                <router-link :to="'/events/edit/' + props.row.id" class="button is-warning is-small">-->
+<!--                  <i class="fas fa-edit"></i>-->
+<!--                  <span class="tooltip-text">עריכה</span>-->
+<!--                </router-link>-->
+              </p>
+              <p class="control tooltip">
+                <button type="button" class="button is-danger is-small" @click="deleteEvent(props.row.id)">
+                  <i class="fas fa-trash"></i>
+                  <span class="tooltip-text">מחיקה</span>
+                </button>
+              </p>
+            </div>
+          </template>
         </v-server-table>
       </div>
     </div>
@@ -56,7 +71,13 @@
         @hide-panel-filters="filtering = false"
     ></panel-filters-component>
     <router-view></router-view>
-    <event-form-modal></event-form-modal>
+
+<!--    <event-form-modal :eventId="eventId"></event-form-modal>-->
+    <div v-if="editEvent">
+      <event-form-modal
+          :eventId="eventId"
+  ></event-form-modal>
+    </div>
   </div>
 </template>
 
@@ -66,11 +87,14 @@ import tBus from '../../mixins/Tbus'
 import EventFormModal from '../calendar/EventFormModal.vue'
 
 export default {
-  mixins: [mId, tBus('app/events/list')],
+  mixins: [mId, tBus('app/events/eventsList')],
+
     data () {
       return {
+        eventId: '',
+        editEvent: false,
         loading: true,
-        columns: ['title','contact','start_date','end_date','created_at','type','details'],
+        columns: ['title','contact','start_date','end_date','type','details','actions'],
         filters: new this.$form({ title: '', details: ''}),
         options: {
           perPage: 10,
@@ -78,6 +102,16 @@ export default {
           sortable: ['title','start_date','end_date','created_at','type'],
           columnsClasses: { id: 'w50 has-text-centered', qty: 'w75', actions: 'w125 has-text-centered p-x-none' },
           filterable: ['title', 'details'],
+          headings: {
+            title: 'נושא',
+            contact: 'איש קשר',
+            details: 'תוכן',
+            type: 'סוג',
+            start_date: 'זמן התחלה',
+            end_date: 'זמן סיום',
+            actions: 'פעולות',
+
+          },
         },
       }
     },
@@ -102,6 +136,45 @@ export default {
 
         this.$modal.show('event-form-modal', { event: null })
       },
+      showEvent(event) {
+
+        this.$modal.show('event-form-modal', { event: event })
+      },
+      deleteEvent (eventId) {
+        this.$modal.show('dialog', {
+          title: 'מחיקת התקשרות',
+          text:
+              '',
+          buttons: [
+            {
+              title: 'מחיקה',
+              class:
+                  'button is-danger is-radiusless is-radius-bottom-left',
+              handler: () => {
+                this.$http
+                    .delete(`app/events/${eventId}`)
+                    .then(() => {
+                      this.$event.fire('refreshEventsListTable')
+                      this.notify(
+                          'success',
+                          'התקשרות נמחקה'
+                      )
+                      this.$modal.hide('event-form-modal')
+                      this.$modal.hide('dialog')
+                    })
+                    .catch(err => {
+                      this.$event.fire('appError', err.response)
+                    })
+              }
+            },
+            {
+              title: 'לא',
+              class:
+                  'button is-warning is-radiusless is-radius-bottom-right'
+            }
+          ]
+        })
+      }
     },
     components: { EventFormModal },
   }

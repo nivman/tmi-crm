@@ -13,6 +13,7 @@
         <header class="modal-card-head is-radius-top">
           <p class="modal-card-title">
             {{ form.id ? 'עריכת התקשרות' : 'הוספת התקשרות' }}
+            {{eventId}}
           </p>
           <button
               type="button"
@@ -47,7 +48,7 @@
                 return-object
                 single-line
                 :options="types"
-                v-model="form.type_id">
+                v-model="form.type">
             </v-select>
           </div>
           <div class="field">
@@ -165,6 +166,7 @@ import 'flatpickr/dist/flatpickr.css'
 
 export default {
   components: { flatPickr },
+  props: ['eventId', 'event'],
   data () {
     return {
       contacts: [],
@@ -189,13 +191,15 @@ export default {
       },
       loading: false,
       isSaving: false,
-      //contact_id: null,
+      contact_id: null,
       type_id: null,
       type: '',
     }
   },
+
   methods: {
     beforeOpen (e) {
+
       let moment = require('moment-timezone');
       moment().tz("Asia/Jerusalem").format();
 
@@ -204,6 +208,8 @@ export default {
       this.fetchTypes();
       if (e.params.event) {
         this.form = new this.$form(e.params.event)
+        this.form.contact = e.params.event.contact.first_name + ' ' + e.params.event.contact.last_name
+        this.form.contact_id = e.params.event.contact.id
       } else {
         if (e.params.customerId) {
 
@@ -217,7 +223,7 @@ export default {
           details: '',
           color: '',
           contact: '',
-         // contact_id: null,
+          contact_id: null,
           type: '',
           type_id: null
         })
@@ -232,13 +238,6 @@ export default {
 
           .get('app/contacts/search?query=' + search)
           .then(res => {
-
-          //   const contacts = res.data.map(item => {
-          // //   console.log(item)
-          //     return item.first_name + ' ' + item.last_name + ' /// ' + item.id
-          //   })
-            console.log(res.data)
-
             this.contacts = res.data
 
           })
@@ -280,11 +279,13 @@ export default {
         this.form
             .put(`app/events/${this.form.id}`)
             .then(() => {
-              this.$event.fire('refreshEvents')
+              this.$refs
+              this.$event.fire('refreshEventsListTable')
               this.notify(
                   'success',
                   'עודכן בהצלחה'
               )
+
               this.$modal.hide('event-form-modal')
             })
             .catch(err => this.$event.fire('appError', err.response))

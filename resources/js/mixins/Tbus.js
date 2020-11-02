@@ -83,8 +83,7 @@ function tBus(url) {
                                 this.$http
                                     .delete(`${url}/delete/${id}`)
                                     .then(res => {
-
-                                        this.notify("success", name + " has been successfully deleted.");
+                                        this.notify("success", name + " נמחק.");
                                         this.refreshTable();
                                         this.$modal.hide("dialog");
                                     })
