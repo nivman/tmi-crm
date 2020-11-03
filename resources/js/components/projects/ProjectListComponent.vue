@@ -1,6 +1,6 @@
 <template>
   <div>
-  <div class="wrapper"  v-if="!showTaskList">
+  <div class="wrapper"  v-if="!showTaskList && !showEventsList">
     <div class="panel panel-default">
       <div class="panel-heading">
 
@@ -50,8 +50,6 @@
               {{ percentageCalculation(props.row.actual_time, props.row.price) }}
             </div>
           </template>
-          percentageCalculation
-
           <template slot="actions" slot-scope="props">
             <div class="buttons has-addons is-centered">
               <p class="control tooltip">
@@ -65,6 +63,14 @@
                     @click="showTasks(props.row.id, props.row.name)"
                     class="fas fa-list button is-info is-small">
                   <span class="tooltip-text bottom"> רשימת משימות</span>
+
+                </a>
+              </p>
+              <p class="control tooltip">
+                <a
+                    @click="showEvents(props.row.id, props.row.name)"
+                    class="far fa-calendar-alt button is-danger is-small">
+                  <span class="tooltip-text bottom"> רשימת התקשרויות</span>
 
                 </a>
               </p>
@@ -98,9 +104,15 @@
       <task-list-component
           :projectName="projectName"
           :projectId="projectId"
-
           @showProjectsList="showProjectsList"
           modal="projects"></task-list-component>
+    </div>
+    <div v-if="showEventsList">
+      <events-list-component
+          :projectName="projectName"
+          :projectId="projectId"
+          @showProjectsList="showProjectsList"
+          modal="projects"></events-list-component>
     </div>
   </div>
 </template>
@@ -110,6 +122,7 @@ import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import DateFormatComponent from '../helpers/DateFormatComponent'
 import TaskListComponent from '../tasks/TaskListComponent'
+import EventsListComponent from '../events/EventsListComponent'
 export default {
   mixins: [mId, tBus('app/projects')],
   props: [
@@ -120,6 +133,7 @@ export default {
   data () {
     return {
       showTaskList: false,
+      showEventsList:false,
       showProjectForm: false,
       projectId: null,
       projectName: null,
@@ -141,7 +155,7 @@ export default {
         headings: {
           name: 'שם',
           customer: 'לקוח',
-          start_date :'תחילת עסודה',
+          start_date :'תחילת עבודה',
           end_date : 'סיום עבודה',
           type: 'סוג',
           date_to_complete: 'תאריך התחלה',
@@ -161,9 +175,18 @@ export default {
        this.projectId = projectId
        this.projectName = projectName
        this.showTaskList = true
+      this.showEventsList = false
+    },
+    showEvents (projectId, projectName) {
+
+      this.projectId = projectId
+      this.projectName = projectName
+      this.showEventsList = true
+      this.showTaskList = false
     },
     showProjectsList: function () {
       this.showTaskList = false
+      this.showEventsList = false
     },
     editDetails (val) {
       let id = val.target.id.replace(/[^\d.]/g, '')
@@ -184,7 +207,7 @@ export default {
         let percentage = totalTimeAsAmount / price
 
         if (Number.isFinite(percentage)) {
-          return ' % ' + percentage * 100 ;
+          return ' % ' + percentage.toFixed(2) * 100 ;
         }
       }
     }
@@ -192,6 +215,7 @@ export default {
   created () {
     this.showTaskList = false
     this.addRoute = !this.customerId ? '/projects/add' : `/projects/add?customerId=${this.customerId}`;
+    this.$root.$refs.ProjectListComponent = this;
   },
   computed: {
     url: {
@@ -202,7 +226,7 @@ export default {
     },
 
   },
-  components: { DateFormatComponent,TaskListComponent },
+  components: { DateFormatComponent,TaskListComponent, EventsListComponent },
 
 }
 </script>

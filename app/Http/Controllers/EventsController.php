@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Event;
 use App\EventsType;
+use App\Helpers\Date;
+use App\Helpers\Filters;
 use Carbon\Carbon;
 use Doctrine\DBAL\Events;
 use Illuminate\Http\Request;
@@ -25,6 +27,7 @@ class EventsController extends Controller
             'details'    => 'nullable',
             'contact_id' => 'required',
             'type_id'    => 'required',
+            'project_id' => 'nullable'
         ]);
     }
     /**
@@ -58,7 +61,7 @@ class EventsController extends Controller
             $orderBy = $requestOrderBy === 'type' ? 'type_id' : $requestOrderBy;
             $request->query->set('orderBy', $orderBy);
 
-            return response()->json(Event::orderBy($orderBy,$ascending)->with(['type', 'contact'])->mine()->vueTable(Event::$columns));
+            return response()->json(Event::orderBy($orderBy,$ascending)->with(['type', 'contact', 'project'])->mine()->vueTable(Event::$columns));
 
         }
 
@@ -67,11 +70,11 @@ class EventsController extends Controller
         return response()->json(Event::whereYear('start_date', $year)->whereMonth('start_date', $month)->mine()->vueTable(Event::$columns));
     }
 
-    public function eventsTypes()
+    public function create()
     {
-        $customerStatuses = (new EventsType())->getEventsType();
-
-        return $customerStatuses;
+        $eventsType = (new EventsType())->getEventsType();
+       // $projects = (new EventsType())->getProjects();
+        return $eventsType;
 
     }
     
@@ -82,19 +85,15 @@ class EventsController extends Controller
 
     public function store(Request $request)
     {
-        //TODO move all the date handling
-        $start_date =  $request->request->get('start_date');
-        $end_date =  $request->request->get('end_date');
-
-        $start = Carbon::createFromFormat('d/m/Y H:i', $start_date)->format('Y-m-d H:i');
-        $end = Carbon::createFromFormat('d/m/Y H:i', $end_date)->format('Y-m-d H:i');
-
-        $request->request->set('start_date', $start);
-        $request->request->set('end_date', $end);
+        $date = Date::formatDateTime($request);
+        $request->request->set('start_date', $date['start_date']);
+        $request->request->set('end_date', $date['end_date']);
         $v['contact_id'] = isset($request->request->get('contact')['id']) ? $request->request->get('contact')['id']: $request->request->get('contact_id');
-        $v['type_id'] = $request->request->get('type')['id'];
+        $v['project_id'] = isset($request->request->get('project')['id']) ? $request->request->get('project')['id']: $request->request->get('project_id');
+        $v['type_id'] = $request->request->get('type_id');
         $request->request->set('type_id', $v['type_id']);
         $request->request->set('contact_id', $v['contact_id']);
+        $request->request->set('project_id', $v['project_id']);
         $v = $this->isValid($request);
 
 
@@ -116,10 +115,35 @@ class EventsController extends Controller
 
         $v['type_id'] = $request->request->get('type')['id'];
         $v['contact_id'] = isset($request->request->get('contact')['id']) ? $request->request->get('contact')['id']: $request->request->get('contact_id');
+        $v['project_id'] = isset($request->request->get('project')['id']) ? $request->request->get('project')['id']: $request->request->get('project_id');
         $request->request->set('type_id', $v['type_id']);
         $request->request->set('contact_id', $v['contact_id']);
+        $request->request->set('project_id', $v['project_id']);
         $v = $this->isValid($request);
+
         $event->update($v);
         return $event;
+    }
+
+    public function getProjectEvents(Request $request ,$projectId)
+    {
+        return $this->filterBy($request, $projectId, 'project_id');
+
+
+    }
+
+
+    private function filterBy($request, $entityId, $entityType)
+    {
+
+
+
+        $events = Event::where($entityType, $entityId)->with(['contact',  'project'])->mine()->vueTable(Event::$columns);
+
+
+
+        return response()->json($events)->original;
+
+
     }
 }

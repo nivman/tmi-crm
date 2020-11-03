@@ -6,6 +6,7 @@ use App\Category;
 use App\Customer;
 use App\Helpers\Filters;
 use App\Http\Requests\TaskRequest;
+use App\Project;
 use App\Status;
 use App\Task;
 use App\TaskPriority;
@@ -167,6 +168,11 @@ class TasksController extends Controller
     public function getCustomer($id)
     {
        return Customer::find($id);
+    }
+
+    public function getProject($id)
+    {
+        return Project::find($id);
     }
 
     public function getCustomerTasks(Request $request ,$customerId)

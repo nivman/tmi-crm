@@ -82,12 +82,34 @@ class Project extends ModelForm
         return $projects;
     }
 
+    public function projectPercentageDone($project)
+    {
+        $projectsTasks = DB::table('tasks')->select('id', 'name', 'actual_time', 'project_id')
+            ->where('project_id', $project->id)
+            ->get();
+        $collectTaskTime = [];
+        foreach ($projectsTasks as $projectsTask) {
+            $collectTaskTime[] = $projectsTask->actual_time;
+        }
+        $HourlyWage = 100;
+        $convertToHours = (array_sum($collectTaskTime) / 60);
+        $totalTimeAsAmount = $convertToHours *  $HourlyWage;
+
+        $percentage = $totalTimeAsAmount / $project->price;
+        return number_format((float)$percentage * 100, 2, '.', '');
+
+    }
+
     public function getProjectsCustomersByIds($customerIds)
     {
         $ids = explode(',', $customerIds);
 
-        return DB::table('projects')->select('*')
-            ->whereIn('customer_id', $ids)
+        return DB::table('projects')->select('projects.*')
+
+            ->join('customers as cu', 'cu.id', '=', 'projects.customer_id')
+            ->join('contacts as co', 'co.customer_id', '=', 'cu.id')
+            ->whereIn('projects.customer_id', $ids)
+            ->distinct()
             ->get();
     }
 }

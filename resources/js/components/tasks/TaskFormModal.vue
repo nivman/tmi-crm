@@ -291,7 +291,8 @@ import EventFormModal from '../calendar/EventFormModal.vue'
 export default {
   props: [
     'modal',
-    'cusId'
+    'cusId',
+    'projId'
   ],
   data () {
     return {
@@ -305,6 +306,7 @@ export default {
       optionsStatuses: [],
       isSaving: false,
       customerId: null,
+      projectId: null,
       projectSelected: false,
       customerSelected: false,
       form: new this.$form({
@@ -341,16 +343,31 @@ export default {
     this.$http
         .get(route)
         .then(res => {
+
           if (this.$route.query.customerId) {
             this.form.customer = res.data
             this.customerId = this.$route.query.customerId
           }
+          if (this.$route.query.projectId) {
+
+            this.form.project = res.data
+
+            let result = [{'customer_id' : res.data.customer_id}]
+            this.getCustomersById(result)
+            this.projectId = this.$route.query.projectId
+          }
+
           if (this.modal === 'customers') {
 
             this.form.customer = res.data
             this.customerId = this.cusId
 
           }
+          if (this.modal === 'projects') {
+            this.form.project = res.data
+            this.projectId = this.projId
+          }
+
           if (this.$route.params.id && !this.modal && !this.$route.query.customerId) {
 
             this.fetchTask(this.$route.params.id)
@@ -425,9 +442,13 @@ export default {
       }
     },
     setRoute () {
+
       let route = !this.modal ? 'app/tasks' : `app/tasks/${this.modal}/${this.cusId}`
       if (this.$route.query.customerId) {
         route = `app/tasks/customers/${this.$route.query.customerId}`
+      }
+      if (this.$route.query.projectId) {
+        route = `app/tasks/projects/${this.$route.query.projectId}`
       }
       return route
     },
