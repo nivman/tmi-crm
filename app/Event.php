@@ -11,13 +11,18 @@ class Event extends Model
 {
     use LogActivity, Restrictable, VueTable;
 
-    public static $columns = ['title', 'details', 'start_date', 'end_date', 'color', 'user_id'];
-    protected $fillable = ['title', 'details', 'start_date', 'end_date', 'color', 'user_id','type_id', 'contact_id'];
+    public static $columns = ['title', 'details', 'start_date', 'end_date', 'color', 'user_id', 'project_id'];
+    protected $fillable = ['title', 'details', 'start_date', 'end_date', 'color', 'user_id','type_id', 'contact_id' ,'project_id'];
     protected $hidden   = ['updated_at'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
     }
 
     public function contact()

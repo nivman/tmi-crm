@@ -27,4 +27,9 @@ class EventsType extends Model
             ->where('id', $id)
             ->get();
     }
+
+    public function getProjects()
+    {
+
+    }
 }

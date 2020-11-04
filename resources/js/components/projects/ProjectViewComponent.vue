@@ -3,7 +3,7 @@
     <div class="modal-background"></div>
     <div class="modal-card is-medium animated fastest zoomIn">
       <header class="modal-card-head is-radius-top">
-        <p class="modal-card-title">פרטי משימה</p>
+        <p class="modal-card-title">פרטי הפרוייקט</p>
         <button type="button" class="delete" @click="$router.go(-1)"></button>
       </header>
       <section class="modal-card-body is-radius-bottom">
@@ -15,54 +15,41 @@
             <tbody>
             <tr>
               <td>לקוח</td>
-              <td>{{ task.customer ? task.customer.name : ''}}</td>
+              <td>{{ project.customer ? project.customer.name : ''}}</td>
             </tr>
             <tr>
               <td>נושא</td>
-              <td>{{ task.name }}</td>
+              <td>{{ project.name }}</td>
             </tr>
             <tr>
-              <td>תאריך יצירה</td>
-              <td>
-                <date-format-component :date=" task.created_at"></date-format-component>
-              </td>
+              <td>מחיר</td>
+              <td>{{ project.price }}</td>
+            </tr>
+            <tr>
+              <td>הוצאות</td>
+              <td>{{ project.expenses }}</td>
+            </tr>
+            <tr>
+              <td>אחוז מהעבודה עד כה</td>
+              <td>{{ percentageDone }}</td>
+            </tr>
+            <tr>
+              <td>סוג</td>
+              <td>{{ type }}</td>
             </tr>
             <tr>
               <td>תאריך התחלה</td>
               <td>
-                <date-format-component :date=" task.start_date"></date-format-component>
+                <date-format-component :date=" project.start_date"></date-format-component>
               </td>
             </tr>
             <tr>
               <td>תאריך סיום</td>
               <td>
-                <date-format-component :date=" task.end_date"></date-format-component>
+                <date-format-component :date=" project.end_date"></date-format-component>
               </td>
             </tr>
-            <tr>
-              <td>סטטוס</td>
-              <td>
-                <div class="has-text-centered"
-                     :style="{background: task.status.length > 0 ? task.status[0].color: ''}">
-                  {{ task.status.length > 0 ? task.status[0].name : ''}}
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>עדיפות</td>
-              <td>
-                <div class="has-text-centered"
-                     :style="{background: task.priority.length > 0 ? task.priority[0].color: ''}">
-                  {{ task.priority.length > 0 ? task.priority[0].name : ''}}
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>תוכן</td>
-              <td>
-                {{task.details}}
-              </td>
-            </tr>
+
             </tbody>
           </table>
         </div>
@@ -79,24 +66,34 @@ export default {
   data () {
     return {
       loading: true,
-      task: null,
+      project: null,
+      type: '',
+      percentageDone: ''
     }
   },
   created () {
     this.$http
-        .get(`app/tasks/${this.$route.params.id}`)
+        .get(`app/projects/${this.$route.params.id}`)
         .then(res => {
-          this.task = res.data.task
+
+          this.project = res.data.project;
+          this.type = res.data.type[0].name;
           this.loading = false
+          this.percentageDone = res.data.percentageDone + '%'
         })
         .catch(err => {
           this.$event.fire('appError', err.response)
         })
+
   },
   methods: {
     showTaxes (taxes) {
       return taxes.map(tax => '<span class="tag">' + tax.name + '</span>').join(' ')
     },
+    bar: function(tasksTime, price) {
+     console.log(tasksTime)
+     return  this.$root.$refs.ProjectListComponent.percentageCalculation(tasksTime, price);
+    }
   },
   components: { DateFormatComponent },
 }

@@ -13,6 +13,7 @@
         <header class="modal-card-head is-radius-top">
           <p class="modal-card-title">
             {{ form.id ? 'עריכת התקשרות' : 'הוספת התקשרות' }}
+
           </p>
           <button
               type="button"
@@ -36,6 +37,20 @@
             </v-select>
           </div>
           <div class="field">
+            <label class="label" for="project">פרוייקט</label>
+            <v-select
+                label="name"
+                id="project"
+                name="project"
+                item-value="id"
+                item-text="name"
+                class="rtl-direction"
+                :options="projects"
+                @search="searchProjects"
+                v-model="form.project">
+            </v-select>
+          </div>
+          <div class="field">
             <label class="label" for="event-type">סוג</label>
             <v-select
                 label="name"
@@ -47,7 +62,7 @@
                 return-object
                 single-line
                 :options="types"
-                v-model="form.type_id">
+                v-model="form.type">
             </v-select>
           </div>
           <div class="field">
@@ -164,12 +179,16 @@ import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
 
 export default {
-  components: { flatPickr },
-  data () {
+  components: {flatPickr},
+  props: ['eventId', 'event'],
+  data() {
     return {
       contacts: [],
-      eventTypes: { id: 1, name: 'שיחה' },
+      projects: [],
+      eventTypes: {id: 1, name: 'שיחה'},
       types: [],
+      contactSelected: false,
+      projectSelected: false,
       form: new this.$form({
         id: '',
         start_date: '',
@@ -179,6 +198,7 @@ export default {
         color: '',
         contact: '',
         type: '',
+        project: ''
 
       }),
       config: {
@@ -189,21 +209,100 @@ export default {
       },
       loading: false,
       isSaving: false,
-      //contact_id: null,
+      contact_id: null,
       type_id: null,
       type: '',
     }
   },
+  watch: {
+    'form.project': function () {
+
+  //  this.projectSelected = !this.projectSelected
+      if (this.projects.length > 0 && !this.contactSelected) {
+
+        this.getContactsByProjectId(this.form.project)
+      }
+      this.projectSelected = !this.projectSelected
+    },
+    'form.contact': function () {
+
+      this.contactSelected = !this.contactSelected
+
+      if (this.form.contact && !this.projectSelected) {
+        this.getProjectsByContactId([this.form.contact])
+      }
+      this.contactSelected = !this.contactSelected
+    }
+  },
   methods: {
-    beforeOpen (e) {
+    getContactsByProjectId(project) {
+
+     if(!project) {
+       return false;
+     }
+      let customer_id = project.customer_id
+      this.$http
+          .post('app/project-customers/' + customer_id)
+          .then(res => {
+            let contacts = []
+
+            if (res.data.length > 1) {
+              res.data.forEach((element) => {
+                contacts.push({
+                  'id': element.contact_id,
+                  'full_name': element.contact_first_name + ' ' + element.contact_last_name
+                })
+              })
+              this.contacts = contacts;
+             // this.form.contact = '';
+          //    this.form.contact_id = null;
+            } else {
+              debugger
+              this.form.contact = res.data[0].contact_first_name + ' ' + res.data[0].contact_last_name;
+              this.form.contact_id = res.data[0].contact_id;
+            }
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+    },
+    getProjectsByContactId(customers) {
+      let id = customers.map(a => a.customer_id)
+
+      if(!id[0]) {
+        return false;
+      }
+      this.$http
+          .post('app/customers-projects/' + id)
+          .then(res => {
+            this.projects = []
+            if (res.data.length > 0) {
+              this.projects = res.data
+            }
+
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+
+    },
+    beforeOpen(e) {
+
       let moment = require('moment-timezone');
       moment().tz("Asia/Jerusalem").format();
 
-      this.form.start_date  = moment(new Date()).format("DD/MM/YYYY H:m");
+      this.form.start_date = moment(new Date()).format("DD/MM/YYYY H:m");
 
-      this.fetchTypes();
+      this.create();
       if (e.params.event) {
+
         this.form = new this.$form(e.params.event)
+        this.form.contact = e.params.event.contact.first_name + ' ' + e.params.event.contact.last_name
+        this.form.contact_id = e.params.event.contact.id
+
+        let project = e.params.event.project;
+        this.form.project = project ? project.name : '';
+        this.form.project_id =  project ? project.id : null;
       } else {
         if (e.params.customerId) {
 
@@ -217,40 +316,49 @@ export default {
           details: '',
           color: '',
           contact: '',
-         // contact_id: null,
-          type: '',
-          type_id: null
+          contact_id: null,
+          type: 'שיחה',
+          type_id: 1,
+          project: ''
         })
       }
     },
-
     searchContacts: function (search) {
+
       if (search === '') {
         return
       }
       this.$http
-
           .get('app/contacts/search?query=' + search)
           .then(res => {
-
-          //   const contacts = res.data.map(item => {
-          // //   console.log(item)
-          //     return item.first_name + ' ' + item.last_name + ' /// ' + item.id
-          //   })
-            console.log(res.data)
-
             this.contacts = res.data
-
+            this.contactSelected = false;
+            this.projectSelected = false;
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
           })
     },
+    searchProjects: function (search) {
 
-    fetchTypes() {
+      if (search === '') {
+        return
+      }
+      this.$http
+          .get('app/projects/search?query=' + search)
+          .then(res => {
+            this.projects = res.data
+            this.projectSelected = false;
+            this.contactSelected = false;
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+    },
+    create() {
 
       this.$http
-          .get(`app/events/eventsTypes`)
+          .get(`app/events/create`)
           .then(res => {
             this.types = res.data.map(item => {
               return item
@@ -260,7 +368,7 @@ export default {
             this.$event.fire('appError', err.response)
           })
     },
-    fetchContact (customer_id) {
+    fetchContact(customer_id) {
 
       this.$http
           .get(`app/contacts/${customer_id}`)
@@ -274,17 +382,19 @@ export default {
             this.$event.fire('appError', err.response)
           })
     },
-    submit () {
+    submit() {
       this.isSaving = true
       if (this.form.id && this.form.id !== '') {
         this.form
             .put(`app/events/${this.form.id}`)
             .then(() => {
-              this.$event.fire('refreshEvents')
+              this.$refs
+              this.$event.fire('refreshEventsListTable')
               this.notify(
                   'success',
                   'עודכן בהצלחה'
               )
+
               this.$modal.hide('event-form-modal')
             })
             .catch(err => this.$event.fire('appError', err.response))
@@ -304,7 +414,7 @@ export default {
             .finally(() => (this.isSaving = false))
       }
     },
-    validateForm () {
+    validateForm() {
       this.$validator
           .validateAll()
           .then(result => {
@@ -314,7 +424,7 @@ export default {
           })
           .catch(err => this.$event.fire('appError', err))
     },
-    deleteEvent () {
+    deleteEvent() {
       this.$modal.show('dialog', {
         title: 'מחיקת התקשרות',
         text:

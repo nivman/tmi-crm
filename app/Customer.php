@@ -121,8 +121,10 @@ class Customer extends ModelForm
     {
         $customersIds = explode(',', $ids);
 
-         return DB::table('customers')->select('*')
-            ->whereIn('id', $customersIds)
+       return DB::table('customers','cu')
+            ->leftJoin('contacts', 'cu.id', '=', 'contacts.customer_id')
+            ->select('cu.*', 'contacts.id as contact_id', 'contacts.first_name as contact_first_name', 'contacts.last_name as contact_last_name')
+            ->whereIn('cu.id', $customersIds)
             ->get();
     }
 }

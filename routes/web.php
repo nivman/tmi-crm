@@ -38,6 +38,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::put('customer/{customer}', 'CustomersController@update');
     Route::get('customer/contact/{customerId}', 'CustomersController@getCustomerByContactId');
     Route::get('contacts/search', 'ContactsController@search');
+    Route::get('projects/search', 'ProjectsController@search');
     Route::post('project-customers/{ids}', 'CustomersController@getCustomersByIds');
 
     Route::get('contacts/{customerId}', 'ContactsController@getContactByCustomerId');
@@ -47,13 +48,17 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('tasks/search', 'TasksController@search');
     Route::get('invoices/{invoice}/payments', 'InvoicesController@payments');
     Route::get('purchases/{purchase}/payments', 'PurchasesController@payments');
-    Route::get('events/list', 'EventsController@list');
-    Route::get('events/list/add', 'EventsController@list');
-    Route::get('events/eventsTypes', 'EventsController@eventsTypes');
+
+    Route::get('events/eventsList', 'EventsController@list');
+    Route::get('events/eventsList/add', 'EventsController@list');
+    Route::get('events/create', 'EventsController@eventsTypes');
+  //  Route::delete('events/eventsTypes', 'EventsController@eventsTypes');
+    Route::delete('events/delete/{event}', 'EventsController@destroy');
     Route::resource('events', 'EventsController');
     Route::get('tasks/details/{term}/{id}', 'TasksController@details');
 
     Route::get('tasks/customers/{id}', 'TasksController@getCustomer');
+    Route::get('tasks/projects/{id}', 'TasksController@getProject');
     Route::get('customers/tasks/{id}', 'TasksController@getCustomerTasks');
     Route::post('tasks/add', 'TasksController@store');
     Route::resource('tasks', 'TasksController');
@@ -62,6 +67,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::post('projects/add', 'ProjectsController@store');
     Route::get('projects/search', 'ProjectsController@search');
     Route::get('projects/tasks/{id}', 'TasksController@getProjectTasks');
+    Route::get('projects/events/{id}', 'EventsController@getProjectEvents');
     Route::resource('projects', 'ProjectsController');
     Route::resource('companies', 'CompaniesController')->only(['show']);
     Route::post('users/change_password', 'UsersController@changePassword');

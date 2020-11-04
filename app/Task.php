@@ -138,27 +138,6 @@ class Task extends ModelForm
         return response()->json($tasksPercentage);
     }
 
-//    public function sortBy($ascending, $request, $params)
-//    {
-//        foreach ($params as $param) {
-//            dump($param);
-//        }
-//        $request->query->set('orderBy', $params['orderBy']);
-//        $tasks = Task::leftJoin( $params['tableToJoin'], $params['orderBy'], '=',$params['columnToJoin'])
-//
-//            ->select('tasks.*')
-//            ->where($params['orderByValue'], 'LIKE', "%{$params['query']}%")
-//            ->with(['customer', 'project', 'priority', 'status','category'])
-//            ->mine()
-//            ->orderBy($params['orderByValue'], $ascending)
-//            ->vueTable(Task::$columns, false, 'tasks');
-//
-//        $tasksPercentage = $this->getPercentage($tasks);
-//
-//        return response()->json($tasksPercentage);
-//    }
-
-
     public function checkRelation($key)
     {
         return in_array($key, Task::$columns);

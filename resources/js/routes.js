@@ -129,7 +129,7 @@ const router = new VueRouter({
             ]
         },
         {
-            path: "/events/list",
+            path: "/events/eventsList",
             component: () => import(/* webpackChunkName: "components" */ "./components/events/EventsListComponent.vue"),
             meta: { title: "Events", admin: false },
             children: [
@@ -140,8 +140,8 @@ const router = new VueRouter({
                 // },
                 {
                     path: "edit/:id",
-                    component: () => import(/* webpackChunkName: "components" */ "./components/products/ProductFormComponent.vue"),
-                    meta: { title: "Edit Product", admin: true, modal: true }
+                    component: () => import(/* webpackChunkName: "components" */ "./components/events/EventsListComponent.vue"),
+                    meta: { title: "Edit Events", admin: true, modal: true }
                 },
                 {
                     path: ":id",
@@ -162,6 +162,11 @@ const router = new VueRouter({
                 },
                 {
                     path: "customer/add/:id",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskFormModal.vue"),
+                    meta: { title: "Add Task", admin: false, modal: true }
+                },
+                {
+                    path: "project/add/:id",
                     component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskFormModal.vue"),
                     meta: { title: "Add Task", admin: false, modal: true }
                 },
@@ -201,8 +206,14 @@ const router = new VueRouter({
                     path: ":id",
                     component: () => import("./components/projects/ProjectViewComponent.vue"),
                     meta: { title: "View Project", admin: false, modal: true }
-                }
+                },
+
             ]
+        },
+        {
+            path: "/projects/tasks/:id",
+            component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskListComponent.vue"),
+            meta: { title: "Task with projects", admin: true }
         },
         {
             path: "/categories",
@@ -262,7 +273,7 @@ const router = new VueRouter({
         {
             path: "/customers/tasks/:id",
             component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskListComponent.vue"),
-            meta: { title: "List Customer Transactions", admin: true }
+            meta: { title: "Tasks Customer ", admin: true }
         },
         {
             path: "/incomes",

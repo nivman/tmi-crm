@@ -219,7 +219,7 @@ export default {
 
         if (Number.isFinite(percentage)) {
 
-          return ' % ' + totalTimeAsAmount ;
+          return ' % ' + totalTimeAsAmount.toFixed(0) ;
         }
       }
     }
@@ -227,18 +227,28 @@ export default {
   },
   created () {
 
+     if(this.customerId != undefined)    {
 
-    this.addRoute = !this.customerId ? '/tasks/add' : `/tasks/add?customerId=${this.customerId}`;
+       this.addRoute = `/tasks/add?customerId=${this.customerId}`;
+     }
+     else if (this.projectId != undefined) {
+
+       this.addRoute = `/tasks/add?projectId=${this.projectId}`;
+     }else {
+
+       this.addRoute = '/tasks/add';
+     }
+  //  this.addRoute = !this.customerId ? '/tasks/add' : `/tasks/add?customerId=${this.customerId}`;
   },
   computed: {
     url: {
       get () {
+
         let route = 'app/tasks';
         if (this.customerId) {
           route = `app/customers/tasks/${this.customerId}`;
         }
         else if (this.projectId) {
-
           route = `app/projects/tasks/${this.projectId}`;
         }
         return route;

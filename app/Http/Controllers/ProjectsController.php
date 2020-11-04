@@ -64,16 +64,21 @@ class ProjectsController extends Controller
 
     public function show(Project $project)
     {
+
         $project->attributes = $project->attributes();
         $project->type = $project->getType($project->getAttribute('type_id'));
         $project->customer = $project->getCustomer($project->getAttribute('customer_id'));
         $projectTypes = ProjectTypes::all();
         $project->load($project->attributes->pluck('slug')->toArray());
+
+        $percentageDone = (new Project)->projectPercentageDone($project);
+
         return [
             'project' => $project,
             'customer' => $project->customer,
             'projectTypes' => $projectTypes,
-            'type' => $project->type
+            'type' => $project->type,
+            'percentageDone' =>$percentageDone
         ];
     }
 
