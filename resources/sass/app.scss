@@ -31,6 +31,7 @@ body,
 }
 input.vs__search::-webkit-input-placeholder {
   color: $grey-light;
+  text-align: center;
 }
 .navbar {
   z-index: 6;
@@ -926,4 +927,7 @@ a.navbar-item.is-white.is-active {
 
 .is-pulled-right {
   float: left !important;
+}
+.right-title{
+  text-align: right;
 }
