@@ -4,8 +4,8 @@
             <div class="panel-heading">
                 {{
                     form.id
-                        ? "Edit Recurring Invoice"
-                        : "Add New Recurring Invoice"
+                        ? "עריכת חשבונית חוזרת"
+                        : "הוספת חשבונית חוזרת"
                 }}
             </div>
             <div class="panel-body">
@@ -15,7 +15,7 @@
                         <div class="column is-half-tablet is-one-third-desktop">
                             <div class="field">
                                 <label class="label" for="start_date"
-                                    >Start Date</label
+                                    >זמן התחלה</label
                                 >
                                 <div class="control">
                                     <flat-pickr
@@ -40,7 +40,7 @@
                         <div class="column is-half-tablet is-one-third-desktop">
                             <div class="field">
                                 <label class="label" for="create_before"
-                                    >Create Before (Days)</label
+                                    >נוצרה לפני בימים</label
                                 >
                                 <div class="control">
                                     <input
@@ -63,7 +63,7 @@
                         </div>
                         <div class="column is-half-tablet is-one-third-desktop">
                             <div class="field">
-                                <label class="label" for="repeat">Repeat</label>
+                                <label class="label" for="repeat">חזרה </label>
                                 <div class="select is-fullwidth">
                                     <select
                                         id="repeat"
@@ -71,31 +71,15 @@
                                         placeholder="Please select repeat period"
                                         :class="{
                                             'is-danger': errors.has('repeat')
-                                        }"
-                                    >
-                                        <option value="">Repeat Period</option>
-                                        <option value="daily"
-                                            >Every day (daily)</option
-                                        >
-                                        <option value="weekly"
-                                            >Every 7 days (weekly)</option
-                                        >
-                                        <option value="monthly"
-                                            >Every month (monthly)</option
-                                        >
-                                        <option value="quarterly"
-                                            >Every 3 months (quarterly)</option
-                                        >
-                                        <option value="semiannually"
-                                            >Every 6 months
-                                            (semiannually)</option
-                                        >
-                                        <option value="annually"
-                                            >Every year (annually)</option
-                                        >
-                                        <option value="biennially"
-                                            >Every 2 years (biennially)</option
-                                        >
+                                        }">
+                                        <option value="">תקופת החזרה</option>
+                                        <option value="daily">כל יום (יומי)</option>
+                                        <option value="weekly">כל 7 ימים (שבועי)</option>
+                                        <option value="monthly">כל חודש (חודשי)</option>
+                                        <option value="quarterly">כל 3 חודשים (רבעוני) </option>
+                                        <option value="semiannually">כל 6 חודשים (חצי שנה) </option>
+                                        <option value="annually">מדי שנה (מדי שנה)</option>
+                                        <option value="biennially">כל שנתיים (דו שנתית)</option>
                                     </select>
                                 </div>
                                 <div class="help is-danger">
@@ -105,9 +89,7 @@
                         </div>
                         <div class="column is-half-tablet is-one-third-desktop">
                             <div class="field">
-                                <label class="label" for="reference"
-                                    >Reference</label
-                                >
+                                <label class="label" for="reference">הפנייה</label>
                                 <div class="control">
                                     <input
                                         type="text"
@@ -127,12 +109,11 @@
                         </div>
                         <div class="column is-half-tablet is-one-third-desktop">
                             <div class="field">
-                                <label class="label" for="customer"
-                                    >Customer</label
-                                >
+                                <label class="label" for="customer">לקוח</label>
                                 <div class="control">
                                     <v-select
                                         label="name"
+                                        id="customer"
                                         name="customer"
                                         v-model="customer"
                                         input-id="customer"
@@ -141,14 +122,13 @@
                                         @input="customerChange"
                                         @search="searchCustomer"
                                         :style="{ width: '100%' }"
-                                        placeholder="Search Customer..."
+                                        placeholder="חיפוש לקוחות"
                                         :class="{
                                             select: true,
                                             'is-danger': errors.has('customer')
-                                        }"
-                                    >
+                                        }">
                                         <template slot="no-options">
-                                            Please type to search...
+                                           לא נמצא לקוח
                                         </template>
                                     </v-select>
                                 </div>
@@ -160,11 +140,12 @@
                         <div class="column is-half-tablet is-one-third-desktop">
                             <div class="field">
                                 <label class="label" for="taxes"
-                                    >Order Taxes</label
+                                    >מיסים</label
                                 >
                                 <div class="control">
                                     <v-select
                                         multiple
+                                        id="taxes"
                                         label="code"
                                         class="select"
                                         :options="taxes"
@@ -172,7 +153,7 @@
                                         max-height="150px"
                                         v-model="form.taxes"
                                         :style="{ width: '100%' }"
-                                        placeholder="Select Tax..."
+                                        placeholder="חיפוש מס"
                                     ></v-select>
                                 </div>
                                 <div class="help is-danger">
@@ -183,7 +164,7 @@
                         <div class="column is-half-tablet is-one-third-desktop">
                             <div class="field">
                                 <label class="label" for="discount"
-                                    >Order Discount</label
+                                    >הנחה</label
                                 >
                                 <div class="control">
                                     <input
@@ -199,25 +180,25 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="column is-half-tablet is-one-third-desktop">
-                            <div class="field">
-                                <label class="label" for="shipping"
-                                    >Shipping</label
-                                >
-                                <div class="control">
-                                    <input
-                                        class="input"
-                                        id="shipping"
-                                        name="shipping"
-                                        v-model="form.shipping"
-                                        v-validate="{ regex: /^([0-9%]+)$/ }"
-                                    />
-                                </div>
-                                <div class="help is-danger">
-                                    {{ errors.first("shipping") }}
-                                </div>
-                            </div>
-                        </div>
+<!--                        <div class="column is-half-tablet is-one-third-desktop">-->
+<!--                            <div class="field">-->
+<!--                                <label class="label" for="shipping"-->
+<!--                                    >Shipping</label-->
+<!--                                >-->
+<!--                                <div class="control">-->
+<!--                                    <input-->
+<!--                                        class="input"-->
+<!--                                        id="shipping"-->
+<!--                                        name="shipping"-->
+<!--                                        v-model="form.shipping"-->
+<!--                                        v-validate="{ regex: /^([0-9%]+)$/ }"-->
+<!--                                    />-->
+<!--                                </div>-->
+<!--                                <div class="help is-danger">-->
+<!--                                    {{ errors.first("shipping") }}-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
                     </div>
                     <div class="field has-addons">
                         <p class="control is-expanded">
@@ -238,7 +219,7 @@
                                     item: 'dropdown-item',
                                     list: 'dropdown-menu dropdown-content'
                                 }"
-                                placeholder="Scan/Search Product or Click add button for manual product"
+                                placeholder="חיפוש מוצר"
                                 :customHeaders="{
                                     'X-Requested-With': 'XMLHttpRequest',
                                     'X-CSRF-TOKEN': $laravel.token
@@ -448,7 +429,7 @@
                             <tfoot class="has-text-weight-bold">
                                 <tr>
                                     <td>
-                                        Total
+                                        סכום כולל
                                         <span class="is-pulled-right">{{
                                             subTotal | formatDecimal(2)
                                         }}</span>
@@ -456,7 +437,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        Product Tax
+                                        מס מוצר
                                         <span class="is-pulled-right">
                                             <a
                                                 @click="
@@ -475,7 +456,7 @@
                                 <!-- <tr v-for="(r, index)  in productTaxes" :key="index" v-html="r"></tr> -->
                                 <tr v-if="this.form.discount">
                                     <td>
-                                        Discount
+                                        הנחה
                                         <span class="is-pulled-right">{{
                                             discountAmount | formatDecimal(2)
                                         }}</span>
@@ -488,23 +469,23 @@
                                     "
                                 >
                                     <td>
-                                        Order Tax
+                                        מס
                                         <span class="is-pulled-right">{{
                                             taxAmount | formatDecimal(2)
                                         }}</span>
                                     </td>
                                 </tr>
-                                <tr v-if="this.form.shipping">
-                                    <td>
-                                        Shipping
-                                        <span class="is-pulled-right">{{
-                                            shippingAmount | formatDecimal(2)
-                                        }}</span>
-                                    </td>
-                                </tr>
+<!--                                <tr v-if="this.form.shipping">-->
+<!--                                    <td>-->
+<!--                                        Shipping-->
+<!--                                        <span class="is-pulled-right">{{-->
+<!--                                            shippingAmount | formatDecimal(2)-->
+<!--                                        }}</span>-->
+<!--                                    </td>-->
+<!--                                </tr>-->
                                 <tr v-if="subTotal != grandTotal">
                                     <td>
-                                        Grand Total
+                                        סכום כולל
                                         <span class="is-pulled-right">{{
                                             grandTotal | formatDecimal(2)
                                         }}</span>
@@ -522,19 +503,19 @@
                                         <i class="fas fa-trash"></i>
                                     </th>
                                     <th class="has-text-centered">
-                                        Product Name
+                                        שם מוצר
                                     </th>
                                     <th class="has-text-centered" width="10%">
-                                        Price
+                                        מחיר
                                     </th>
                                     <th class="has-text-centered" width="10%">
-                                        Qty
+                                        כמות
                                     </th>
                                     <th class="has-text-centered" width="15%">
-                                        Taxes
+                                        מיסים
                                     </th>
                                     <th class="has-text-centered" width="15%">
-                                        Total
+                                        סכום כולל
                                     </th>
                                 </tr>
                             </thead>
@@ -657,100 +638,10 @@
                                     </td>
                                 </tr>
                             </transition-group>
-
-                            <tfoot class="has-text-weight-bold">
-                                <tr>
-                                    <td
-                                        class="table-label has-text-right"
-                                        colspan="3"
-                                    >
-                                        <!-- <a @click="addLine" class="table-add_line is-pulled-left is-small">
-                                            <span class="icon is-small"><i class="fas fa-plus" /></span>
-                                            <span>Add Row</span>
-                                        </a> -->
-                                        Total
-                                    </td>
-                                    <td class="table-amount has-text-right">
-                                        {{ totalQty | formatDecimal(2) }}
-                                    </td>
-                                    <td class="table-amount has-text-right">
-                                        <a
-                                            @click="
-                                                showProductsTaxDetails(
-                                                    productTaxes
-                                                )
-                                            "
-                                            >{{
-                                                totalProductTax
-                                                    | formatDecimal(2)
-                                            }}</a
-                                        >
-                                    </td>
-                                    <td class="table-amount has-text-right">
-                                        {{ subTotal | formatDecimal(2) }}
-                                    </td>
-                                </tr>
-                                <!-- <tr v-for="(r, index)  in productTaxes" :key="index" v-html="r"></tr> -->
-                                <tr v-if="this.form.discount">
-                                    <td
-                                        class="table-label has-text-right"
-                                        colspan="5"
-                                    >
-                                        Discount
-                                    </td>
-                                    <td class="table-amount has-text-right">
-                                        {{ discountAmount | formatDecimal(2) }}
-                                    </td>
-                                </tr>
-                                <tr
-                                    v-if="
-                                        this.form.taxes &&
-                                            this.form.taxes.length
-                                    "
-                                >
-                                    <td
-                                        class="table-label has-text-right"
-                                        colspan="5"
-                                    >
-                                        Order Tax
-                                    </td>
-                                    <td class="table-amount has-text-right">
-                                        {{ taxAmount | formatDecimal(2) }}
-                                    </td>
-                                </tr>
-                                <tr v-if="this.form.shipping">
-                                    <td
-                                        class="table-label has-text-right"
-                                        colspan="5"
-                                    >
-                                        Shipping
-                                    </td>
-                                    <td class="table-amount has-text-right">
-                                        {{ shippingAmount | formatDecimal(2) }}
-                                    </td>
-                                </tr>
-                                <tr v-if="subTotal != grandTotal">
-                                    <td
-                                        class="table-label has-text-right"
-                                        colspan="5"
-                                    >
-                                        Grand Total
-                                    </td>
-                                    <td class="table-amount has-text-right">
-                                        {{ grandTotal | formatDecimal(2) }}
-                                    </td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
-                    <article class="message" v-else>
-                        <div class="message-body">
-                            Please serach the product by code or name to add to
-                            the order list, You can scan the barcode too.
-                        </div>
-                    </article>
                     <div v-if="attributes">
-                        <h5 class="cf">Custom Fields</h5>
+                        <h5 class="cf">שדות דינמיים</h5>
                         <div class="columns is-multiline">
                             <div
                                 class="column is-one-third-desktop"
@@ -767,7 +658,7 @@
                     <div class="columns">
                         <div class="column">
                             <div class="field">
-                                <label class="label" for="note">Note</label>
+                                <label class="label" for="note">הערות</label>
                                 <div class="control">
                                     <textarea
                                         v-model="form.note"
@@ -787,7 +678,7 @@
                                     name="active"
                                     v-model="form.active"
                                     :checked="form.active"
-                                    label="This recurring invoice is active"
+                                    label="חשבונית חוזרת זו פעילה"
                                 ></checkbox-component>
                             </div>
                             <div class="field">
@@ -797,7 +688,7 @@
                                     :disabled="errors.any()"
                                     :class="{ 'is-loading': isSaving }"
                                 >
-                                    Submit
+                                    שמירה
                                 </button>
                             </div>
                         </div>

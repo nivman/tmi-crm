@@ -5,7 +5,7 @@
             <div class="modal-card animated fastest zoomIn">
                 <header class="modal-card-head is-radius-top">
                     <p class="modal-card-title">
-                        {{ form.id ? "Edit Product" : "Add New Product" }}
+                        {{ form.id ? "עריכת מוצר" : "הוספת מוצר" }}
                     </p>
                     <button
                         type="button"
@@ -18,7 +18,7 @@
                     <div class="columns">
                         <div class="column is-half">
                             <div class="field">
-                                <label class="label" for="code">Code</label>
+                                <label class="label" for="code">קוד</label>
                                 <input
                                     id="code"
                                     type="text"
@@ -33,7 +33,7 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="name">Name</label>
+                                <label class="label" for="name">שם</label>
                                 <input
                                     id="name"
                                     type="text"
@@ -83,7 +83,7 @@
                             ></number-input-component>
                             <div class="field">
                                 <label class="label" for="category"
-                                    >Category</label
+                                    >קטגוריה</label
                                 >
                                 <div class="control">
                                     <div
@@ -106,7 +106,7 @@
                                                 "
                                                 value=""
                                                 disabled
-                                                >Select Category...</option
+                                                >בחירת קטגוריה</option
                                             >
                                             <option
                                                 :key="category.id"
@@ -126,7 +126,7 @@
                         <div class="column is-half">
                             <div class="field">
                                 <label class="label" for="details"
-                                    >Details</label
+                                    >פרטים</label
                                 >
                                 <textarea
                                     rows="5"
@@ -143,7 +143,7 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="taxes">Taxes</label>
+                                <label class="label" for="taxes">מיסים</label>
                                 <div class="select is-fullwidth is-multiple">
                                     <select
                                         multiple
@@ -167,13 +167,14 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="email">Photo</label>
+                                <label class="label" for="image">תמונה</label>
                                 <div class="control">
                                     <div class="file has-name is-fullwidth">
                                         <label class="file-label">
                                             <input
                                                 type="file"
                                                 ref="image"
+                                                id="image"
                                                 name="image"
                                                 accept="image/*"
                                                 class="file-input"
@@ -198,7 +199,7 @@
                         </div>
                     </div>
                     <div v-if="attributes">
-                        <h5 class="cf">Custom Fields</h5>
+                        <h5 class="cf">שדות דינמיים</h5>
                         <div class="columns is-multiline">
                             <div
                                 class="column is-half"
@@ -220,7 +221,7 @@
                                 :class="{ 'is-loading': isSaving }"
                                 :disabled="errors.any() || isSaving"
                             >
-                                Submit
+                                הוספה
                             </button>
                         </div>
                     </div>

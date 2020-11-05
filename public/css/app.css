@@ -19016,6 +19016,7 @@ body,
 
 input.vs__search::-webkit-input-placeholder {
   color: #b5b5b5;
+  text-align: center;
 }
 
 .navbar {
@@ -19994,5 +19995,9 @@ a.navbar-item.is-white.is-active {
 
 .is-pulled-right {
   float: left !important;
+}
+
+.right-title {
+  text-align: right;
 }
 

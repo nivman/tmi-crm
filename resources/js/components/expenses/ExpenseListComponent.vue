@@ -6,7 +6,7 @@
                     <i class="fas fa-cog" />
                 </button>
                 <router-link to="/expenses/add" class="button is-link is-small is-pulled-right">
-                    <i class="fas fa-plus m-r-sm" /> הוספת הוצאה
+                    <i class="fas fa-plus m-l-sm" /> הוספת הוצאה
                 </router-link>
                 הוצאות
                 <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
@@ -88,14 +88,24 @@ export default {
                 range: 1,
                 date_range: '',
             }),
-            columns: ['created_at', 'title', 'reference', 'category', 'account', 'amount', 'actions'],
+            columns: ['created_at', 'title', 'details', 'category', 'account', 'amount', 'actions'],
             options: {
                 perPage: 10,
                 orderBy: { ascending: false, column: 'created_at' },
                 sortable: ['id', 'created_at', 'title', 'reference', 'amount'],
                 columnsClasses: { id: 'w50 has-text-centered', actions: 'w125 has-text-centered p-x-none', amount: 'w125' },
                 filterable: ['id', 'created_at', 'title', 'reference', 'categories.name', 'account.name', 'amount'],
+              headings: {
+                created_at: 'תאריך יצירה',
+                title: 'כותרת',
+                details: 'פרטים',
+                category: 'קטגוריה',
+                amount: 'סכום',
+                actions: 'פעולות',
+
+              },
             },
+
         };
     },
     methods: {

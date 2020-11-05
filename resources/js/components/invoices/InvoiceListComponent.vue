@@ -10,9 +10,9 @@
                     class="button is-link is-small is-pulled-right"
                     v-if="!$store.getters.customer && !$store.getters.vendor"
                 >
-                    <i class="fas fa-plus m-r-sm" /> Create New Invoice
+                    <i class="fas fa-plus m-l-sm" /> יצירת חשבונית חדשה
                 </router-link>
-                Invoices
+              חשבוניות
                 <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
             </div>
             <div class="panel-block table-body-br">
@@ -32,7 +32,7 @@
                     </template>
                     <template slot="status" slot-scope="props">
                         <div class="has-text-centered">
-                            <span v-if="props.row.draft" class="tag is-warning">Draft</span>
+                            <span v-if="props.row.draft" class="tag is-warning">טיוטה</span>
                             <span v-else class="tag is-success"> Finalised</span>
                         </div>
                     </template>
@@ -48,31 +48,31 @@
                                 </router-link> -->
                                 <a class="button is-primary is-small" :href="'/view/invoice/' + props.row.hash" target="_blank">
                                     <i class="fas fa-file-alt" />
-                                    <span class="tooltip-text">View</span>
+                                    <span class="tooltip-text">הצגה</span>
                                 </a>
                             </p>
                             <p class="control tooltip">
                                 <a @click="payment(props.row)" class="button is-primary is-small">
                                     <i class="fas fa-money-bill"></i>
-                                    <span class="tooltip-text">Payments</span>
+                                    <span class="tooltip-text">תשלום</span>
                                 </a>
                             </p>
                             <p class="control tooltip">
                                 <a @click="email(props.row.id)" class="button is-info is-small">
                                     <i class="fas fa-envelope"></i>
-                                    <span class="tooltip-text">Email</span>
+                                    <span class="tooltip-text">אימייל</span>
                                 </a>
                             </p>
                             <p class="control tooltip" v-if="$store.getters.admin">
                                 <router-link :to="'/invoices/edit/' + props.row.id" class="button is-warning is-small">
                                     <i class="fas fa-edit"></i>
-                                    <span class="tooltip-text">Edit</span>
+                                    <span class="tooltip-text">ערכיה</span>
                                 </router-link>
                             </p>
                             <p class="control tooltip" v-if="$store.getters.superAdmin">
                                 <button type="button" class="button is-danger is-small" @click="deleteRecord(props.row.id)">
                                     <i class="fas fa-trash"></i>
-                                    <span class="tooltip-text">Delete</span>
+                                    <span class="tooltip-text">מחיקה</span>
                                 </button>
                             </p>
                         </div>
@@ -129,6 +129,15 @@ export default {
                     status: 'w100',
                     grand_total: 'w150',
                 },
+              headings: {
+                date: 'תאריך יצירה',
+                reference: 'הפניה',
+                customer: 'לקוח',
+                status: 'סטטוס',
+                grand_total: 'סכום כולל',
+                actions: 'פעולות',
+
+              },
                 multiSort: {
                     date: [
                         {

@@ -10,9 +10,9 @@
                     class="button is-link is-small is-pulled-right"
                     v-if="!$store.getters.customer && !$store.getters.vendor"
                 >
-                    <i class="fas fa-plus m-r-sm" /> Create New Recurring Invoice
+                    <i class="fas fa-plus m-l-sm" /> יצירת חשבונית חוזרת חדשה
                 </router-link>
-                Recurring Invoices
+              חשבוניות חוזרת
                 <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
             </div>
             <div class="panel-block table-body-br">
@@ -33,8 +33,8 @@
                     </template>
                     <template slot="active" slot-scope="props">
                         <div class="has-text-centered">
-                            <span v-if="props.row.active" class="tag is-success">Active</span>
-                            <span v-else class="tag is-warning"> Draft</span>
+                            <span v-if="props.row.active" class="tag is-success">פעיל</span>
+                            <span v-else class="tag is-warning"> טיוטה</span>
                         </div>
                     </template>
                     <template slot="grand_total" slot-scope="props">
@@ -45,13 +45,13 @@
                             <p class="control tooltip">
                                 <router-link :to="'/recurrings/edit/' + props.row.id" class="button is-warning is-small">
                                     <i class="fas fa-edit"></i>
-                                    <span class="tooltip-text">Edit</span>
+                                    <span class="tooltip-text">עריכה</span>
                                 </router-link>
                             </p>
                             <p class="control tooltip">
                                 <button type="button" class="button is-danger is-small" @click="deleteRecord(props.row.id)">
                                     <i class="fas fa-trash"></i>
-                                    <span class="tooltip-text">Delete</span>
+                                    <span class="tooltip-text">מחיקה</span>
                                 </button>
                             </p>
                         </div>
@@ -106,6 +106,18 @@ export default {
                     grand_total: 'w150',
                     actions: 'w100 has-text-centered p-x-none',
                 },
+              headings: {
+                start_date: 'תאריך התחלה',
+                last_created_at: 'תאריך יצירה אחרון',
+                reference: 'הפנייה',
+                repeat: 'חזרה',
+                status: 'סטטוס',
+                customer: 'לקוח',
+                active: 'פעיל',
+                grand_total: 'סכום כולל',
+                actions: 'פעולות',
+
+              },
             },
         };
     },

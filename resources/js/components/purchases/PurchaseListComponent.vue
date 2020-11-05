@@ -10,9 +10,9 @@
                     class="button is-link is-small is-pulled-right"
                     v-if="!$store.getters.customer && !$store.getters.vendor"
                 >
-                    <i class="fas fa-plus m-r-sm" /> Create New Purchase
+                    <i class="fas fa-plus m-l-sm" /> יצירת רכישה חדשה
                 </router-link>
-                Purchases
+                רכישות
                 <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
             </div>
             <div class="panel-block table-body-br">

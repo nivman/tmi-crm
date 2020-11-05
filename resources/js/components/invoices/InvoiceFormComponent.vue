@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="panel panel-default">
       <div class="panel-heading">
-        {{ form.id ? 'Edit Invoice' : 'Add New Invoice' }}
+        {{ form.id ? 'עריכת חשבונית ' : 'חשבונית חדשה'  }}
       </div>
       <div class="panel-body">
         <loading v-if="loading" class="cl-top"></loading>
@@ -10,7 +10,7 @@
           <div class="columns is-multiline">
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="date">Date</label>
+                <label class="label" for="date">תאריך</label>
                 <div class="control">
                   <flat-pickr
                     id="date"
@@ -31,7 +31,7 @@
             </div>
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="reference">Reference</label>
+                <label class="label" for="reference">הפניה</label>
                 <div class="control">
                   <input
                     type="text"
@@ -39,10 +39,7 @@
                     id="reference"
                     name="reference"
                     v-model="form.reference"
-                    :class="{
-                      'is-danger': errors.has('reference'),
-                    }"
-                  />
+                    :class="{'is-danger': errors.has('reference'),}"/>
                 </div>
                 <div class="help is-danger">
                   {{ errors.first('reference') }}
@@ -51,26 +48,27 @@
             </div>
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="customer">Customer</label>
+                <label class="label" for="customer">לקוח</label>
                 <div class="control">
                   <v-select
                     label="name"
                     name="customer"
+                    id="customer"
                     v-model="customer"
                     :options="customers"
                     input-id="customer"
                     v-validate="'required'"
                     @input="customerChange"
                     @search="searchCustomer"
-                    :style="{ width: '100%' }"
-                    placeholder="Search Customer..."
+                    :style="{ width: '100%', textAlign: 'right' }"
+                    placeholder="חיפוש לקוחות"
                     :class="{
                       select: true,
                       'is-danger': errors.has('customer'),
                     }"
                   >
                     <template slot="no-options">
-                      Please type to search...
+                      :-( לא מצאתי לקוח
                     </template>
                   </v-select>
                 </div>
@@ -81,18 +79,19 @@
             </div>
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="taxes">Order Taxes</label>
+                <label class="label" for="taxes"> מיסים</label>
                 <div class="control">
                   <v-select
                     multiple
                     label="code"
+                    id="taxes"
                     class="select"
                     :options="taxes"
                     input-id="taxes"
                     max-height="150px"
                     v-model="form.taxes"
                     :style="{ width: '100%' }"
-                    placeholder="Select Tax..."
+                    placeholder="בחירת מס"
                   ></v-select>
                 </div>
                 <div class="help is-danger">
@@ -102,7 +101,7 @@
             </div>
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="discount">Order Discount</label>
+                <label class="label" for="discount">הנחה</label>
                 <div class="control">
                   <input class="input" id="discount" name="discount" v-model="form.discount" v-validate="{ regex: /^([0-9%]+)$/ }" />
                 </div>
@@ -112,17 +111,17 @@
               </div>
             </div>
             <!-- <transition mode="out-in" name="fade" enter-active-class="animated faster fadeInDown" leave-active-class="animated fastest fadeOutLeft" appear></transition> -->
-            <div class="column is-half-tablet is-one-third-desktop">
-              <div class="field">
-                <label class="label" for="shipping">Shipping</label>
-                <div class="control">
-                  <input id="shipping" class="input" name="shipping" v-model="form.shipping" v-validate="{ regex: /^([0-9%]+)$/ }" />
-                </div>
-                <div class="help is-danger">
-                  {{ errors.first('shipping') }}
-                </div>
-              </div>
-            </div>
+<!--            <div class="column is-half-tablet is-one-third-desktop">-->
+<!--              <div class="field">-->
+<!--                <label class="label" for="shipping">Shipping</label>-->
+<!--                <div class="control">-->
+<!--                  <input id="shipping" class="input" name="shipping" v-model="form.shipping" v-validate="{ regex: /^([0-9%]+)$/ }" />-->
+<!--                </div>-->
+<!--                <div class="help is-danger">-->
+<!--                  {{ errors.first('shipping') }}-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
           </div>
           <div class="field has-addons">
             <p class="control is-expanded">
@@ -143,7 +142,7 @@
                   item: 'dropdown-item',
                   list: 'dropdown-menu dropdown-content',
                 }"
-                placeholder="Scan/Search Product or Click add button for manual product"
+                placeholder="חיפוש מוצר"
                 :customHeaders="{
                   'X-Requested-With': 'XMLHttpRequest',
                   'X-CSRF-TOKEN': $laravel.token,
@@ -482,13 +481,8 @@
               </tfoot>
             </table>
           </div>
-          <div class="message" v-else>
-            <div class="message-body">
-              Please serach the product by code or name to add to the order list, You can scan the barcode too.
-            </div>
-          </div>
           <div v-if="attributes">
-            <h5 class="cf">Custom Fields</h5>
+            <h5 class="cf">שדות דינמיים</h5>
             <div class="columns is-multiline">
               <div class="column is-one-third-desktop" v-for="attr in attributes" :key="attr.slug">
                 <custom-field-component :attr="attr" v-model="form[attr.slug]"></custom-field-component>
@@ -498,7 +492,7 @@
           <div class="columns">
             <div class="column">
               <div class="field">
-                <label class="label" for="note">Note</label>
+                <label class="label" for="note">הערות</label>
                 <div class="control">
                   <textarea v-model="form.note" name="note" id="note" rows="3" class="textarea"></textarea>
                 </div>
@@ -512,7 +506,7 @@
                   name="draft"
                   v-model="form.draft"
                   :checked="form.draft"
-                  label="This invoice is still a draft"
+                  label="חשבונית זו עדיין טיוטה"
                 ></checkbox-component>
               </div>
               <div class="field" v-if="is_draftable && !form.draft">
@@ -521,12 +515,12 @@
                   name="create_payment"
                   v-model="form.create_payment"
                   :checked="form.create_payment"
-                  label="Auto create payment for this invoice"
+                  label="יצירה אוטומטית של תשלום עבור חשבונית זו"
                 ></checkbox-component>
               </div>
               <div class="field">
                 <button type="submit" class="button is-link" :disabled="errors.any()" :class="{ 'is-loading': isSaving }">
-                  Submit
+                  הוספה
                 </button>
               </div>
             </div>

@@ -13,21 +13,21 @@
         <form autocomplete="off" action="#" @submit.prevent="validateForm()">
             <div class="modal-card animated fastest zoomIn">
                 <header class="modal-card-head is-radius-top">
-                    <p class="modal-card-title">
-                        {{ form.id ? "Edit Product" : "Add New Product" }}
+                  <button
+                      type="button"
+                      class="delete"
+                      @click="$modal.hide('product-form-modal')">
+                  </button>
+                    <p class="modal-card-title right-title">
+                        {{ form.id ? "עריכת מוצר" : "הוספת מוצר" }}
                     </p>
-                    <button
-                        type="button"
-                        class="delete"
-                        @click="$modal.hide('product-form-modal')"
-                    ></button>
                 </header>
                 <section class="modal-card-body is-radius-bottom">
                     <loading v-if="loading"></loading>
                     <div class="columns">
                         <div class="column is-half">
                             <div class="field">
-                                <label class="label" for="code">Code</label>
+                                <label class="label right-title" for="code">קוד</label>
                                 <input
                                     id="code"
                                     name="code"
@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="name">Name</label>
+                                <label class="label right-title" for="name">שם</label>
                                 <input
                                     id="name"
                                     name="name"
@@ -56,73 +56,60 @@
                                     {{ errors.first("name") }}
                                 </div>
                             </div>
-                            <number-input-component
+                            <number-input-component class="right-title"
                                 :value.sync="form.cost"
                                 :validation="{
                                     rules: 'required',
                                     name: 'cost'
                                 }"
                                 :field="{
-                                    label: 'Cost',
+                                    label: 'עלות',
                                     name: 'cost',
                                     id: 'cost'
                                 }"
                             ></number-input-component>
-                            <number-input-component
+                            <number-input-component class="right-title"
                                 :value.sync="form.price"
                                 :validation="{
                                     rules: 'required',
                                     name: 'price'
                                 }"
                                 :field="{
-                                    label: 'Price',
+                                    label: 'מחיר',
                                     name: 'price',
                                     id: 'price'
                                 }"
                             ></number-input-component>
-                            <number-input-component
+                            <number-input-component class="right-title"
                                 v-if="$store.getters.stock"
                                 :value.sync="form.qty"
                                 :validation="{ rules: 'required', name: 'qty' }"
                                 :field="{
-                                    label: 'Qty',
+                                    label: 'כמוצ',
                                     name: 'qty',
                                     id: 'qty'
                                 }"
                             ></number-input-component>
                             <div class="field">
-                                <label class="label" for="category"
-                                    >Category</label
-                                >
+                                <label class="label right-title" for="category">קטגוריה</label>
                                 <div class="control">
                                     <div
                                         class="select is-fullwidth"
-                                        :class="{
-                                            'is-danger': errors.has('category')
-                                        }"
-                                    >
+                                        :class="{'is-danger': errors.has('category')}" >
                                         <select
                                             id="category"
                                             name="category"
                                             v-model="form.category"
                                             v-validate="'required'"
-                                            placeholder="Select Category..."
-                                        >
-                                            <option
-                                                v-if="
-                                                    $store.state.settings.ac
-                                                        .select
-                                                "
+                                            placeholder="בחירת קטגוריה">
+                                            <optio
+                                                v-if="$store.state.settings.ac.select"
                                                 value=""
-                                                disabled
-                                                >Select Category...</option
-                                            >
+                                                disabled>בחירת קטגוריה</optio>
                                             <option
                                                 v-for="category in categories"
                                                 :key="category.id"
-                                                :value="category.id"
-                                                >{{ category.name }}</option
-                                            >
+                                                :value="category.id">{{ category.name }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -133,25 +120,23 @@
                         </div>
                         <div class="column is-half">
                             <div class="field">
-                                <label class="label" for="details"
-                                    >Details</label
-                                >
+                                <label class="label right-title" for="details"
+                                    >פרטים</label>
                                 <textarea
                                     rows="5"
                                     id="details"
                                     name="details"
                                     class="textarea"
                                     v-model="form.details"
-                                    :class="{
-                                        'is-danger': errors.has('details')
-                                    }"
-                                ></textarea>
+                                    :class="{  'is-danger': errors.has('details')}">
+
+                                </textarea>
                                 <div class="help is-danger">
                                     {{ errors.first("details") }}
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="taxes">Taxes</label>
+                                <label class="label right-title" for="taxes">מיסים</label>
                                 <div class="select is-fullwidth is-multiple">
                                     <select
                                         v-model="form.taxes"
@@ -177,7 +162,7 @@
                         </div>
                     </div>
                     <div v-if="attributes">
-                        <h5 class="cf">Custom Fields</h5>
+                        <h5 class="cf right-title">שדות דינמיים</h5>
                         <div class="columns is-multiline">
                             <div
                                 class="column is-half"
@@ -198,7 +183,7 @@
                                 class="button is-link is-fullwidth"
                                 :disabled="errors.any()"
                             >
-                                Save & Add to Order
+                               שמירה
                             </button>
                         </div>
                     </div>
