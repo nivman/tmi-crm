@@ -208,7 +208,7 @@ export default {
         let percentage = totalTimeAsAmount / price
 
         if (Number.isFinite(percentage)) {
-          return ' % ' + percentage.toFixed(2) * 100 ;
+          return ' % ' + (percentage * 100).toFixed(2) ;
         }
       }
     }

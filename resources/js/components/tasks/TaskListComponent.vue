@@ -220,7 +220,7 @@ export default {
 
         if (Number.isFinite(percentage)) {
 
-          return ' % ' + totalTimeAsAmount.toFixed(0) ;
+          return ' % ' + totalTimeAsAmount.toFixed(2) ;
         }
       }
     }
