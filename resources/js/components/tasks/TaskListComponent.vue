@@ -57,7 +57,8 @@
           </template>
 
           <template slot="amountPerHours" slot-scope="props">
-            {{ props.row.actual_time ?  parseFloat(props.row.actual_time / 60 * 100).toFixed(2) : '' }}
+<!--            //TODO hour wage should be dynamic-->
+            {{ props.row.actual_time ?  parseFloat(props.row.actual_time / 60 * 150).toFixed(2) : '' }}
           </template>
           <template slot="date_to_complete" slot-scope="props">
             <date-format-component :date="props.row.date_to_complete"></date-format-component>
