@@ -221,7 +221,8 @@ export default {
       if (tasksTime) {
 
         let convertToHours = (tasksTime / 60)
-        let HourlyWage = convertToHours * 100; // how mush per hour need to be dynamic
+        //TODO hour wage should be dynamic
+        let HourlyWage = convertToHours * 150; // how mush per hour need to be dynamic
 
         let totalTimeAsAmount = HourlyWage * 100 / price;
 
@@ -229,7 +230,7 @@ export default {
 
         if (Number.isFinite(percentage)) {
 
-          return ' % ' + totalTimeAsAmount.toFixed(0) ;
+          return ' % ' + totalTimeAsAmount.toFixed(2) ;
         }
       }
     }

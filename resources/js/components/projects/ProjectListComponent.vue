@@ -200,14 +200,15 @@ export default {
       if (tasksTime) {
 
         let sumTasksTime = tasksTime.reduce((a, b) => a + b, 0)
-        let HourlyWage = 100;
+        //TODO hour wage should be dynamic
+        let HourlyWage = 150;
         let convertToHours = (sumTasksTime / 60)
         let totalTimeAsAmount = convertToHours *  HourlyWage;
 
         let percentage = totalTimeAsAmount / price
 
         if (Number.isFinite(percentage)) {
-          return ' % ' + percentage.toFixed(2) * 100 ;
+          return ' % ' + (percentage * 100).toFixed(2) ;
         }
       }
     }

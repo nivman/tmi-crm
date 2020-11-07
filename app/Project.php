@@ -91,7 +91,8 @@ class Project extends ModelForm
         foreach ($projectsTasks as $projectsTask) {
             $collectTaskTime[] = $projectsTask->actual_time;
         }
-        $HourlyWage = 100;
+        //TODO hour wage should be dynamic
+        $HourlyWage = 150;
         $convertToHours = (array_sum($collectTaskTime) / 60);
         $totalTimeAsAmount = $convertToHours *  $HourlyWage;
 
