@@ -60,6 +60,7 @@
             {{ props.row.actual_time ?  parseFloat(props.row.actual_time / 60 * 100).toFixed(2) : '' }}
           </template>
           <template slot="date_to_complete" slot-scope="props">
+
             <date-format-component :date="props.row.date_to_complete"></date-format-component>
           </template>
           <template slot="priority" slot-scope="props">
@@ -113,6 +114,7 @@
               </p>
             </div>
           </template>
+
         </v-server-table>
       </div>
     </div>
@@ -131,7 +133,7 @@
 import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import DateFormatComponent from '../helpers/DateFormatComponent'
-
+import VCalendar from 'v-calendar';
 export default {
   mixins: [mId, tBus('app/tasks')],
   props: [
@@ -143,6 +145,14 @@ export default {
   ],
   data () {
     return {
+      range: {
+        start: new Date(),
+        end: new Date(),
+      },
+      masks: {
+        input: 'DD/MM/YYYY',
+      },
+
       showTaskForm: false,
       columns: [
         'name',
@@ -162,7 +172,7 @@ export default {
       addRoute: null,
       options: {
         filterByColumn:true,
-        dateColumns:['date_to_complete'],
+
         listColumns: ['customer','name'],
         orderBy: { ascending: false, column: 'date_to_complete' },
         sortable: ['name','priority','customer','date_to_complete', 'project', 'status', 'category'],
@@ -174,7 +184,7 @@ export default {
           actions: 'w175 has-text-centered p-x-none',
           details: 'details-td'
         },
-        filterable: ['name', 'start_date', 'end_date', 'details','customer', 'project', 'status', 'priority', 'category'],
+        filterable: ['name', 'start_date', 'end_date', 'details','customer', 'project', 'status', 'priority', 'category','date_to_complete'],
         headings: {
           name: 'נושא',
           customer: 'לקוח',
@@ -226,8 +236,94 @@ export default {
 
   },
   created () {
+    setTimeout(()=>{
+      let x=  document.querySelector('.VueTables__date_to_complete-filter-wrapper')
+      const Hello = {
+        props: [''],
+        template:
+            '  <form style="display: inline" class="bg-white shadow-md rounded px-8 pt-6 pb-8 dates-range" @submit.prevent>\n' +
+            '    <div>\n' +
+            '      <v-date-picker title-position="right" \n' +
+            'popover.positionFixed ="true"'+
+            '        style="direction: ltr;display: block"'+
+            '        color= "red"'+
+            '        v-model="this.range"\n' +
+            '        mode="date"\n' +
+            '        :masks="this.masks"\n' +
+            '        is-range\n' +
+            '      >\n' +
+            '        <template v-slot="{ inputValue, inputEvents, isDragging }">\n' +
+            '          <div style="display: block" class="sm:flex-row justify-start items-center date-range-position">\n' +
+            '            <div class="relative flex-grow">\n' +
+            '              <svg\n' +
+            '                style="height: 20px; width: 20px;position: absolute; margin-top: 4px; margin-left: 78px !important;"'+
+            '                class="text-gray-600 w-4 h-full mx-2 absolute pointer-events-none"\n' +
+            '                fill="none"\n' +
+            '                stroke-linecap="round"\n' +
+            '                stroke-linejoin="round"\n' +
+            '                stroke-width="2"\n' +
+            '                viewBox="0 0 24 24"\n' +
+            '                stroke="currentColor"\n' +
+            '              >\n' +
+            '                <path\n' +
+            '                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"\n' +
+            '                ></path>\n' +
+            '              </svg>\n' +
+            '              <input\n' +
+            '                style="width: 100px; padding-right: 22px !important;"'+
+            '                class="flex-grow pl-8 pr-2 py-1 bg-gray-100 border rounded w-full"\n' +
+            '                :class="isDragging ? \'text-gray-600\' : \'text-gray-900\'"\n' +
+            '                :value="inputValue.start"\n' +
+            '                v-on="inputEvents.start"\n' +
+            '              />\n' +
+            '            </div>\n' +
+            '            <span>'+
+            '            </span>\n' +
+            '            <div class="relative flex-grow">\n' +
+            '              <svg\n' +
+            '                style="height: 20px; width: 20px;position: absolute; margin-top: 4px; margin-left: 78px !important;"'+
+            '                class="text-gray-600 w-4 h-full mx-2 absolute pointer-events-none"\n' +
+            '                fill="none"\n' +
+            '                stroke-linecap="round"\n' +
+            '                stroke-linejoin="round"\n' +
+            '                stroke-width="2"\n' +
+            '                viewBox="0 0 24 24"\n' +
+            '                stroke="currentColor"\n' +
+            '              >\n' +
+            '                <path\n' +
+            '                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"\n' +
+            '                ></path>\n' +
+            '              </svg>\n' +
+            '              <input\n' +
+            '                style="width: 100px; padding-right: 22px !important;"'+
+            '                class="flex-grow pl-8 pr-2 py-1 bg-gray-100 border rounded w-full"\n' +
+            '                :class="isDragging ? \'text-gray-600\' : \'text-gray-900\'"\n' +
+            '                :value="inputValue.end"\n' +
+            '                v-on="inputEvents.end"\n' +
+            '              />\n' +
+            '            </div>\n' +
+            '          </div>\n' +
+            '        </template>\n' +
+            '      </v-date-picker>\n' +
+            '    </div>\n' +
+            '  </form>'
 
-     if(this.customerId != undefined)    {
+
+      };
+      const HelloCtor = Vue.extend(Hello);
+      const vm = new HelloCtor({
+
+      }).$mount('.VueTables__date_to_complete-filter-wrapper');
+
+    },200)
+
+    // const HelloCtor = Vue.extend(Hello);
+    // const vm = new HelloCtor({
+    //   propsData: {
+    //     text: 'HI :)'
+    //   }
+    // }).$mount('.VueTables__date_to_complete-filter-wrapper');
+    if(this.customerId != undefined)    {
 
        this.addRoute = `/tasks/add?customerId=${this.customerId}`;
      }
@@ -257,7 +353,7 @@ export default {
     },
 
   },
-  components: { DateFormatComponent },
+  components: { DateFormatComponent,VCalendar },
 
 }
 </script>
@@ -279,5 +375,17 @@ table td .details-textarea {
 
 .back-title{
   padding: 5px;
+}
+.svg-display{
+  height: 30px !important;
+}
+.dates-range{
+  display: inline;
+}
+.date-range-position{
+  display: block !important;
+}
+.vc-popover-content-wrapper{
+  direction: ltr;
 }
 </style>
