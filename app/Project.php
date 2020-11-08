@@ -107,8 +107,8 @@ class Project extends ModelForm
 
         return DB::table('projects')->select('projects.*')
 
-            ->join('customers as cu', 'cu.id', '=', 'projects.customer_id')
-            ->join('contacts as co', 'co.customer_id', '=', 'cu.id')
+            ->leftJoin('customers as cu', 'cu.id', '=', 'projects.customer_id')
+            ->leftJoin('contacts as co', 'co.customer_id', '=', 'cu.id')
             ->whereIn('projects.customer_id', $ids)
             ->distinct()
             ->get();

@@ -428,6 +428,7 @@ export default {
 
       this.customerSelected = !this.customerSelected
       if (this.form.customer) {
+        console.log(this.form.customer)
         this.getProjectsByCustomerId([this.form.customer])
       } else {
         this.customerSelected = false
@@ -585,7 +586,7 @@ export default {
     getProjectsByCustomerId (customers) {
 
       let id = customers.map(a => a.id)
-
+      debugger
       this.$http
           .post('app/customers-projects/' + id)
           .then(res => {

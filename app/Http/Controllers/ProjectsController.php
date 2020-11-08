@@ -38,6 +38,7 @@ class ProjectsController extends Controller
 
     public function getProjectsCustomersByIds($customersIds)
     {
+
         return (new Project)->getProjectsCustomersByIds($customersIds);
     }
 
