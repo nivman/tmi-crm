@@ -49,7 +49,7 @@ class CustomerRequest extends FormRequest
 
         foreach ($this->attributes as $attribute) {
 
-            if (!isset($validated[$attribute->slug])) {
+            if (!$attribute->type == 'datetime' && !isset($validated[$attribute->slug])) {
 
                 $validated[$attribute->slug] = '---';
             }
