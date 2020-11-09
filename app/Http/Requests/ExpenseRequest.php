@@ -25,6 +25,7 @@ class ExpenseRequest extends FormRequest
             'account_id' => 'required|numeric',
             'category' => 'required|integer',
             'taxes' => 'nullable|array',
+            'project_id' => 'nullable'
         ];
 
         $expense = new Expense;

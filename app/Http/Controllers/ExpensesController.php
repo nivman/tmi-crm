@@ -33,7 +33,7 @@ class ExpensesController extends Controller
 
     public function store(ExpenseRequest $request)
     {
-        $v       = $request->validated();
+        $v = $request->validated();
         $expense = $request->user()->expenses()->create($v);
         $expense->categories()->sync($v['category']);
         return $expense;

@@ -20005,3 +20005,15 @@ a.navbar-item.is-white.is-active {
   text-align: center;
 }
 
+.expenses-dropdown {
+  direction: ltr;
+}
+
+.expenses-dropdown > div > div > input {
+  display: none;
+}
+
+.expenses-dropdown > div > div {
+  direction: rtl;
+}
+

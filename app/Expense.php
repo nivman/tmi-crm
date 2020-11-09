@@ -2,22 +2,23 @@
 
 namespace App;
 
+use App\Http\ModelForm;
 use Ulid\Ulid;
 use App\Traits\VueTable;
 use App\Traits\LogActivity;
 use App\Traits\Restrictable;
 use App\Traits\AttributableModel;
-use Illuminate\Database\Eloquent\Model;
 
-class Expense extends Model
+
+class Expense extends ModelForm
 {
     use AttributableModel, LogActivity, Restrictable, VueTable;
 
-    public static $columns = ['id', 'created_at', 'title', 'reference', 'amount', 'categories.name', 'account.name'];
+    public static $columns = ['id', 'created_at', 'title', 'reference', 'amount', 'categories.name', 'account.name', 'projects.name'];
 
-    protected $fillable = ['id', 'title', 'amount', 'reference', 'details', 'account_id', 'user_id'];
+    protected $fillable = ['id', 'title', 'amount', 'reference', 'details', 'account_id', 'user_id', 'project_id'];
     protected $hidden   = ['updated_at'];
-    protected $with     = ['account', 'categories'];
+    protected $with     = ['account', 'categories', 'project'];
 
     protected static function boot()
     {
@@ -36,7 +37,14 @@ class Expense extends Model
 
     public function account()
     {
+
         return $this->belongsTo(Account::class);
+    }
+
+    public function project()
+    {
+
+        return $this->belongsTo(Project::class);
     }
 
     public function categories()

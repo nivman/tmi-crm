@@ -3,7 +3,7 @@
         <div class="modal-background"></div>
         <div class="modal-card is-medium animated fastest zoomIn">
             <header class="modal-card-head is-radius-top">
-                <p class="modal-card-title">Expense Details</p>
+                <p class="modal-card-title">פרטי הוצאה</p>
                 <button type="button" class="delete" @click="$router.go(-1)"></button>
             </header>
             <section class="modal-card-body is-radius-bottom">
@@ -12,27 +12,31 @@
                     <table class="table is-bordered is-rounded is-rounded-body is-striped is-narrow is-hoverable is-fullwidth m-b-none">
                         <tbody>
                             <tr>
-                                <td>Created at</td>
+                                <td>נוצרה ב</td>
                                 <td>{{ expense.created_at | formatDate($store.state.settings.ac.dateformat + ' HH:mm') }}</td>
                             </tr>
                             <tr>
-                                <td>Title</td>
+                                <td>כותרת</td>
                                 <td>{{ expense.title }}</td>
                             </tr>
                             <tr>
-                                <td>Reference</td>
+                                <td>הפנייה</td>
                                 <td>{{ expense.reference }}</td>
                             </tr>
                             <tr>
-                                <td>Amount</td>
+                                <td>סכום</td>
                                 <td>{{ expense.amount | formatNumber }}</td>
                             </tr>
                             <tr>
-                                <td>Category</td>
+                                <td>קטגוריה</td>
                                 <td>{{ expense.categories[0].name }}</td>
                             </tr>
                             <tr>
-                                <td>Account</td>
+                              <td>פרוייקט</td>
+                              <td>{{ expense.project ? expense.project.name : '' }}</td>
+                            </tr>
+                            <tr>
+                                <td>חשבון</td>
                                 <td>{{ expense.account.name }}</td>
                             </tr>
                             <template v-if="expense.attributes">

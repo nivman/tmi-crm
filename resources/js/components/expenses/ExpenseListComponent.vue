@@ -18,14 +18,17 @@
                     :options="options"
                     ref="expensesTable"
                     @loaded="onLoaded"
-                    name="expensesTable"
-                >
+                    name="expensesTable">
                     <template slot="created_at" slot-scope="props">
-                        {{ props.row.created_at | formatDate(dateformat + ' HH:mm') }}
+                      <date-format-component :date="props.row.created_at"></date-format-component>
+
                     </template>
                     <template slot="category" slot-scope="props">
                         {{ props.row.categories[0].name }}
                     </template>
+                  <template slot="project" slot-scope="props">
+                    {{ props.row.project ? props.row.project.name : '' }}
+                  </template>
                     <template slot="account" slot-scope="props">
                         {{ props.row.account.name }}
                     </template>
@@ -37,19 +40,19 @@
                             <p class="control tooltip">
                                 <router-link :to="'/expenses/' + props.row.id" class="button is-primary is-small">
                                     <i class="fas fa-file-invoice-dollar" />
-                                    <span class="tooltip-text">View</span>
+                                    <span class="tooltip-text">הצגה</span>
                                 </router-link>
                             </p>
                             <p class="control tooltip" v-if="$store.getters.admin">
                                 <router-link :to="'/expenses/edit/' + props.row.id" class="button is-warning is-small">
                                     <i class="fas fa-edit" />
-                                    <span class="tooltip-text">Edit</span>
+                                    <span class="tooltip-text">עריכה</span>
                                 </router-link>
                             </p>
                             <p class="control tooltip" v-if="$store.getters.superAdmin">
                                 <button type="button" class="button is-danger is-small" @click="deleteRecord(props.row.id)">
                                     <i class="fas fa-trash" />
-                                    <span class="tooltip-text">Delete</span>
+                                    <span class="tooltip-text">מחיקה</span>
                                 </button>
                             </p>
                         </div>
@@ -73,6 +76,7 @@
 <script>
 import mId from '../../mixins/Mid';
 import tBus from '../../mixins/Tbus';
+import DateFormatComponent from '../helpers/DateFormatComponent'
 export default {
     mixins: [mId, tBus('app/expenses')],
     data() {
@@ -88,7 +92,7 @@ export default {
                 range: 1,
                 date_range: '',
             }),
-            columns: ['created_at', 'title', 'details', 'category', 'account', 'amount', 'actions'],
+            columns: ['created_at', 'title',  'project', 'details', 'category', 'account', 'amount', 'actions'],
             options: {
                 perPage: 10,
                 orderBy: { ascending: false, column: 'created_at' },
@@ -100,12 +104,11 @@ export default {
                 title: 'כותרת',
                 details: 'פרטים',
                 category: 'קטגוריה',
+                project: 'פרוייקט',
                 amount: 'סכום',
                 actions: 'פעולות',
-
               },
             },
-
         };
     },
     methods: {
@@ -116,5 +119,6 @@ export default {
             }, 0);
         },
     },
+  components: { DateFormatComponent },
 };
 </script>

@@ -33,10 +33,7 @@
                     class="input"
                     v-model="form.title"
                     v-validate="'required'"
-                    :class="{
-                                        'is-danger': errors.has('title')
-                                    }"
-                />
+                    :class="{ 'is-danger': errors.has('title')  }"/>
                 <div class="help is-danger">
                   {{ errors.first("title") }}
                 </div>
@@ -44,16 +41,9 @@
 
               <number-input-component
                   :value.sync="form.amount"
-                  :validation="{
-                                    rules: 'required',
-                                    name: 'amount'
-                                }"
-                  :field="{
-                                    label: 'Amount',
-                                    name: 'amount',
-                                    id: 'amount'
-                                }"
-              ></number-input-component>
+                  :validation="{rules: 'required', name: 'amount'}"
+                  :field="{label: 'Amount', name: 'amount', id: 'amount'}">
+              </number-input-component>
               <div class="help is-danger">
                 {{ errors.first("amount") }}
               </div>
@@ -70,21 +60,18 @@
                         name="category"
                         v-model="form.category"
                         v-validate="'required'"
-                        placeholder="בחירת קטגוריה" >
+                        placeholder="בחירת קטגוריה">
                       <option
                           v-if="$store.state.settings.ac.select"
                           value=""
-                          disabled
-                      >Select Category...
-                      </option
-                      >
+                          disabled>בחירת קטגוריה
+                      </option>
                       <option
                           v-for="category in categories"
                           :key="category.id"
-                          :value="category.id"
-                      >{{ category.name }}
-                      </option
-                      >
+                          :value="category.id">
+                        {{ category.name }}
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -102,11 +89,12 @@
                       v-model="account"
                       input-id="account"
                       :options="accounts"
+                      class="expenses-dropdown"
                       @input="accountChange"
                       v-validate="'required'"
                       :style="{ width: '100%' }"
                       placeholder="בחירת חשבון"
-                      :class="{select: true,'is-danger': errors.has('account')}" >
+                      :class="{select: true,'is-danger': errors.has('account')}">
                     <template slot="no-options">
                       :-( לא מצאתי חשבון
                     </template>
@@ -116,6 +104,35 @@
                   {{ errors.first("account") }}
                 </div>
               </div>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label" for="project">פרוייקט</label>
+                <div class="control">
+                  <v-select
+                      label="name"
+                      name="project"
+                      id="project"
+                      v-model="project"
+                      input-id="project"
+                      :options="projects"
+                      @input="projectChange"
+                      class="expenses-dropdown"
+                      :style="{ width: '100%' }"
+                      placeholder="בחירת פרוייקט">
+                    <template slot="no-options">
+                      :-( לא מצאתי פרוייקט
+                    </template>
+                  </v-select>
+                </div>
+                <div class="help is-danger">
+                  {{ errors.first("project") }}
+                </div>
+              </div>
+            </div>
+            <div class="column">
               <div class="field">
                 <label class="label" for="details">פרטים</label>
                 <textarea
@@ -131,6 +148,8 @@
                   {{ errors.first("details") }}
                 </div>
               </div>
+
+
             </div>
           </div>
           <div v-if="attributes">
@@ -139,12 +158,11 @@
               <div
                   class="column is-half"
                   v-for="attr in attributes"
-                  :key="attr.slug"
-              >
+                  :key="attr.slug">
                 <custom-field-component
                     :attr="attr"
-                    v-model="form[attr.slug]"
-                ></custom-field-component>
+                    v-model="form[attr.slug]">
+                </custom-field-component>
               </div>
             </div>
           </div>
@@ -154,9 +172,8 @@
                   type="submit"
                   class="button is-link is-fullwidth"
                   :class="{ 'is-loading': isSaving }"
-                  :disabled="errors.any() || isSaving"
-              >
-                Submit
+                  :disabled="errors.any() || isSaving">
+                עריכה
               </button>
             </div>
           </div>
@@ -178,7 +195,9 @@ export default {
   data() {
     return {
       accounts: [],
+      projects: [],
       account: null,
+      project: null,
       loading: true,
       categories: [],
       attributes: [],
@@ -191,7 +210,8 @@ export default {
         amount: "",
         category: "",
         account_id: "",
-        details: ""
+        details: "",
+        project_id: ""
       })
     };
   },
@@ -203,6 +223,7 @@ export default {
           this.$http
               .get("app/categories?all=1")
               .then(res => {
+
                 this.categories = res.data;
                 if (
                     !this.$store.state.settings.ac.select &&
@@ -227,6 +248,22 @@ export default {
               .catch(err => {
                 this.$event.fire("appError", err.response);
               });
+        })
+        .catch(err => {
+          this.$event.fire("appError", err.response);
+        });
+    this.$http
+        .get("app/projects?all=1")
+        .then(res => {
+
+          this.projects = res.data.data;
+
+          if (
+              !this.$store.state.settings.ac.select &&
+              this.projects.length > 0
+          ) {
+          //  this.form.project = this.projects[0].id;
+          }
         })
         .catch(err => {
           this.$event.fire("appError", err.response);
@@ -269,8 +306,10 @@ export default {
           .then(res => {
             this.attributes = res.data.attributes;
             res.data.category = res.data.categories[0].id;
+            this.project = res.data.project ?res.data.project.name : '';
             delete res.data.attributes;
             delete res.data.categories;
+            delete res.data.projects;
             this.form = new this.$form(res.data);
             this.account = this.accounts.find(
                 account => account.id == res.data.account_id
@@ -291,27 +330,10 @@ export default {
           })
           .catch(err => this.$event.fire("appError", err));
     },
-    // sellerChange(selected) {
-    //     this.seller = selected;
-    //     this.form.seller_id = selected ? selected.id : '';
-    // },
-    // getSeller(id) {
-    //     this.$http.get(`app/sellers/${id}`)
-    //     .then((res) => { this.sellerChange(res.data); })
-    //     .catch((err) => { this.$event.fire('appError', err.response); });
-    // },
-    // searchSeller(search, loading) {
-    //     this.getSellers(search, loading, this)
-    // },
-    // getSellers: _debounce((search, loading, vm) => {
-    //     loading(true);
-    //     vm.$http.get('app/sellers/search?query='+search)
-    //     .then(res => {
-    //         vm.sellers = res.data;
-    //         loading(false);
-    //     })
-    //     .catch((err) => { vm.$event.fire('appError', err.response); });
-    // }, 250),
+    projectChange(selected) {
+      this.project = selected;
+      this.form.project_id = selected ? selected.id : "";
+    },
     accountChange(selected) {
       this.account = selected;
       this.form.account_id = selected ? selected.id : "";
@@ -329,3 +351,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.vs2__combobox{
+  direction: ltr;
+}
+</style>

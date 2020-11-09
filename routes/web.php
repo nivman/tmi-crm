@@ -133,6 +133,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::delete('statuses/delete/{status}', 'StatusController@destroy');
         Route::delete('customers/delete/{customer}', 'CustomersController@destroy');
         Route::delete('tasks/delete/{task}', 'TasksController@destroy');
+        Route::delete('expenses/delete/{expense}', 'ExpensesController@destroy');
         Route::get('tasks/details', 'TasksController@details');
         Route::get('statuses/{status}', 'StatusController@edit');
         Route::get('templates/{template?}', 'EmailTemplateController@show');

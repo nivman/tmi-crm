@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="panel panel-default">
       <div class="panel-heading">
-        {{ form.id ? 'Edit Purchase' : 'Add New Purchase' }}
+        {{ form.id ? 'עריכת רכישה ' : 'הוספת רכישה' }}
       </div>
       <div class="panel-body">
         <loading v-if="loading" class="cl-top"></loading>
@@ -10,7 +10,7 @@
           <div class="columns is-multiline">
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="date">Date</label>
+                <label class="label" for="date">תאריך</label>
                 <div class="control">
                   <flat-pickr
                     id="date"
@@ -31,7 +31,7 @@
             </div>
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="reference">Reference</label>
+                <label class="label" for="reference">הפנייה</label>
                 <div class="control">
                   <input
                     type="text"
@@ -51,11 +51,12 @@
             </div>
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="vendor">Vendor</label>
+                <label class="label" for="vendor">ספק</label>
                 <div class="control">
                   <v-select
                     label="name"
                     name="vendor"
+                    id="vendor"
                     v-model="vendor"
                     input-id="vendor"
                     :options="vendors"
@@ -63,14 +64,14 @@
                     @search="searchVendor"
                     v-validate="'required'"
                     :style="{ width: '100%' }"
-                    placeholder="Search Vendor..."
+                    placeholder="חיפוש ספקים"
                     :class="{
                       select: true,
                       'is-danger': errors.has('vendor'),
                     }"
                   >
                     <template slot="no-options">
-                      Please type to search...
+                      חיפוש
                     </template>
                   </v-select>
                 </div>
@@ -81,18 +82,19 @@
             </div>
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="taxes">Order Taxes</label>
+                <label class="label" for="taxes">מיסים</label>
                 <div class="control">
                   <v-select
                     multiple
                     label="code"
                     class="select"
+                    id="taxes"
                     input-id="taxes"
                     :options="taxes"
                     max-height="150px"
                     v-model="form.taxes"
                     :style="{ width: '100%' }"
-                    placeholder="Select Tax..."
+                    placeholder="בחירת רעל (מיסים)"
                   ></v-select>
                 </div>
                 <div class="help is-danger">
@@ -102,7 +104,7 @@
             </div>
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="discount">Order Discount</label>
+                <label class="label" for="discount">הנחה</label>
                 <div class="control">
                   <input class="input" id="discount" name="discount" v-model="form.discount" v-validate="{ regex: /^([0-9%]+)$/ }" />
                 </div>
@@ -113,7 +115,7 @@
             </div>
             <div class="column is-half-tablet is-one-third-desktop">
               <div class="field">
-                <label class="label" for="shipping">Shipping</label>
+                <label class="label" for="shipping">קוד אישור הזמנה</label>
                 <div class="control">
                   <input id="shipping" class="input" name="shipping" v-model="form.shipping" v-validate="{ regex: /^([0-9%]+)$/ }" />
                 </div>
@@ -142,7 +144,7 @@
                   item: 'dropdown-item',
                   list: 'dropdown-menu dropdown-content',
                 }"
-                placeholder="Scan/Search Product or Click add button for manual product"
+                placeholder="חיפוש מוצר"
                 :customHeaders="{
                   'X-Requested-With': 'XMLHttpRequest',
                   'X-CSRF-TOKEN': $laravel.token,
@@ -166,7 +168,7 @@
               <thead>
                 <tr>
                   <th class="has-text-centered">
-                    Order Items
+                    פריטים
                   </th>
                 </tr>
               </thead>
@@ -458,13 +460,8 @@
               </tfoot>
             </table>
           </div>
-          <article class="message" v-else>
-            <div class="message-body">
-              Please search the product by code or name to add to the order list, You can scan the barcode too.
-            </div>
-          </article>
           <div v-if="attributes">
-            <h5 class="cf">Custom Fields</h5>
+            <h5 class="cf">שדות נוספים</h5>
             <div class="columns is-multiline">
               <div class="column is-one-third-desktop" v-for="attr in attributes" :key="attr.slug">
                 <custom-field-component :attr="attr" v-model="form[attr.slug]"></custom-field-component>
@@ -474,7 +471,7 @@
           <div class="columns">
             <div class="column">
               <div class="field">
-                <label class="label" for="note">Note</label>
+                <label class="label" for="note">הערות</label>
                 <div class="control">
                   <textarea v-model="form.note" name="note" id="note" rows="3" class="textarea"></textarea>
                 </div>
@@ -488,12 +485,12 @@
                   name="draft"
                   v-model="form.draft"
                   :checked="form.draft"
-                  label="This purchase is still a draft"
+                  label="רכישה זו עדיין טיוטה"
                 ></checkbox-component>
               </div>
               <div class="field">
                 <button type="submit" class="button is-link" :disabled="errors.any()" :class="{ 'is-loading': isSaving }">
-                  Submit
+                  הוספת רכישה
                 </button>
               </div>
             </div>
