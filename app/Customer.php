@@ -8,9 +8,8 @@ use App\Traits\LogActivity;
 use App\Traits\Restrictable;
 use App\Traits\AccountingJournal;
 use App\Traits\AttributableModel;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Rinvex\Attributes\Models\Attribute;
+
 
 class Customer extends ModelForm
 {

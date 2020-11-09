@@ -26,6 +26,7 @@
             :columns="columns"
             :options="options"
             ref="tasksTable"
+            class="center-text-table"
             name="tasksTable">
           <template slot="customer" slot-scope="props">
             <div class="has-text-centered">
