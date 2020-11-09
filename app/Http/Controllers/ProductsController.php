@@ -32,7 +32,7 @@ class ProductsController extends Controller
 
     public function index(Request $request)
     {
-
+            //TODO fix filters
         if (!auth()->user()->hasRole(['admin', 'super'])) {
             Product::setStaticHidden(['cost']);
         }
