@@ -207,8 +207,8 @@ export default {
     refreshPage() {
       this.$modal.hide('dialog');
       this.$modal.show('dialog', {
-        title: '419 Unknown Status',
-        text: 'The page token has been expired! please click OK to refresh then try again.',
+        title: '419 סטטוס לא ידוע',
+        text: 'פג תוקף אסימון הדף! אנא לחצו על אישור כדי לרענן ואז נסו שוב',
         buttons: [
           {
             title: 'OK',
