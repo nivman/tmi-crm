@@ -131,9 +131,9 @@
                 <div class="control">
                     <flat-pickr
                         class="input"
-                        placeholder="Date range"
+                        placeholder="טווח תאריכים"
                         v-model="filters.date_range"
-                        :config="{ mode: 'range', dateFormat: 'Y-m-d' }"
+                        :config="{ mode: 'range', dateFormat: 'd/m/y' }"
                     ></flat-pickr>
                 </div>
             </div>

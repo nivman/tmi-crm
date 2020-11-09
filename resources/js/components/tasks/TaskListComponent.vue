@@ -115,16 +115,10 @@
               </p>
             </div>
           </template>
-
         </v-server-table>
       </div>
     </div>
-    <panel-filters-component
-        v-if="filtering"
-        :filters="filters"
-        :class="{ loaded: filtering }"
-        @hide-panel-filters="filtering = false"
-    ></panel-filters-component>
+
     <router-view></router-view>
 
   </div>
@@ -134,7 +128,9 @@
 import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import DateFormatComponent from '../helpers/DateFormatComponent'
-import VCalendar from 'v-calendar';
+import 'daterangepicker/daterangepicker.css'
+import 'daterangepicker/daterangepicker.js'
+
 export default {
   mixins: [mId, tBus('app/tasks')],
   props: [
@@ -146,14 +142,7 @@ export default {
   ],
   data () {
     return {
-      range: {
-        start: new Date(),
-        end: new Date(),
-      },
-      masks: {
-        input: 'DD/MM/YYYY',
-      },
-      inputValue: '',
+
       showTaskForm: false,
       columns: [
         'name',
@@ -169,21 +158,23 @@ export default {
         'amountPerHours',
         'percentageOfProject',
         'actions'],
-      filters: new this.$form({ name: '', customer: '', project: ''}),
-      addRoute: null,
-      options: {
+      filters: new this.$form({
+        name: 'שם',
+        customer: { name: 'לקוח' },
+        project: 'פרוייקט',
+        category: 'קטגוריה',
+        date_to_complete: 'תאריך לביצוע',
+        range: {
+            startDate: '',
+            endDate: ''
+          },
+        date_range: ''}),
+        addRoute: null,
+        options: {
         filterByColumn:true,
-        multiSorting: {
-          name: [
-            {
-              column: 'date_to_complete',
-              matchDir: true
-            }
-          ]
-        },
         dateColumns: ['date_to_complete'],
         datepickerOptions: {
-          opens: 'left'
+          opens: 'right'
         },
         listColumns: ['customer','name', 'date_to_complete'],
         orderBy: { ascending: false, column: 'date_to_complete' },
@@ -194,9 +185,10 @@ export default {
           id: 'w50 has-text-centered',
           receivable: 'w125 has-text-right',
           actions: 'w175 has-text-centered p-x-none',
-          details: 'details-td'
+          details: 'details-td',
+          date_to_complete: 'w50 has-text-centered'
         },
-        filterable: ['name', 'start_date', 'end_date', 'details','customer', 'project', 'status', 'priority', 'category','date_to_complete'],
+        filterable: ['name','details','customer', 'project', 'status', 'priority', 'category', 'date_to_complete'],
         headings: {
           name: 'נושא',
           customer: 'לקוח',
@@ -215,12 +207,9 @@ export default {
       },
     }
   },
-  watch: {
-    'inputValue' : () =>{
-      alert(5)
-    }
-  },
+
   methods: {
+
     editDetails (val) {
       let id = val.target.id.replace(/[^\d.]/g, '')
       this.$http(`app/tasks/details/${val.target.value}/${id}`).then()
@@ -249,89 +238,27 @@ export default {
           return ' % ' + totalTimeAsAmount.toFixed(2) ;
         }
       }
-    }
+    },
+    setTextFilter(){
+      // this is here because the clear button is not changing the filter text from the previous date selected
+      // to the filter title
+      let em = this;
+      setTimeout(()=>{
+        let element = em.$el.querySelector('.VueTables__filter-placeholder');
+        element.addEventListener('click', function(event) {
+          let btn = document.querySelector('.cancelBtn');
 
+          btn.addEventListener('click', function(event) {
+            let dateFilter = document.querySelector('#VueTables__date_to_complete-filter')
+            dateFilter.innerHTML = "סינון תאריך לביצוע\n"
+          });
+        });
+      },200)
+    }
   },
+
   created () {
-    // setTimeout(()=>{
-    //
-    //   const dateRangeTemplate = {
-    //     props: [''],
-    //     template:
-    //         '  <form style="display: inline" class="bg-white shadow-md rounded px-8 pt-6 pb-8 dates-range" @submit.prevent>\n' +
-    //         '    <div>\n' +
-    //         '      <v-date-picker' +
-    //         '        title-position="right" \n' +
-    //         '        popover.positionFixed ="true"'+
-    //         '        style="direction: ltr;display: block"'+
-    //         '        color= "red"'+
-    //         '        v-model="this.range"\n' +
-    //         '        mode="date"\n' +
-    //         '        :masks="this.masks"\n' +
-    //         '        is-range\n' +
-    //         '      >\n' +
-    //         '        <template v-slot="{ inputValue, inputEvents, isDragging }">\n' +
-    //         '          <div style="display: block" class="sm:flex-row justify-start items-center date-range-position">\n' +
-    //         '            <div class="relative flex-grow">\n' +
-    //         '              <svg\n' +
-    //         '                style="height: 20px; width: 20px;position: absolute; margin-top: 4px; margin-left: 78px !important;"'+
-    //         '                class="text-gray-600 w-4 h-full mx-2 absolute pointer-events-none"\n' +
-    //         '                fill="none"\n' +
-    //         '                stroke-linecap="round"\n' +
-    //         '                stroke-linejoin="round"\n' +
-    //         '                stroke-width="2"\n' +
-    //         '                viewBox="0 0 24 24"\n' +
-    //         '                stroke="currentColor"\n' +
-    //         '              >\n' +
-    //         '                <path\n' +
-    //         '                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"\n' +
-    //         '                ></path>\n' +
-    //         '              </svg>\n' +
-    //         '              <input\n' +
-    //         '                style="width: 100px; padding-right: 22px !important;"'+
-    //         '                class="flex-grow pl-8 pr-2 py-1 bg-gray-100 border rounded w-full"\n' +
-    //         '                v-model="inputValue.start"\n' +
-    //         '                v-on="inputEvents.start"\n' +
-    //         '              />\n' +
-    //         '            </div>\n' +
-    //         '            <span>'+
-    //         '            </span>\n' +
-    //         '            <div class="relative flex-grow">\n' +
-    //         '              <svg\n' +
-    //         '                style="height: 20px; width: 20px;position: absolute; margin-top: 4px; margin-left: 78px !important;"'+
-    //         '                class="text-gray-600 w-4 h-full mx-2 absolute pointer-events-none"\n' +
-    //         '                fill="none"\n' +
-    //         '                stroke-linecap="round"\n' +
-    //         '                stroke-linejoin="round"\n' +
-    //         '                stroke-width="2"\n' +
-    //         '                viewBox="0 0 24 24"\n' +
-    //         '                stroke="currentColor"\n' +
-    //         '              >\n' +
-    //         '                <path\n' +
-    //         '                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"\n' +
-    //         '                ></path>\n' +
-    //         '              </svg>\n' +
-    //         '              <input\n' +
-    //         '                style="width: 100px; padding-right: 22px !important;"'+
-    //         '                class="flex-grow pl-8 pr-2 py-1 bg-gray-100 border rounded w-full"\n' +
-    //         '                :value="inputValue.end"\n' +
-    //         '                v-on="inputEvents.end"\n' +
-    //         '              />\n' +
-    //         '            </div>\n' +
-    //         '          </div>\n' +
-    //         '        </template>\n' +
-    //         '      </v-date-picker>\n' +
-    //         '    </div>\n' +
-    //         '  </form>'
-    //
-    //
-    //   };
-    //   const dateRange = Vue.extend(dateRangeTemplate);
-    //   const vm = new dateRange({
-    //
-    //   }).$mount('.VueTables__date_to_complete-filter-wrapper');
-    //
-    // },200)
+      this.setTextFilter()
     if(this.customerId != undefined)    {
 
        this.addRoute = `/tasks/add?customerId=${this.customerId}`;
@@ -362,7 +289,7 @@ export default {
     },
 
   },
-  components: { DateFormatComponent,VCalendar },
+  components: { DateFormatComponent},
 
 }
 </script>
@@ -397,4 +324,8 @@ table td .details-textarea {
 .vc-popover-content-wrapper{
   direction: ltr;
 }
+.flatpickr-input{
+  font-size: 12px !important;
+}
+
 </style>
