@@ -906,7 +906,9 @@ a.navbar-item.is-white.is-active {
 .button.is-small {
   padding: 0.5rem;
 }
-
+.monthselect{
+  direction: rtl;
+}
 .pointer {
   cursor: pointer;
 }
@@ -930,4 +932,12 @@ a.navbar-item.is-white.is-active {
 }
 .right-title{
   text-align: right;
+}
+.applyBtn{
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+select[name="limit"] option:first-child {
+  display: none;
 }
