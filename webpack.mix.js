@@ -8,6 +8,11 @@ let ImageminPlugin = require('imagemin-webpack-plugin').default;
 let SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 
 // mix.setPublicPath("public");
+mix.autoload({
+    'jquery': ['$', 'window.jQuery', 'jQuery'],
+    'vue': ['Vue','window.Vue'],
+    'moment': ['moment','window.moment'],
+})
 
 mix.extend('serviceWorker', webpackConfig => {
   webpackConfig.plugins.push(

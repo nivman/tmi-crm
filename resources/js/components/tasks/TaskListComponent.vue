@@ -62,6 +62,7 @@
             {{ props.row.actual_time ?  parseFloat(props.row.actual_time / 60 * 150).toFixed(2) : '' }}
           </template>
           <template slot="date_to_complete" slot-scope="props">
+
             <date-format-component :date="props.row.date_to_complete"></date-format-component>
           </template>
           <template slot="priority" slot-scope="props">
@@ -118,12 +119,7 @@
         </v-server-table>
       </div>
     </div>
-    <panel-filters-component
-        v-if="filtering"
-        :filters="filters"
-        :class="{ loaded: filtering }"
-        @hide-panel-filters="filtering = false"
-    ></panel-filters-component>
+
     <router-view></router-view>
 
   </div>
@@ -133,6 +129,8 @@
 import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import DateFormatComponent from '../helpers/DateFormatComponent'
+import 'daterangepicker/daterangepicker.css'
+import 'daterangepicker/daterangepicker.js'
 
 export default {
   mixins: [mId, tBus('app/tasks')],
@@ -145,6 +143,7 @@ export default {
   ],
   data () {
     return {
+
       showTaskForm: false,
       columns: [
         'name',
@@ -160,12 +159,25 @@ export default {
         'amountPerHours',
         'percentageOfProject',
         'actions'],
-      filters: new this.$form({ name: '', customer: '', project: ''}),
-      addRoute: null,
-      options: {
+      filters: new this.$form({
+        name: 'שם',
+        customer: { name: 'לקוח' },
+        project: 'פרוייקט',
+        category: 'קטגוריה',
+        date_to_complete: 'תאריך לביצוע',
+        range: {
+            startDate: '',
+            endDate: ''
+          },
+        date_range: ''}),
+        addRoute: null,
+        options: {
         filterByColumn:true,
-        dateColumns:['date_to_complete'],
-        listColumns: ['customer','name'],
+        dateColumns: ['date_to_complete'],
+        datepickerOptions: {
+          opens: 'right'
+        },
+        listColumns: ['customer','name', 'date_to_complete'],
         orderBy: { ascending: false, column: 'date_to_complete' },
         sortable: ['name','priority','customer','date_to_complete', 'project', 'status', 'category'],
         editableColumns: ['details'],
@@ -174,9 +186,10 @@ export default {
           id: 'w50 has-text-centered',
           receivable: 'w125 has-text-right',
           actions: 'w175 has-text-centered p-x-none',
-          details: 'details-td'
+          details: 'details-td',
+          date_to_complete: 'w50 has-text-centered'
         },
-        filterable: ['name', 'start_date', 'end_date', 'details','customer', 'project', 'status', 'priority', 'category'],
+        filterable: ['name','details','customer', 'project', 'status', 'priority', 'category', 'date_to_complete'],
         headings: {
           name: 'נושא',
           customer: 'לקוח',
@@ -197,6 +210,7 @@ export default {
   },
 
   methods: {
+
     editDetails (val) {
       let id = val.target.id.replace(/[^\d.]/g, '')
       this.$http(`app/tasks/details/${val.target.value}/${id}`).then()
@@ -225,12 +239,28 @@ export default {
           return ' % ' + totalTimeAsAmount.toFixed(2) ;
         }
       }
+    },
+    setTextFilter(){
+      // this is here because the clear button is not changing the filter text from the previous date selected
+      // to the filter title
+      let em = this;
+      setTimeout(()=>{
+        let element = em.$el.querySelector('.VueTables__filter-placeholder');
+        element.addEventListener('click', function(event) {
+          let btn = document.querySelector('.cancelBtn');
+
+          btn.addEventListener('click', function(event) {
+            let dateFilter = document.querySelector('#VueTables__date_to_complete-filter')
+            dateFilter.innerHTML = "סינון תאריך לביצוע\n"
+          });
+        });
+      },200)
     }
-
   },
-  created () {
 
-     if(this.customerId != undefined)    {
+  created () {
+      this.setTextFilter()
+    if(this.customerId != undefined)    {
 
        this.addRoute = `/tasks/add?customerId=${this.customerId}`;
      }
@@ -260,7 +290,7 @@ export default {
     },
 
   },
-  components: { DateFormatComponent },
+  components: { DateFormatComponent},
 
 }
 </script>
@@ -283,4 +313,20 @@ table td .details-textarea {
 .back-title{
   padding: 5px;
 }
+.svg-display{
+  height: 30px !important;
+}
+.dates-range{
+  display: inline;
+}
+.date-range-position{
+  display: block !important;
+}
+.vc-popover-content-wrapper{
+  direction: ltr;
+}
+.flatpickr-input{
+  font-size: 12px !important;
+}
+
 </style>

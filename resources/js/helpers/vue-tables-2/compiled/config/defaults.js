@@ -6,13 +6,20 @@ module.exports = function () {
     listColumns: {},
     datepickerOptions: {
       locale: {
-        cancelLabel: 'ניקוי'
-      }
+        cancelLabel: 'ניקוי',
+        applyLabel: 'חיפוש',
+        fromLabel: 'From',
+        toLabel: 'To',
+        customRangeLabel: 'Custom',
+      },
+      showDropdowns: true,
+      autoUpdateInput: false,
+
     },
     datepickerPerColumnOptions: {},
     initialPage: 1,
     perPage: 10,
-    perPageValues: [10, 25, 50, 100],
+    perPageValues: [-1,10, 25, 50, 100],
     groupBy: false,
     params: {},
     sortable: true,
@@ -68,7 +75,7 @@ module.exports = function () {
       nav: 'fixed'
     },
     childRow: false,
-    childRowTogglerFirst: true,
+    childRowToggleFirst: true,
     uniqueKey: 'id',
     requestFunction: false,
     requestAdapter: function requestAdapter(data) {
@@ -83,6 +90,7 @@ module.exports = function () {
         count: data.count
       };
     },
+
     requestKeys: {
       query: 'query',
       limit: 'limit',

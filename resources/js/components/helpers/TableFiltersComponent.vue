@@ -127,10 +127,12 @@
         <tr class="is-active is-hidden-touch" v-if="filters.range">
             <td class="filter" colspan="100%">
                 <flat-pickr
-                    placeholder="Date range"
-                    class="input input-filter"
+                    type="date"
+                    placeholder="טווח תאריכים"
+                    class="date-range-input"
                     v-model="filters.date_range"
-                    :config="{ mode: 'range', dateFormat: 'Y-m-d' }"
+                    :config="{ mode: 'range', dateFormat: 'd/m/y' }"
+
                 ></flat-pickr>
             </td>
         </tr>
@@ -160,3 +162,20 @@ export default {
     },
 };
 </script>
+<style>
+.date-range-input {
+  height: 38px;
+  text-align: right;
+  background-color: white;
+  border-color: #dbdbdb;
+  border-radius: 4px;
+  color: #363636;
+  box-shadow: none;
+  max-width: 100%;
+  width: 138px;
+  font-size: 12px;
+}
+.date-range-input::placeholder {
+  font-size: 16px;
+}
+</style>

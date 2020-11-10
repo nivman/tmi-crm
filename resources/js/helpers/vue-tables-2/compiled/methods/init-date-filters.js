@@ -75,7 +75,7 @@ module.exports = function () {
 
       that.updateState('query', query);
 
-      $(this).html("<span class='VueTables__filter-placeholder'>" + that.display('filterBy', { column: that.getHeading(column) }) + "</span>");
+
 
       search(query, { target: { name: 'vf__' + column, value: query[column] } });
     });
