@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contact;
 use App\Customer;
 use App\Status;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use App\Http\Requests\CustomerRequest;
 
@@ -27,6 +28,12 @@ class CustomersController extends Controller
         } elseif ($customer->users()->exists()) {
             return response(['message' => 'Customer has been attached to some users and can not be deleted.'], 422);
         }
+
+        $contacts = (new Contact)->getContactByCustomerId($customer->getQueueableId());
+          foreach ($contacts->getIterator() as $contact){
+              $contact->delete();
+          }
+
         $customer->delete();
         return response(['success' => true], 204);
     }

@@ -61,4 +61,15 @@ class Contact extends Model
             ->where('id',$id)
             ->get()->toArray()[0]->customer_id;
     }
+
+    public function getContactByCustomerId($id)
+    {
+
+        $contacts =  DB::table('contacts')->select('*')
+            ->where('customer_id', $id)
+            ->get()->toArray();
+
+        return Contact::hydrate($contacts);
+
+    }
 }
