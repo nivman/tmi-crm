@@ -33,16 +33,18 @@ class Project extends ModelForm
 
     public function getType($typeId)
     {
-
         return (new ProjectTypes())->getPriorityById($typeId);
     }
 
     public function getCustomer($customerId)
     {
-
         return (new Customer())->getCustomerById($customerId);
     }
 
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
 
     public function scopeSearch($query, $search)
     {
