@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\SourcesOfArrival;
+use App\ArrivalSources;
 use Illuminate\Http\Request;
 
 class SourcesOfArrivalController extends Controller
@@ -15,7 +15,7 @@ class SourcesOfArrivalController extends Controller
     public function index(Request $request)
     {
 
-      return response()->json(SourcesOfArrival::vueTable(SourcesOfArrival::$columns));
+      return response()->json(ArrivalSources::vueTable(ArrivalSources::$columns));
 
     }
 
@@ -27,7 +27,7 @@ class SourcesOfArrivalController extends Controller
     public function create(Request $request)
     {
 
-        return SourcesOfArrival::create($request->request->all());
+        return ArrivalSources::create($request->request->all());
     }
 
     /**
@@ -44,10 +44,10 @@ class SourcesOfArrivalController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\SourcesOfArrival  $sourcesOfArrival
+     * @param  \App\ArrivalSources  $sourcesOfArrival
      * @return \Illuminate\Http\Response
      */
-    public function show(SourcesOfArrival $sourcesOfArrival)
+    public function show(ArrivalSources $sourcesOfArrival)
     {
         //
     }
@@ -55,10 +55,10 @@ class SourcesOfArrivalController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\SourcesOfArrival  $sourcesOfArrival
+     * @param  \App\ArrivalSources  $sourcesOfArrival
      * @return \Illuminate\Http\Response
      */
-    public function edit(SourcesOfArrival $sourcesOfArrival)
+    public function edit(ArrivalSources $sourcesOfArrival)
     {
         //
     }
@@ -67,10 +67,10 @@ class SourcesOfArrivalController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\SourcesOfArrival  $sourcesOfArrival
+     * @param  \App\ArrivalSources  $sourcesOfArrival
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SourcesOfArrival $sourcesOfArrival)
+    public function update(Request $request, ArrivalSources $sourcesOfArrival)
     {
         //
     }

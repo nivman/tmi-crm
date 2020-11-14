@@ -1003,7 +1003,7 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'App\\RecurringItem' => __DIR__ . '/../..' . '/app/RecurringItem.php',
         'App\\Role' => __DIR__ . '/../..' . '/app/Role.php',
         'App\\Scopes\\CreatedByScope' => __DIR__ . '/../..' . '/app/Scopes/CreatedByScope.php',
-        'App\\SourcesOfArrival' => __DIR__ . '/../..' . '/app/SourcesOfArrival.php',
+        'App\\ArrivalSources' => __DIR__ . '/../..' . '/app/ArrivalSources.php',
         'App\\Status' => __DIR__ . '/../..' . '/app/Status.php',
         'App\\StatusHistory' => __DIR__ . '/../..' . '/app/StatusHistory.php',
         'App\\Stock' => __DIR__ . '/../..' . '/app/Stock.php',

@@ -220,7 +220,7 @@ return array(
     'App\\RecurringItem' => $baseDir . '/app/RecurringItem.php',
     'App\\Role' => $baseDir . '/app/Role.php',
     'App\\Scopes\\CreatedByScope' => $baseDir . '/app/Scopes/CreatedByScope.php',
-    'App\\SourcesOfArrival' => $baseDir . '/app/SourcesOfArrival.php',
+    'App\\ArrivalSources' => $baseDir . '/app/ArrivalSources.php',
     'App\\Status' => $baseDir . '/app/Status.php',
     'App\\StatusHistory' => $baseDir . '/app/StatusHistory.php',
     'App\\Stock' => $baseDir . '/app/Stock.php',
