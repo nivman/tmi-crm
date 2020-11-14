@@ -45,7 +45,7 @@ class EventsController extends Controller
 
     public function index(Request $request)
     {
-        $date = $request->date == null ? '2020-10' : $request->date;
+        $date = $request->date == null ? '' : $request->date;
 
         list($year, $month) = explode('-', $date);
 

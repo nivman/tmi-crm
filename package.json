@@ -19,7 +19,7 @@
 		"@fortawesome/fontawesome-free": "^5.13.1",
 		"@vue/babel-plugin-transform-vue-jsx": "^1.1.2",
 		"accounting": "^0.4.1",
-		"animate.css": "^4.1.0",
+		"animate.css": "^4.1.1",
 		"archiver": "^4.0.1",
 		"array-intersection": "^0.1.2",
 		"axios": "^0.19",
@@ -66,6 +66,9 @@
 		"jquery": "^3.5.1",
 		"moment-timezone": "^0.5.31",
 		"v-calendar": "^2.0.2",
-		"vue-color": "^2.7.1"
+		"velocity-animate": "^2.0.6",
+		"vue-color": "^2.7.1",
+		"vue-rocker-switch": "^1.2.4",
+		"vue-toggles": "^1.1.0"
 	}
 }

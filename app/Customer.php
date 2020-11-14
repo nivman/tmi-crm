@@ -17,7 +17,7 @@ class Customer extends ModelForm
 
     public static $columns = ['id', 'name', 'company', 'email', 'phone', 'address', 'state', 'country'];
 
-    protected $fillable = ['name', 'company', 'email', 'phone', 'user_id', 'opening_balance', 'address', 'state', 'country', 'state_name', 'country_name','status_id'];
+    protected $fillable = ['name', 'company', 'email', 'phone', 'user_id', 'opening_balance', 'address', 'state', 'country', 'state_name', 'country_name','status_id','is_lead' ,'arrival_source_id'];
     protected $hidden   = ['created_at', 'updated_at'];
 
     protected static function boot()

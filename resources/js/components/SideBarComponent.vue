@@ -83,6 +83,20 @@
                     </li>
                 </template>
             </side-bar-menu-component>
+          <side-bar-menu-component :expand="subIsActive(['/leads'])">
+                <span class="icon is-small m-l-sm">
+                    <i class="fas fa-person-booth"></i>
+                </span>
+            לידים
+            <template slot="submenu">
+              <li>
+                <router-link to="/leads" exact @click.native="hideMenu">רשימת לידים</router-link>
+              </li>
+              <li>
+                <router-link to="/leads/add" @click.native="hideMenu">הוספת ליד חדש</router-link>
+              </li>
+            </template>
+          </side-bar-menu-component>
           <side-bar-menu-component :expand="subIsActive(['/events'])">
                 <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-handshake"></i>
@@ -275,8 +289,11 @@
                         <li>
                             <router-link to="/settings/fields" @click.native="hideMenu">רשימת שדות דינמיים</router-link>
                         </li>
-                      <li>
+                        <li>
                             <router-link to="/settings/statuses" @click.native="hideMenu">רשימת סטטוסים</router-link>
+                        </li>
+                       <li>
+                            <router-link to="/settings/arrival-source" @click.native="hideMenu">רשימת מקורות הגעה</router-link>
                         </li>
                        <li>
                             <router-link to="/settings/fields" @click.native="hideMenu"></router-link>

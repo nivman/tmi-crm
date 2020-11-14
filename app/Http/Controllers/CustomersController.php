@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\ArrivalSources;
 use App\Contact;
 use App\Customer;
+use App\Events\StatusChange;
+use App\Events\StatusChangeEvent;
+use App\SourcesOfArrival;
 use App\Status;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -14,9 +18,10 @@ class CustomersController extends Controller
     public function create()
     {
         $customerStatuses = (new Status)->getAllEntityStatus('App\Customer');
+        $arrivalSources = ArrivalSources::all();
 
         $customer = new Customer;
-        return ['attributes' => $customer->attributes(), 'statuses' => $customerStatuses];
+        return ['attributes' => $customer->attributes(), 'statuses' => $customerStatuses, 'arrivalSources' =>$arrivalSources];
     }
 
     public function destroy(Customer $customer)
@@ -38,10 +43,12 @@ class CustomersController extends Controller
         return response(['success' => true], 204);
     }
 
-    public function index()
+    public function index(Request $request)
     {
 
-        $customers = Customer::with(['journal', 'status'])->mine()->vueTable(Customer::$columns);
+        $leadRequest = strpos($request->getPathInfo(), 'lead') ? 1 : 0;
+
+        $customers = Customer::with(['journal', 'status'])->where('is_lead','=',$leadRequest)->vueTable(Customer::$columns);
         $attributes = (new Customer)->getCustomFields($customers);
 
         foreach ($customers['data'] as $key => $customer) {
@@ -82,10 +89,12 @@ class CustomersController extends Controller
         $customer->attributes = $customer->attributes();
 
         $customer->status = $customer->getStatus($customer->getAttribute('status_id'));
-        $customerStatuses = (new Status)->getAllEntityStatus('App\Customer');
+        $customer->arrivalSources = ArrivalSources::select('id','name','color')->find($customer->getAttribute('arrival_source_id'));
 
+        $customerStatuses = (new Status)->getAllEntityStatus('App\Customer');
+        $arrivalSources = ArrivalSources::all();
         $customer->load($customer->attributes->pluck('slug')->toArray());
-        return ['customer' => $customer, 'statuses' => $customerStatuses];
+        return ['customer' => $customer, 'statuses' => $customerStatuses, 'arrivalSources' => $arrivalSources];
 
     }
 
@@ -105,32 +114,49 @@ class CustomersController extends Controller
 
     public function store(CustomerRequest $request)
     {
-
         $v = $request->validated();
+
         $v['user_id'] = auth()->id();
         $v['status_id'] = $request->request->get('status');
+        $v['arrival_source_id'] = $request->request->get('arrivalSource');
+        $v['is_lead'] = $request->request->get('is_lead');
         $contact = new Contact();
         $customer = Customer::create($v);
+        $this->setStatusHistory($v['status_id'], $customer->id);
         $contact->createNewContact($v, $customer->id);
         return $customer;
     }
 
-    public function update(CustomerRequest $request, Customer $customer)
+    public function update (CustomerRequest $request, Customer $customer)
     {
-        $user = auth()->user();
-        if ($user->hasRole(['staff', 'customer', 'vendor']) && $user->customer_id != $customer->id) {
-            abort(403);
-        }
         $v = $request->validated();
+
         $v['status_id'] = $request->request->get('status');
+        $v['arrival_source_id'] = $request->request->get('arrivalSource');
+        $v['is_lead'] = $request->request->get('is_lead');
         $customer->update($v);
+
+        $this->setStatusHistory($v['status_id'], $customer->id);
         return $customer;
     }
 
     public function getCustomersByIds($ids)
     {
-
         return (new Customer)->getCustomersByIds($ids);
-
     }
+
+    /**
+     * @param $status_id
+     * @param $customer_id
+     */
+    public function setStatusHistory($status_id, $customer_id): void
+    {
+        $status = (new Status)->getStatus($status_id);
+        if ($status) {
+            $status = $status->first();
+            $status->setAttribute('entity_id', $customer_id);
+            event(new StatusChangeEvent($status));
+        }
+    }
+
 }

@@ -250,11 +250,13 @@ const router = new VueRouter({
             children: [
                 {
                     path: "add",
+                    name: 'customer',
                     component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerFormComponent.vue"),
                     meta: { title: "Add Customer", admin: false, modal: true }
                 },
                 {
                     path: "edit/:id",
+                    name: 'customer',
                     component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerFormComponent.vue"),
                     meta: { title: "Edit Customer", admin: true, modal: true }
                 },
@@ -262,6 +264,30 @@ const router = new VueRouter({
                     path: ":id",
                     component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerViewComponent.vue"),
                     meta: { title: "View Customer", admin: false, modal: true }
+                }
+            ]
+        },
+        {
+            path: "/leads",
+            component: () => import(/* webpackChunkName: "components" */ "./components/leads/LeadListComponent.vue"),
+            meta: { title: "Leads", admin: false },
+            children: [
+                {
+                    path: "add",
+                    name: 'lead',
+                    component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerFormComponent.vue"),
+                    meta: { title: "Add Lead", admin: false, modal: true,  lead: true}
+                },
+                {
+                    path: "edit/:id",
+                    name: 'lead',
+                    component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerFormComponent.vue"),
+                    meta: { title: "Edit Lead", admin: true, modal: true }
+                },
+                {
+                    path: ":id",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerViewComponent.vue"),
+                    meta: { title: "View Lead", admin: false, modal: true }
                 }
             ]
         },
@@ -480,6 +506,38 @@ const router = new VueRouter({
                                 import(/* webpackChunkName: "components" */ "./components/settings/StatusFormComponent.vue"),
                             meta: {
                                 title: "עריכת סטטוס",
+                                admin: true,
+                                modal: true
+                            }
+                        }
+                    ]
+                },
+                {
+                    path: "arrival-source",
+                    component: () => import("./components/settings/SourcesOfArrivalListComponent.vue"),
+                    meta: { title: "arrivalSource", admin: false, super: true }
+                },
+                {
+                    path: "arrival-source",
+                    component: () => import("./components/settings/SourcesOfArrivalFormComponent.vue"),
+                    meta: { title: "arrivalSource", admin: true },
+                    children: [
+                        {
+                            path: "add",
+                            component: () =>
+                                import(/* webpackChunkName: "components" */ "./components/settings/SourcesOfArrivalFormComponent.vue"),
+                            meta: {
+                                title: "הוספת מקור הגעה",
+                                admin: true,
+                                modal: true
+                            }
+                        },
+                        {
+                            path: "edit/:id",
+                            component: () =>
+                                import(/* webpackChunkName: "components" */ "./components/settings/SourcesOfArrivalFormComponent.vue"),
+                            meta: {
+                                title: "עריכת מקור הגעה",
                                 admin: true,
                                 modal: true
                             }

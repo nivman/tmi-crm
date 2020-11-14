@@ -17,6 +17,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\PurchaseEvent' => [
             'App\Listeners\CheckPaymentsForPurchase',
         ],
+        'App\Events\StatusChangeEvent' => [
+            'App\Listeners\StatusChangeListener',
+        ],
         // 'App\Events\InvoiceCreated' => [
         //     'App\Listeners\InvoiceCreated',
         // ],

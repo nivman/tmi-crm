@@ -7,11 +7,10 @@
                   @click="filtering = !filtering">
             <i class="fas fa-cog"/>
           </button>
-          <router-link to="/customers/add" class="button is-link is-small is-pulled-right">
-            <i class="fas fa-plus m-l-sm"/> הוספת לקוח
+          <router-link to="/leads/add" class="button is-link is-small is-pulled-right">
+            <i class="fas fa-plus m-l-sm"/> הוספת ליד
           </router-link>
-          לקוחות
-          <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
+          לידים
         </div>
         <div class="panel-block table-body-br">
           <v-server-table
@@ -19,10 +18,9 @@
               :columns="columns"
               :options="options"
               @loaded="onLoaded"
-              ref="customersTable"
-              name="customersTable"
-              :slots="slots"
-          >
+              ref="leadsTable"
+              name="leadsTable"
+              :slots="slots">
             <template slot="status" slot-scope="props">
               <div class="has-text-centered" :style="{background: props.row.status ? props.row.status.color : ''} ">
                 {{ props.row.status ? props.row.status.name : '' }}
@@ -51,18 +49,6 @@
             <template slot="actions" slot-scope="props">
               <div class="buttons has-addons is-centered">
                 <p class="control tooltip">
-                  <router-link :to="'/customers/' + props.row.id" class="button is-primary is-small">
-                    <i class="fas fa-file-alt"/>
-                    <span class="tooltip-text">View</span>
-                  </router-link>
-                </p>
-                <!--                          <p class="control tooltip" v-if="$store.getters.admin">-->
-                <!--                            <router-link :to="'/customers/tasks/' + props.row.id" class="button is-info is-small">-->
-                <!--                              <i class="fas fa-list"></i>-->
-                <!--                              <span class="tooltip-text">רשימת משימות</span>-->
-                <!--                            </router-link>-->
-                <!--                          </p>-->
-                <p class="control tooltip">
                   <a
                       @click="showTasks(props.row.id, props.row.name)"
                       class="fas fa-list button is-info is-small">
@@ -70,22 +56,8 @@
 
                   </a>
                 </p>
-                <!--                            <p class="control tooltip" v-if="$store.getters.admin">-->
-                <!--                                <router-link :to="'/customers/transactions/' + props.row.id" class="button is-info is-small">-->
-                <!--                                    <i class="fas fa-list"></i>-->
-                <!--                                    <span class="tooltip-text">List Transactions</span>-->
-                <!--                                </router-link>-->
-                <!--                            </p>-->
                 <p class="control tooltip" v-if="$store.getters.admin">
-                  <router-link :to="'/payments/add?payer=customer&payer_id=' +
-                           props.row.id + '&amount=' +  parseFloat(props.row.journal.balance.amount / 100)"
-                      class="button is-success is-small">
-                    <i class="fas fa-money-bill-alt"></i>
-                    <span class="tooltip-text">הוספת תשלום</span>
-                  </router-link>
-                </p>
-                <p class="control tooltip" v-if="$store.getters.admin">
-                  <router-link :to="'/customers/edit/' + props.row.id" class="button is-warning is-small">
+                  <router-link :to="'/leads/edit/' + props.row.id" class="button is-warning is-small">
                     <i class="fas fa-edit"></i>
                     <span class="tooltip-text">עריכה</span>
                   </router-link>
@@ -98,10 +70,6 @@
                 </p>
               </div>
             </template>
-            <template slot="afterBody">
-              <table-filters-component :filters="filters" :amount="totalAmount"></table-filters-component>
-            </template>
-
           </v-server-table>
         </div>
       </div>
@@ -132,7 +100,7 @@ import TaskListComponent from '../tasks/TaskListComponent'
 
 
 export default {
-  mixins: [mId, tBus('app/customers')],
+  mixins: [mId, tBus('app/customers/leads')],
   data () {
     return {
       loaded: false,
@@ -141,7 +109,7 @@ export default {
       customerName: null,
       showTaskList: false,
       customColumn: [],
-      totalAmount: 0,
+
       columns: ['name', 'company', 'email', 'phone', 'status', 'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       options: {
@@ -185,11 +153,6 @@ export default {
       let attributesNames = data.data.attributesNames
       attributesNames = Object.keys(attributesNames).map((k) => attributesNames[k])
       this.slots = attributesNames
-
-      let totalAmount = Object.keys(table).reduce(function (sum, key) {
-        return sum + parseFloat(table[key].journal.balance.amount)
-      }, 0)
-      this.totalAmount = parseFloat(totalAmount / 100)
 
       let em = this
       this.customColumn = attributesNames

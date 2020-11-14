@@ -60,6 +60,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('tasks/customers/{id}', 'TasksController@getCustomer');
     Route::get('tasks/projects/{id}', 'TasksController@getProject');
     Route::get('customers/tasks/{id}', 'TasksController@getCustomerTasks');
+    Route::get('customers/leads', 'CustomersController@index');
     Route::post('tasks/add', 'TasksController@store');
     Route::resource('tasks', 'TasksController');
 
@@ -128,6 +129,8 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::resource('settings', 'SettingsController')->only(['index', 'store']);
         Route::resource('custom_fields', 'CustomFieldsController')->only(['destroy']);
         Route::resource('statuses', 'StatusController')->only(['index']);
+        Route::post('arrival-source/create', 'SourcesOfArrivalController@create');
+        Route::resource('arrival-source', 'SourcesOfArrivalController');
         Route::post('statuses/create', 'StatusController@store');
         Route::post('statuses/edit/{status}', 'StatusController@update');
         Route::delete('statuses/delete/{status}', 'StatusController@destroy');
@@ -138,6 +141,10 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::get('statuses/{status}', 'StatusController@edit');
         Route::get('templates/{template?}', 'EmailTemplateController@show');
         Route::put('templates/{template?}', 'EmailTemplateController@update');
+
+        Route::resource('history', 'StatusHistoryController');
+        Route::get('history/status/{entity_type}/{entity_id}', 'StatusHistoryController@get');
+
     });
 
     Route::get('token', 'AjaxController@token');

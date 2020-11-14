@@ -27,4 +27,12 @@ class Status extends ModelForm
             ->where('id', $id)
             ->get();
     }
+
+    public function getStatus($id) {
+        $status = DB::table('statuses')->select('*')
+            ->where('id', $id)
+            ->get()->toArray();
+
+        return Status::hydrate($status);
+    }
 }

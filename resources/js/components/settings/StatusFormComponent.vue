@@ -66,9 +66,8 @@
                         <button
                             type="submit"
                             class="button is-link is-fullwidth"
-                            :disabled="errors.any()"
-                        >
-                            Submit
+                            :disabled="errors.any()">
+                            אישור
                         </button>
                     </div>
                 </section>
@@ -102,11 +101,6 @@ export default {
             return this.form.id && this.form.id !== "";
         }
     },
-    created() {
-        if (this.$route.params.id) {
-            this.fetchExpense(this.$route.params.id);
-        }
-    },
     methods: {
        updateValue(value) {
          this.form.color =value.hex8;
@@ -120,7 +114,7 @@ export default {
                         this.$event.fire("refreshStatuesTable");
                         this.notify(
                             "success",
-                            "Custom field has been successfully updated."
+                            "סטטוס עודכן"
                         );
                         this.$router.push("/settings/statuses");
                     })
@@ -134,26 +128,13 @@ export default {
                     this.$event.fire("refreshStatuesTable");
                     this.notify(
                         "success",
-                        "Product has been successfully added."
+                        "סטטוס נוסף "
                     );
                     this.$router.push("/settings/statuses");
                   })
                   .catch(err => this.$event.fire("appError", err.response))
                   .finally(() => (this.isSaving = false));
             }
-        },
-        fetchExpense(id) {
-
-            this.$http
-                .get(`app/statuses/${id}`)
-                .then(res => {
-                    this.form = new this.$form(res.data);
-                    this.colors = res.data.color;
-
-                })
-                .catch(err => {
-                    this.$event.fire("appError", err.response);
-                });
         },
         validateForm() {
             this.$validator
@@ -165,11 +146,6 @@ export default {
                 })
                 .catch(err => this.$event.fire("appError", err));
         },
-        hasValue(v) {
-            return (
-                this.form.entities.filter(e => e.entity_type == v).length > 0
-            );
-        }
     },
   components: {
     'compact-picker': Compact,

@@ -5,23 +5,25 @@
             <header class="modal-card-head is-radius-top">
               <template v-if="customer">
                 <p class="modal-card-title">פרטי לקוח</p>
-                <button type="button" class="delete" @click="$router.go(-1)"></button>
-              <p class="control tooltip">
-                <a
-                    @click="addEvent"
-                    class="fas fa-comment-dots is-small button is-info">
-                  <span class="tooltip-text bottom"> התקשרות חדשה</span>
-
-                </a>
-              </p>
-                <p class="control tooltip">
-                  <a
-                      @click="addTask"
-                      class="fas fa-thumbtack is-small button is-primary">
-                    <span class="tooltip-text bottom"> משימה חדשה</span>
-
+                <span class="control tooltip">
+<!--               <a @click="statusHistory"  class="button is-success is-small">-->
+                  <!--                    <i class="fas fa-history"></i>-->
+                  <!--                    <span class="tooltip-text bottom">היסטוריית סטטוסים</span>-->
+                  <!--  </a>-->
+            </span>
+                <span class="control tooltip">
+                  <a @click="addEvent"  class="button is-info is-small">
+                    <i class="fas fa-comment-dots"></i>
+                    <span class="tooltip-text bottom"> התקשרות חדשה</span>
                   </a>
-                </p>
+            </span>
+                <span class="control tooltip">
+                  <a @click="addTask"  class="button is-success is-small">
+                    <i class="fas fa-thumbtack"></i>
+                    <span class="tooltip-text bottom">  משימה חדשה</span>
+                  </a>
+            </span>
+                <button type="button" class="delete" @click="$router.go(-1)"></button>
               </template>
             </header>
             <section class="modal-card-body is-radius-bottom">
@@ -31,23 +33,23 @@
                     <table class="table is-bordered is-rounded is-rounded-body is-striped is-narrow is-hoverable is-fullwidth m-b-none">
                         <tbody>
                             <tr>
-                                <td>Name</td>
+                                <td>שם</td>
                                 <td>{{ customer.name }}</td>
                             </tr>
                             <tr>
-                                <td>Company</td>
+                                <td>חברה</td>
                                 <td>{{ customer.company }}</td>
                             </tr>
                             <tr>
-                                <td>email</td>
+                                <td>אימייל</td>
                                 <td>{{ customer.email }}</td>
                             </tr>
                             <tr>
-                                <td>Phone</td>
+                                <td>טלפון</td>
                                 <td>{{ customer.phone }}</td>
                             </tr>
                             <tr>
-                                <td>Address</td>
+                                <td>כתובת</td>
                                 <td>{{ customer.address }}</td>
                             </tr>
                             <tr>
