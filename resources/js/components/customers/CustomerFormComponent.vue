@@ -176,6 +176,7 @@
                 v-text="errors.first('address')"
             ></div>
           </div>
+          <header class="modal-card-head modal-card-head-customer">
           <div>
             <VueToggles
                 style="direction: ltr; margin-left: 9px;"
@@ -192,24 +193,17 @@
                 checkedBg="#b4d455"
                 uncheckedBg="lightgrey"/>
           </div>
+          <h5 class="modal-card-title">שדות נוספים</h5>
+          </header>
           <transition
 
               v-on:before-enter="beforeEnter"
                        v-on:enter="enter"
                        v-on:leave="leave"
                        v-bind:css="false">
-          <div class="animated slowest zoomIn" style="overflow: hidden;height: max-content"  v-if="showExtraFields">
-            <header class="modal-card-head modal-card-head-customer">
+          <div class="animated zoomIn" style="overflow:auto; height: max-content "  v-show="showExtraFields">
 
-
-
-              <h5 class="modal-card-title">שדות נוספים</h5>
-            </header>
-
-              <section class="modal-card-body animated slowest zoomIn" >
-
-
-                  <div class="column">
+              <section class="modal-card-body  zoomIn" >
 
                     <div class="field">
                       <label class="label" for="arrivalSource">מקורות הגעה</label>
@@ -231,9 +225,7 @@
                         {{ errors.first("arrivalSources") }}
                       </div>
                     </div>
-                  </div>
                   <div v-if="attributes">
-
                     <div class="columns is-multiline">
                       <div
                           class="column is-half"
@@ -246,11 +238,8 @@
                       </div>
                     </div>
                   </div>
-
               </section>
-
           </div>
-
           </transition>
           <div class="columns">
             <div class="column">
@@ -350,7 +339,7 @@ export default {
 
     },
     enter: function (el, done) {
-      Velocity(el, { opacity: 1,width: 440 ,  height: 404}, { duration: "slow" })
+      Velocity(el, { opacity: 1,width: "auto" ,  height: 300}, { duration: "fast" })
 
 
     },
