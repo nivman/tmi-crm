@@ -152,7 +152,8 @@ class CustomersController extends Controller
     public function setStatusHistory($status_id, $customer_id): void
     {
         $status = (new Status)->getStatus($status_id);
-        if ($status) {
+
+        if ($status && count($status) > 0) {
             $status = $status->first();
             $status->setAttribute('entity_id', $customer_id);
             event(new StatusChangeEvent($status));
