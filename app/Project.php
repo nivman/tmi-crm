@@ -98,6 +98,10 @@ class Project extends ModelForm
         $convertToHours = (array_sum($collectTaskTime) / 60);
         $totalTimeAsAmount = $convertToHours *  $HourlyWage;
 
+        if (!$project->price) {
+
+            return '';
+        }
         $percentage = $totalTimeAsAmount / $project->price;
         return number_format((float)$percentage * 100, 2, '.', '');
 
