@@ -157,6 +157,11 @@ export default {
       })
     };
   },
+  watch: {
+    'form.customer': function () {
+      this.form.customer_id = this.form.customer.id
+    }
+  },
   created() {
     if (this.$route.params.id) {
       if(!this.fromContactList) {
