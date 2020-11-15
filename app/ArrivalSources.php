@@ -13,9 +13,4 @@ class ArrivalSources extends Model
     public static $columns = ['id', 'name'];
     protected $fillable = ['name',  'color'];
 
-
-    public function getArrivalSourcesById($id)
-    {
-        dd($id);
-    }
 }
