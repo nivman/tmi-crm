@@ -81,6 +81,9 @@
                     <li>
                         <router-link to="/customers/add" @click.native="hideMenu">הוספת לקוח חדש</router-link>
                     </li>
+                  <li>
+                  <router-link to="/contacts/add" @click.native="hideMenu">הוספת איש קשר חדש</router-link>
+                  </li>
                 </template>
             </side-bar-menu-component>
           <side-bar-menu-component :expand="subIsActive(['/leads'])">

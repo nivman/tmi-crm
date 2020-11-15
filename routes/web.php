@@ -35,15 +35,17 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::put('vendor/{vendor}', 'VendorsController@update');
     Route::get('customers/search', 'CustomersController@search');
     Route::post('customers-projects/{ids}', 'ProjectsController@getProjectsCustomersByIds');
+    Route::post('customers-contacts/{ids}', 'ContactsController@getContactsCustomerById');
     Route::put('customer/{customer}', 'CustomersController@update');
     Route::get('customer/contact/{customerId}', 'CustomersController@getCustomerByContactId');
     Route::get('contacts/search', 'ContactsController@search');
     Route::get('projects/search', 'ProjectsController@search');
     Route::post('project-customers/{ids}', 'CustomersController@getCustomersByIds');
-
+    Route::get('customer/{id}', 'CustomersController@getCustomerById');
     Route::get('contacts/{customerId}', 'ContactsController@getContactByCustomerId');
-
-
+    Route::get('contacts/details/{customerId}', 'ContactsController@getContactsDetailsByCustomerId');
+    Route::get('contact/{contact}', 'ContactsController@show');
+    Route::put('contacts/edit/{contact}', 'ContactsController@update');
     Route::resource('categories', 'CategoriesController')->only(['index', 'show']);
     Route::get('tasks/search', 'TasksController@search');
     Route::get('invoices/{invoice}/payments', 'InvoicesController@payments');
@@ -80,6 +82,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::resource('payments', 'PaymentsController')->except(['update', 'destroy']);
     Route::resource('purchases', 'PurchasesController')->except(['update', 'destroy']);
     Route::resource('customers', 'CustomersController')->except(['update', 'destroy']);
+    Route::resource('contacts', 'ContactsController')->except(['update', 'destroy']);
     Route::resource('recurrings', 'RecurringsController')->except(['update', 'destroy']);
 
     Route::middleware(['role:admin'])->group(function () {
@@ -135,6 +138,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::post('statuses/edit/{status}', 'StatusController@update');
         Route::delete('statuses/delete/{status}', 'StatusController@destroy');
         Route::delete('customers/delete/{customer}', 'CustomersController@destroy');
+        Route::delete('customers/leads/delete/{customer}', 'CustomersController@destroy');
         Route::delete('tasks/delete/{task}', 'TasksController@destroy');
         Route::delete('expenses/delete/{expense}', 'ExpensesController@destroy');
         Route::get('tasks/details', 'TasksController@details');

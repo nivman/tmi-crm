@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contact;
 use App\Customer;
+use App\Http\Requests\ContactRequest;
 use App\Status;
 use Illuminate\Http\Request;
 use App\Http\Requests\CustomerRequest;
@@ -44,18 +45,33 @@ class ContactsController extends Controller
 
     }
 
-    public function show(Customer $customer)
+    public function show(Contact $contact)
     {
 
+        $customer = Customer::find($contact->customer_id);
+
+        return ['contact' =>$contact, 'customer' => $customer];
     }
 
-    public function store(CustomerRequest $request)
+    public function store(ContactRequest  $request)
     {
-
+        $v = $request->validated();
+        $v['customer_id'] = $request->request->get('customer_id');
+        $contact =  new Contact();
+        Contact::create($v);
+        return $contact;
     }
 
-    public function update(CustomerRequest $request, Customer $customer)
+    public function update(ContactRequest $request, Contact $contact)
     {
+        $v = $request->validated();
+        $v['customer_id'] = $request->request->get('customer_id');
+        $contact->update($v);
+        return $contact;
+    }
 
+    public function getContactsDetailsByCustomerId($customerId)
+    {
+        return (new Contact)->getContactByCustomerId($customerId);
     }
 }

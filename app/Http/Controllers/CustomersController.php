@@ -145,6 +145,9 @@ class CustomersController extends Controller
         return (new Customer)->getCustomersByIds($ids);
     }
 
+    public function getCustomerById($id) {
+        return Customer::find($id);
+    }
     /**
      * @param $status_id
      * @param $customer_id

@@ -586,7 +586,6 @@ export default {
     getProjectsByCustomerId (customers) {
 
       let id = customers.map(a => a.id)
-      debugger
       this.$http
           .post('app/customers-projects/' + id)
           .then(res => {

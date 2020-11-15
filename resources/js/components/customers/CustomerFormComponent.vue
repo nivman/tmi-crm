@@ -17,6 +17,12 @@
                   </a>
             </span>
               <span class="control tooltip">
+                  <a @click="showContacts" class="button is-warning is-small">
+                    <i style="color: white" class="fas fa-user-friends"></i>
+                    <span class="tooltip-text bottom">אנשי קשר</span>
+                  </a>
+            </span>
+              <span class="control tooltip">
                   <a @click="addEvent" class="button is-info is-small">
                     <i class="fas fa-comment-dots"></i>
                     <span class="tooltip-text bottom"> התקשרות חדשה</span>
@@ -262,15 +268,21 @@
     ></button>
     <event-form-modal></event-form-modal>
     <div v-if="showStatusHistory">
-
       <status-history-view-component
           entityType="customer"
           :entityId="customerId"
           :entityName="form.name"
-          @showStatusesHistory="showStatusesHistory"
-      ></status-history-view-component>
+          @showStatusesHistory="showStatusesHistory">
+      </status-history-view-component>
     </div>
+    <div v-if="showContactsList">
+      <customer-contacts-list
 
+          :customerId="customerId"
+
+          @showContacts="showContacts">
+      </customer-contacts-list>
+    </div>
   </div>
 
 </template>
@@ -282,6 +294,7 @@ import "vue-rocker-switch/dist/vue-rocker-switch.css";
 import "animate.css"
 import Lightbulb from "../Lightbulb";
 import StatusHistoryViewComponent from "../statusHistory/StatusHistoryViewComponent";
+import CustomerContactsList from "./CustomerContactsListComponent";
 import VueToggles from 'vue-toggles';
 import Velocity from 'velocity-animate'
 export default {
@@ -296,6 +309,7 @@ export default {
       optionsStatuses: [],
       isSaving: false,
       showStatusHistory: false,
+      showContactsList: false,
       createLead: false,
       customerId: null,
       form: new this.$form({
@@ -336,29 +350,15 @@ export default {
       el.style.opacity = 0
       el.style.width = 0
       el.style.height = 0;
-
     },
     enter: function (el, done) {
       Velocity(el, { opacity: 1,width: "auto" ,  height: 300}, { duration: "fast" })
-
-
     },
     leave: function (el, done) {
-
-
       Velocity(el, { opacity:0,width: 0 ,  height: 0}, { duration: "slow" })
-      // Velocity(el, {
-      //   rotateZ: '45deg',
-      //   translateY: '30px',
-      //   translateX: '30px',
-      //   opacity: 0
-      // }, { complete: done })
     },
     displayExtraFields() {
-      let em = this
-     // setTimeout(()=>{
-        em.showExtraFields = !em.showExtraFields;
-     // },200)
+       this.showExtraFields = !this.showExtraFields;
     },
     submit() {
       this.isSaving = true;
@@ -383,7 +383,7 @@ export default {
         this.form
             .post("app/customers")
             .then(() => {
-              this.$event.fire("refreshCustomersTable");
+              this.$event.fire(refreshTable);
               this.notify(
                   "success",
                   "לקוח נוסף בהצלחה"
@@ -433,13 +433,16 @@ export default {
       this.showStatusHistory = this.showStatusHistory !== true;
 
     },
+    showContacts() {
+      this.showContactsList = this.showContactsList !== true
+    },
     showStatusesHistory: function () {
       this.showStatusHistory = false
 
     },
   },
 
-  components: {EventFormModal, RockerSwitch, Lightbulb, StatusHistoryViewComponent, VueToggles, Velocity},
+  components: {EventFormModal, CustomerContactsList, RockerSwitch, Lightbulb, StatusHistoryViewComponent, VueToggles, Velocity},
 };
 </script>
 <style>

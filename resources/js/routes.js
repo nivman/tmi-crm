@@ -268,6 +268,30 @@ const router = new VueRouter({
             ]
         },
         {
+            path: "/contacts",
+            component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerListComponent.vue"),
+            meta: { title: "Customers", admin: false },
+            children: [
+                {
+                    path: "add",
+                    name: 'contact',
+                    component: () => import(/* webpackChunkName: "components" */ "./components/customers/ContactFormComponent.vue"),
+                    meta: { title: "Add Contacts", admin: false, modal: true }
+                },
+                {
+                    path: "edit/:id",
+                    name: 'contact',
+                    component: () => import(/* webpackChunkName: "components" */ "./components/customers/ContactFormComponent.vue"),
+                    meta: { title: "Edit Customer", admin: true, modal: true }
+                },
+                {
+                    path: ":id",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerViewComponent.vue"),
+                    meta: { title: "View Customer", admin: false, modal: true }
+                }
+            ]
+        },
+        {
             path: "/leads",
             component: () => import(/* webpackChunkName: "components" */ "./components/leads/LeadListComponent.vue"),
             meta: { title: "Leads", admin: false },
