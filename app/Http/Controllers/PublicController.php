@@ -112,7 +112,7 @@ class PublicController extends Controller
             }
             $card_gateway  = env('CARD_GATEWAY');
             $currency_code = env('CURRENCY_CODE');
-            $omni          = new \App\Helpers\Payment($card_gateway, demo());
+            $omni          = new \App\Helpers\Payment($card_gateway);
 
             try {
                 if ($card_gateway == 'Stripe') {

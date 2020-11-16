@@ -19,7 +19,7 @@ class InvoiceObserver
             if (!$invoice->recurring_id && $balance < 0) {
                 event(new \App\Events\InvoiceEvent($invoice));
             }
-            if (!demo() && $invoice->customer->email) {
+            if ($invoice->customer->email) {
                 try {
                     \Mail::to($invoice->customer->email)->send(new \App\Mail\InvoiceCreated($invoice));
                 } catch (\Exception $e) {
@@ -54,7 +54,7 @@ class InvoiceObserver
                 if (!$invoice->recurring_id && $balance < 0) {
                     event(new \App\Events\InvoiceEvent($invoice));
                 }
-                if (!demo() && $invoice->customer->email) {
+                if ($invoice->customer->email) {
                     try {
                         \Mail::to($invoice->customer->email)->send(new \App\Mail\InvoiceCreated($invoice));
                     } catch (\Exception $e) {

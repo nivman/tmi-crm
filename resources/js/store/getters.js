@@ -16,9 +16,6 @@ export const customer = state => {
 export const vendor = state => {
     return state.user && state.user.roles.find(r => r == "vendor");
 };
-export const demo = state => {
-    return state.settings.demo ? true : false;
-};
 export const stock = state => {
     return state.settings.stock ? true : false;
 };

@@ -3,9 +3,9 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <router-link to="/users/add" class="button is-link is-small is-pulled-right">
-                    <i class="fas fa-plus m-r-sm" /> Add User
+                    <i class="fas fa-plus m-l-sm" />  הוספה
                 </router-link>
-                Users
+                משתמשות
                 <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
             </div>
             <div class="panel-block">
@@ -15,13 +15,13 @@
                             <p class="control tooltip">
                                 <router-link :to="'/profile/' + props.row.username" class="button is-warning is-small">
                                     <i class="fas fa-edit"></i>
-                                    <span class="tooltip-text">Edit</span>
+                                    <span class="tooltip-text">עריכה</span>
                                 </router-link>
                             </p>
                             <p class="control tooltip">
                                 <button type="button" class="button is-danger is-small" @click="deleteRecord(props.row.username)">
                                     <i class="fas fa-trash"></i>
-                                    <span class="tooltip-text">Delete</span>
+                                    <span class="tooltip-text">מחיקה</span>
                                 </button>
                             </p>
                         </div>
@@ -47,6 +47,12 @@ export default {
                 orderBy: { ascending: true, column: 'name' },
                 sortable: ['id', 'name', 'username', 'email', 'phone'],
                 columnsClasses: { id: 'w50 has-text-centered', actions: 'w125 has-text-centered p-x-none' },
+              headings: {
+                name: 'שם',
+                username: 'כינוי',
+                email: 'אימייל',
+                phone: 'טלפון'
+              }
             },
         };
     },

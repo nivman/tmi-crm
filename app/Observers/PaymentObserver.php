@@ -33,7 +33,7 @@ class PaymentObserver
                 'account_transaction_id' => $account_record->id,
             ]);
             event(new \App\Events\PaymentEvent($payment));
-            if (!demo() && $payment->payable->email) {
+            if ($payment->payable->email) {
                 try {
                     \Mail::to($payment->payable->email)->send(new \App\Mail\PaymentReceived($payment));
                 } catch (\Exception $e) {
@@ -41,7 +41,7 @@ class PaymentObserver
                 }
             }
         } else {
-            if (!demo() && $payment->payable->email) {
+            if ($payment->payable->email) {
                 try {
                     \Mail::to($payment->payable->email)->send(new \App\Mail\PaymentCreated($payment));
                 } catch (\Exception $e) {
@@ -105,7 +105,7 @@ class PaymentObserver
                     ]);
                     $payment->setEventDispatcher($temp);
                     event(new \App\Events\PaymentEvent($payment));
-                    if (!demo() && $payment->payable->email) {
+                    if ($payment->payable->email) {
                         try {
                             \Mail::to($payment->payable->email)->send(new \App\Mail\PaymentReceived($payment));
                         } catch (\Exception $e) {

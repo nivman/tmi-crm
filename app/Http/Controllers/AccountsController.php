@@ -26,11 +26,6 @@ class AccountsController extends Controller
         } elseif ($account->fromTransfers()->exists()) {
             return response(['message' => 'Account has been attached to some transfers and can not be deleted.'], 422);
         }
-
-        if (demo()) {
-            return response(['message' => 'This feature is disabled on demo.'], 422);
-        }
-
         $account->journal->transactions()->delete();
         $account->journal->delete();
         $account->delete();

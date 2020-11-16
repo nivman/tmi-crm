@@ -3,36 +3,21 @@
     <div class="row">
       <div class="col-md-12">
         <div class="panel panel-default">
-          <div class="panel-heading">System Settings</div>
+          <div class="panel-heading">הגדרות מערכת</div>
           <div class="panel-block">
-            <p class="block has-text-danger">
-              Please update the settings by modifying them below
-            </p>
           </div>
           <form autocomplete="off" action="#" @submit.prevent="validateForm()" class="is-fullwidth">
             <div class="panel-body">
               <loading v-if="loading"></loading>
-              <!-- <div class="columns is-multiline">
-                                <div v-for="item in settings" :key="item.key" class="column is-one-quarter">
-                                    <div class="field">
-                                        <label class="label" :for="item.key">{{ itemLabel(item.key) }}</label>
-                                        <div class="control">
-                                            <input :value="item.value" v-validate="'required'" type="text" :id="item.key" class="input" :class="{'is-danger': errors.has(item.key) }">
-                                        </div>
-                                        <div class="help is-danger">{{ errors.first(item.key) }}</div>
-                                    </div>
-                                </div>
-                            </div> -->
-
               <div class="panel panel-default is-shadowless">
                 <div class="panel-heading">
-                  General Settings
+                 הגדרות כלליות
                 </div>
                 <div class="panel-body is-shadowless p-t-md">
                   <div class="columns is-multiline">
                     <div class="column is-one-quarter">
                       <div class="field">
-                        <label class="label" for="APP_NAME">App Name</label>
+                        <label class="label" for="APP_NAME">שם מערכת</label>
                         <div class="control">
                           <input
                             type="text"
@@ -53,7 +38,7 @@
                     </div>
                     <div class="column is-one-quarter">
                       <div class="field">
-                        <label class="label" for="APP_URL">App URL</label>
+                        <label class="label" for="APP_URL">כתובת</label>
                         <div class="control">
                           <input
                             type="text"
@@ -74,7 +59,7 @@
                     </div>
                     <div class="column is-one-quarter">
                       <div class="field">
-                        <label class="label" for="TIMEZONE">App Timezone</label>
+                        <label class="label" for="TIMEZONE">אזור זמן</label>
                         <div class="control">
                           <input
                             type="text"
@@ -101,10 +86,11 @@
                     </div>
                     <div class="column is-one-quarter">
                       <div class="field">
-                        <label class="label" for="DEFAULT_ACCOUNT">Default Account</label>
+                        <label class="label" for="DEFAULT_ACCOUNT">חשבון ברירת מחדל</label>
                         <div class="control">
                           <v-select
                             label="name"
+                            id="DEFAULT_ACCOUNT"
                             v-model="account"
                             :options="accounts"
                             name="DEFAULT_ACCOUNT"
@@ -137,7 +123,7 @@
                           name="STOCK"
                           v-model="form.STOCK"
                           :checked="!!form.STOCK"
-                          label="Enable Stock/Product Quantity"
+                          label="אפשר מלאי / כמות מוצרים"
                         ></checkbox-component>
                         <div class="help is-danger">
                           {{ errors.first('STOCK') }}
@@ -148,12 +134,12 @@
                 </div>
               </div>
               <div class="panel panel-default is-shadowless">
-                <div class="panel-heading">Email Settings</div>
+                <div class="panel-heading">הגדרות מייל</div>
                 <div class="panel-body is-shadowless p-t-md">
                   <div class="columns is-multiline">
                     <div class="column is-one-quarter">
                       <div class="field">
-                        <label class="label" for="MAIL_FROM_NAME">From Name</label>
+                        <label class="label" for="MAIL_FROM_NAME">שם המוען</label>
                         <div class="control">
                           <input
                             type="text"
@@ -174,7 +160,7 @@
                     </div>
                     <div class="column is-one-quarter">
                       <div class="field">
-                        <label class="label" for="MAIL_FROM_ADDRESS">From Address</label>
+                        <label class="label" for="MAIL_FROM_ADDRESS">כתובת</label>
                         <div class="control">
                           <input
                             type="email"
@@ -195,9 +181,10 @@
                     </div>
                     <div class="column is-one-quarter">
                       <div class="field">
-                        <label class="label" for="MAIL_MAILER">Email Driver</label>
+                        <label class="label" for="MAIL_MAILER">סוג פרוטוקול</label>
                         <div class="control">
                           <v-select
+                            id="MAIL_MAILER"
                             v-model="driver"
                             :options="drivers"
                             name="MAIL_MAILER"
@@ -207,7 +194,7 @@
                             :style="{
                               width: '100%',
                             }"
-                            placeholder="Select mail driver..."
+
                             :class="{
                               select: true,
                               'is-danger': errors.has('MAIL_MAILER'),
@@ -229,52 +216,7 @@
                     name="fade"
                     enter-active-class="animated faster fadeInDown"
                     leave-active-class="animated fastest fadeOutLeft"
-                    appear
-                  >
-                    <div v-if="form.MAIL_MAILER == 'mailgun'" class="columns is-multiline">
-                      <div class="column is-one-quarter">
-                        <div class="field">
-                          <label class="label" for="MAILGUN_DOMAIN">Mailgun Domain</label>
-                          <div class="control">
-                            <input
-                              type="text"
-                              class="input"
-                              id="MAILGUN_DOMAIN"
-                              name="MAILGUN_DOMAIN"
-                              v-validate="'required'"
-                              v-model="form.MAILGUN_DOMAIN"
-                              :class="{
-                                'is-danger': errors.has('MAILGUN_DOMAIN'),
-                              }"
-                            />
-                          </div>
-                          <div class="help is-danger">
-                            {{ errors.first('MAILGUN_DOMAIN') }}
-                          </div>
-                        </div>
-                      </div>
-                      <div class="column is-one-quarter">
-                        <div class="field">
-                          <label class="label" for="MAILGUN_SECRET">Mailgun Secret</label>
-                          <div class="control">
-                            <input
-                              type="text"
-                              class="input"
-                              id="MAILGUN_SECRET"
-                              name="MAILGUN_SECRET"
-                              v-validate="'required'"
-                              v-model="form.MAILGUN_SECRET"
-                              :class="{
-                                'is-danger': errors.has('MAILGUN_SECRET'),
-                              }"
-                            />
-                          </div>
-                          <div class="help is-danger">
-                            {{ errors.first('MAILGUN_SECRET') }}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    appear>
                   </transition>
                   <transition
                     appear
@@ -509,7 +451,7 @@
               </div>
               <div class="panel panel-default is-shadowless">
                 <div class="panel-heading">
-                  Payment Settings
+                  הגדרות תשלומים
                 </div>
                 <div class="panel-body is-shadowless p-t-md">
                   <div class="columns is-multiline">
@@ -635,6 +577,7 @@
                         <label class="label" for="CARD_GATEWAY">Accept credit/debit card payment with</label>
                         <div class="control">
                           <v-select
+                            id="CARD_GATEWAY"
                             v-model="payment"
                             :options="payments"
                             name="CARD_GATEWAY"
@@ -834,7 +777,7 @@
               </div>
               <div class="field">
                 <button type="submit" class="button is-link" :disabled="errors.any()" :class="{ 'is-loading': isSaving }">
-                  Submit
+                  עידכון
                 </button>
               </div>
             </div>
@@ -856,6 +799,7 @@ export default {
       loading: true,
       isSaving: false,
       form: new this.$form(),
+      dateformat: 'DD\/MM\/YYYY',
       booleans: ['PAYPAL_ENABLED', 'STOCK'],
       payments: [
         { label: 'Disable', value: '' },
@@ -898,6 +842,7 @@ export default {
     settingsToForm(settings) {
       let form = {};
       for (let setting of settings) {
+
         if (this.booleans.includes(setting.key)) {
           form[setting.key] = setting.value ? true : false;
         } else {
@@ -905,27 +850,31 @@ export default {
         }
         if (setting.key == 'MAIL_MAILER') {
           this.driver = this.drivers.find(d => d.value == setting.value);
-        } else if (setting.key == 'DEFAULT_ACCOUNT') {
+        } else if
+        (setting.key == 'DEFAULT_ACCOUNT') {
           this.account = this.accounts.find(a => a.id == setting.value);
-        } else if (setting.key == 'CARD_GATEWAY') {
+        }
+        else if (setting.key == 'CARD_GATEWAY') {
           this.payment = this.payments.find(p => p.value == setting.value);
         }
       }
       this.form = new this.$form(form);
+    //  this.form.dateformat = 'DD\/MM\/YYYY'
       // this.form.DEFAULT_ACCOUNT = this.account.id;
     },
     validateForm() {
       this.$validator
         .validateAll()
         .then(result => {
+          debugger
           if (result) {
             this.isSaving = true;
             this.form
-              .post('app/settings/system')
+              .post('app/settings/system/update')
               .then(res => {
                 this.form = new this.$form(res.data);
                 this.$store.commit('SET_STOCK', this.form.STOCK);
-                this.notify('success', 'System settings has been successfully updated.');
+                this.notify('success', 'הגדרות המערכת עודכנו בהצלחה');
                 this.isSaving = false;
               })
               .catch(err => {
@@ -934,7 +883,7 @@ export default {
           } else {
             this.notify(
               'error',
-              'All the fields are required except Mail Encryption & Payment Gateway. Please fill the form and try again.'
+              'כל השדות נדרשים למעט הצפנת דואר ושער תשלום. אנא מלא את הטופס ונסה שוב.'
             );
           }
         })

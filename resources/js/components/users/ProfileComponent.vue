@@ -4,13 +4,13 @@
       <div class="col-md-12">
         <div class="panel panel-default">
           <loading v-if="loading"></loading>
-          <div class="panel-heading">Profile {{ user.name }}</div>
+          <div class="panel-heading">פרופיל {{ user.name }}</div>
           <form autocomplete="off" @submit.prevent="validateForm">
             <div class="panel-body">
               <div class="columns is-multiline">
                 <div class="column is-half">
                   <div class="field">
-                    <label class="label" for="username">Username</label>
+                    <label class="label" for="username">כינוי</label>
                     <input
                       type="text"
                       class="input"
@@ -28,7 +28,7 @@
                 </div>
                 <div class="column is-half">
                   <div class="field">
-                    <label class="label" for="email">Email</label>
+                    <label class="label" for="email">אימייל</label>
                     <input
                       id="email"
                       type="text"
@@ -46,7 +46,7 @@
                 </div>
                 <div class="column is-half">
                   <div class="field">
-                    <label class="label" for="name">Name</label>
+                    <label class="label" for="name">שם</label>
                     <input
                       id="name"
                       name="name"
@@ -63,7 +63,7 @@
                 </div>
                 <div class="column is-half">
                   <div class="field">
-                    <label class="label" for="phone">Phone</label>
+                    <label class="label" for="phone">טלפון</label>
                     <input
                       id="phone"
                       type="text"
@@ -101,9 +101,10 @@
                   <div class="columns">
                     <div class="column is-half" v-if="showCustomer">
                       <div class="field">
-                        <label class="label" for="customer">Customer</label>
+                        <label class="label" for="customer">לקוח</label>
                         <div class="control">
                           <v-select
+                            id="customer"
                             label="name"
                             name="customer"
                             v-model="customer"
@@ -115,16 +116,13 @@
                             :style="{
                               width: '100%',
                             }"
-                            placeholder="Search Customer..."
+
                             :class="{
                               select: true,
                               'is-danger': errors.has('customer'),
                             }"
                           >
-                            <template slot="no-options">
-                              Please type to search...
-                            </template>
-                          </v-select>
+                                    </v-select>
                         </div>
                         <div class="help is-danger">
                           {{ errors.first('customer') }}
@@ -133,9 +131,10 @@
                     </div>
                     <div class="column is-half" v-if="showVendor">
                       <div class="field">
-                        <label class="label" for="vendor">Vendor</label>
+                        <label class="label" for="vendor">ספקים</label>
                         <div class="control">
                           <v-select
+                            id="vendor"
                             label="name"
                             name="vendor"
                             v-model="vendor"
@@ -147,15 +146,7 @@
                             :style="{
                               width: '100%',
                             }"
-                            placeholder="Search Vendor..."
-                            :class="{
-                              select: true,
-                              'is-danger': errors.has('vendor'),
-                            }"
-                          >
-                            <template slot="no-options">
-                              Please type to search...
-                            </template>
+                            :class="{select: true,'is-danger': errors.has('vendor'),}">
                           </v-select>
                         </div>
                         <div class="help is-danger">
@@ -168,7 +159,7 @@
                   <div class="columns">
                     <div class="column is-half">
                       <div class="field">
-                        <label class="label" for="password">Password<small>(optional)</small></label>
+                        <label class="label" for="password">סיסמה<small>(אופציונאלי)</small></label>
                         <input
                           class="input"
                           id="password"
@@ -186,7 +177,7 @@
                     </div>
                     <div class="column is-half">
                       <div class="field">
-                        <label class="label" for="password_confirmation">Confirm Password</label>
+                        <label class="label" for="password_confirmation">אישור סיסמה</label>
                         <input
                           class="input"
                           type="password"
@@ -212,7 +203,7 @@
                 <div class="columns">
                   <div class="field">
                     <button type="submit" class="button is-link" :disabled="errors.any()">
-                      Submit
+                      אישור
                     </button>
                   </div>
                 </div>
@@ -328,7 +319,7 @@ export default {
               .put('app/users/' + this.username)
               .then(res => {
                 this.updateForm(res);
-                this.notify('success', 'Profile has been successfully update.');
+                this.notify('success', 'הפרופיל עודכן בהצלחה');
                 this.isSaving = false;
               })
               .catch(err => this.$event.fire('appError', err.response));

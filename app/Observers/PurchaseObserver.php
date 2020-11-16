@@ -20,7 +20,7 @@ class PurchaseObserver
             if ($balance < 0) {
                 event(new \App\Events\PurchaseEvent($purchase));
             }
-            if (!demo() && $purchase->vendor->email) {
+            if ($purchase->vendor->email) {
                 try {
                     \Mail::to($purchase->vendor->email)->send(new \App\Mail\PurchaseCreated($purchase));
                 } catch (\Exception $e) {
@@ -57,7 +57,7 @@ class PurchaseObserver
                 if ($balance < 0) {
                     event(new \App\Events\PurchaseEvent($purchase));
                 }
-                if (!demo() && $purchase->vendor->email) {
+                if ($purchase->vendor->email) {
                     try {
                         \Mail::to($purchase->vendor->email)->send(new \App\Mail\PurchaseCreated($purchase));
                     } catch (\Exception $e) {

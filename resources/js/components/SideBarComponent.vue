@@ -213,13 +213,13 @@
 <!--                    <span class="icon is-small m-l-sm">-->
 <!--                        <i class="fas fa-fw fa-exchange-alt"></i>-->
 <!--                    </span>-->
-<!--                    Transfers-->
+<!--                    העברות כספים-->
 <!--                    <template slot="submenu">-->
 <!--                        <li>-->
-<!--                            <router-link to="/transfers" exact @click.native="hideMenu">List Transfers</router-link>-->
+<!--                            <router-link to="/transfers" exact @click.native="hideMenu">רשימת העברות כספים</router-link>-->
 <!--                        </li>-->
 <!--                        <li>-->
-<!--                            <router-link to="/transfers/add" @click.native="hideMenu">Add New Transfer</router-link>-->
+<!--                            <router-link to="/transfers/add" @click.native="hideMenu">הוספת העברה</router-link>-->
 <!--                        </li>-->
 <!--                    </template>-->
 <!--                </side-bar-menu-component>-->
@@ -228,13 +228,13 @@
 <!--                    <span class="icon is-small m-l-sm">-->
 <!--                        <i class="fas fa-fw fa-swatchbook"></i>-->
 <!--                    </span>-->
-<!--                    Accounts-->
+<!--                    חשבונות-->
 <!--                    <template slot="submenu">-->
 <!--                        <li>-->
-<!--                            <router-link to="/accounts" exact @click.native="hideMenu">List Accounts</router-link>-->
+<!--                            <router-link to="/accounts" exact @click.native="hideMenu">רשימת חשבונות</router-link>-->
 <!--                        </li>-->
 <!--                        <li>-->
-<!--                            <router-link to="/accounts/add" @click.native="hideMenu">Add New Account</router-link>-->
+<!--                            <router-link to="/accounts/add" @click.native="hideMenu">הוספת חשבון</router-link>-->
 <!--                        </li>-->
 <!--                    </template>-->
 <!--                </side-bar-menu-component>-->
@@ -267,7 +267,7 @@
                     <template slot="submenu">
                         <span v-if="$store.getters.superAdmin">
                             <li>
-                                <router-link class="navbar-item" to="/settings" exact @click.native="hideMenu">הגדרות מערכת</router-link>
+                                <router-link class="navbar-item" to="/settings" exact @click.native="hideMenu">הגדרות אתר</router-link>
                             </li>
                             <li>
                                 <router-link class="navbar-item" to="/settings/invoice_settings" @click.native="hideMenu">

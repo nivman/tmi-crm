@@ -18,9 +18,7 @@ class EmailTemplateController extends Controller
 
     public function update(Request $request, $template = 'user_created')
     {
-        if (demo()) {
-            return response(['message' => 'This feature is disabled on demo.'], 422);
-        }
+
         $path = resource_path('views/' . $this->{camel_case($template)}(true) . '.blade.php');
         $data = "@extends('mail.template')\n@section('content')\n" . $request->template . "\n@endsection\n";
         return response()->json(['success' => file_put_contents($path, $data), 'template' => $request->template]);

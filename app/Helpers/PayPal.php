@@ -14,8 +14,6 @@ class PayPal
         $gateway->setBrandName(env('APP_NAME'));
         // $gateway->setLogoImageUrl();
         // $gateway->setHeaderImageUrl();
-        $gateway->setTestMode(demo());
-
         return $gateway;
     }
 

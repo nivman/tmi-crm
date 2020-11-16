@@ -5,7 +5,7 @@
             <div class="modal-card is-medium animated fastest zoomIn">
                 <header class="modal-card-head is-radius-top">
                     <p class="modal-card-title">
-                        {{ form.id ? "Edit User" : "Add New User" }}
+                        {{ form.id ? "עריכה" : "הוספה" }}
                     </p>
                     <button
                         type="button"
@@ -15,7 +15,7 @@
                 </header>
                 <section class="modal-card-body is-radius-bottom">
                     <div class="field">
-                        <label class="label" for="name">Name</label>
+                        <label class="label" for="name">שם</label>
                         <input
                             id="name"
                             type="text"
@@ -32,7 +32,7 @@
                         ></div>
                     </div>
                     <div class="field">
-                        <label class="label" for="username">Username</label>
+                        <label class="label" for="username">שם משתמש</label>
                         <input
                             type="text"
                             id="username"
@@ -52,7 +52,7 @@
                         ></div>
                     </div>
                     <div class="field">
-                        <label class="label" for="email">Email</label>
+                        <label class="label" for="email">אימייל</label>
                         <input
                             id="email"
                             type="text"
@@ -69,7 +69,7 @@
                         ></div>
                     </div>
                     <div class="field">
-                        <label class="label" for="phone">Phone</label>
+                        <label class="label" for="phone">טלפון</label>
                         <input
                             id="phone"
                             type="text"
@@ -173,7 +173,7 @@ export default {
             custom: {
                 username: {
                     regex:
-                        "Only alphanumeric with dash, underscore and dot are allowed."
+                        "מותר רק אותיות עם מקף, קו תחתון ונקודה."
                 }
             }
         };
@@ -189,7 +189,7 @@ export default {
                         this.$event.fire("refreshUsersTable");
                         this.notify(
                             "success",
-                            "User has been successfully updated."
+                            "משתמשת עודכנה"
                         );
                         this.$router.push("/users");
                     })
@@ -202,7 +202,7 @@ export default {
                         this.$event.fire("refreshUsersTable");
                         this.notify(
                             "success",
-                            "User has been successfully added."
+                            "משתמשת נוצרה"
                         );
                         this.$router.push("/users");
                     })

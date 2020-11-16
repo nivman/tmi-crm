@@ -54,7 +54,7 @@ if (!function_exists('get_state')) {
     }
 }
 
-// Is Demo Enabled
+
 if (!function_exists('stock')) {
     function stock()
     {

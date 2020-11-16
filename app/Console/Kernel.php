@@ -21,8 +21,5 @@ class Kernel extends ConsoleKernel
         $schedule->command('payment:request')->daily();
         $schedule->command('recurring:create')->daily();
         $schedule->command('activitylog:clean')->weekly()->mondays()->at('01:00');
-        if (demo()) {
-            $schedule->command('data:reset')->twiceDaily(1, 13);
-        }
     }
 }

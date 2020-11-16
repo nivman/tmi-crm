@@ -105,7 +105,7 @@ export default {
     data() {
         return {
             loading: false,
-            demouser: "super",
+
             form: new this.$form({
                 username: "",
                 password: "",
@@ -146,7 +146,7 @@ export default {
                     this.loading = false;
                     this.notify(
                         "success",
-                        "You are successfully signed in, please perform action again."
+                        "נכנסת למערכת"
                     );
                     this.$router.push("/");
                     this.$http
@@ -190,7 +190,7 @@ export default {
                     } else {
                         this.notify(
                             "error",
-                            "Something went wrong, please make sure you are connected then try again."
+                            "משהו השתבש תנסו שוב"
                         );
                     }
                 });
@@ -203,11 +203,6 @@ export default {
                 }
             });
         },
-        loginDemoUser() {
-            this.form.username = this.demouser;
-            this.form.password = "123456";
-            this.signIn();
-        }
     }
 };
 </script>

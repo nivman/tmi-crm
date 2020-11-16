@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Change Password for <strong>{{ user_name }}</strong>
+                        שינוי סיסמה עבור :<strong>{{ user_name }}</strong>
                     </div>
 
                     <form autocomplete="off" @submit.prevent="validateForm">
@@ -13,7 +13,7 @@
                                 <div class="column is-half">
                                     <div class="field">
                                         <label class="label" for="current"
-                                            >Current Password</label
+                                            >סיסמה נוכחית</label
                                         >
                                         <input
                                             id="current"
@@ -26,8 +26,7 @@
                                                 'is-danger': errors.has(
                                                     'current'
                                                 )
-                                            }"
-                                        />
+                                            }"/>
                                         <div
                                             class="help is-danger"
                                             v-if="errors.has('current')"
@@ -37,7 +36,7 @@
 
                                     <div class="field">
                                         <label class="label" for="password"
-                                            >New Password</label
+                                            >סיסמה חדשה</label
                                         >
                                         <input
                                             class="input"
@@ -63,7 +62,7 @@
                                         <label
                                             class="label"
                                             for="password_confirmation"
-                                            >Confirm Password</label
+                                            >אישור סיסמה</label
                                         >
                                         <input
                                             class="input"
@@ -100,9 +99,8 @@
                                             type="submit"
                                             class="button is-link"
                                             :class="{ 'is-loading': isSaving }"
-                                            :disabled="errors.any() || isSaving"
-                                        >
-                                            Submit
+                                            :disabled="errors.any() || isSaving">
+                                            אישור
                                         </button>
                                     </div>
                                 </div>
@@ -147,7 +145,7 @@ export default {
                                 this.$event.fire("logOut");
                                 this.notify(
                                     "success",
-                                    "Password has been successfully update."
+                                    "הסיסמה עודכנה בהצלחה"
                                 );
                             })
                             .catch(err =>
