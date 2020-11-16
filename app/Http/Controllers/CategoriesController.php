@@ -18,11 +18,17 @@ class CategoriesController extends Controller
     public function destroy(Category $category)
     {
         if ($category->expenses()->exists()) {
-            return response(['message' => 'Category has been attached to some expenses and can not be deleted.'], 422);
+            $expenses = $category->expenses()->get()->toArray();
+            $list = $this->entityList($category, $expenses);
+            return response(['message' => 'הקטגוריה צורפה להוצאות ולא ניתן למחוק אותה.' . '<br> ' . $list], 422);
         } elseif ($category->incomes()->exists()) {
-            return response(['message' => 'Category has been attached to some incomes and can not be deleted.'], 422);
+            $incomes = $category->incomes()->get()->toArray();
+            $list = $this->entityList($category, $incomes);
+            return response(['message' => 'קטגוריה צורפה לכמה הכנסות ולא ניתן למחוק אותה.' . '<br> ' . $list], 422);
         } elseif ($category->products()->exists()) {
-            return response(['message' => 'Category has been attached to some products and can not be deleted.'], 422);
+            $products = $category->products()->get()->toArray();
+            $list = $this->entityList($category, $products);
+            return response(['message' => 'קטגוריה צורפה למוצרים ולא ניתן למחוק אותה'. '<br> ' . $list ], 422);
         }
         $category->delete();
         return response(['success' => true], 204);
@@ -57,5 +63,23 @@ class CategoriesController extends Controller
         $v = $this->isValid($request);
         $category->update($v);
         return $category;
+    }
+
+    /**
+     * @param Category $category
+     * @param $entity
+     * @return string
+     */
+    public function entityList(Category $category, $entity): string
+    {
+
+        $mapEntities = array_map(function ($t) {
+            return ['id' => $t['id'], 'title' => $t['title']];
+        }, $entity);
+        $mapEntities = array_column($mapEntities, 'id', 'title');
+        return implode('<br>', array_map(function ($k, $v) {
+            return " שם: $k  $v מזהה: ";
+        }, array_keys($mapEntities), array_values($mapEntities)));
+
     }
 }
