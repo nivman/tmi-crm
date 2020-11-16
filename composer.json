@@ -29,7 +29,8 @@
 		"rinvex/laravel-cacheable": "^4.1",
 		"rinvex/laravel-support": "^4.2",
 		"robinvdvleuten/ulid": "^4.1",
-		"spatie/laravel-activitylog": "^3.14"
+		"spatie/laravel-activitylog": "^3.14",
+		"webklex/laravel-imap": "^2.2"
 	},
 	"require-dev": {
 		"barryvdh/laravel-ide-helper": "^2.8",

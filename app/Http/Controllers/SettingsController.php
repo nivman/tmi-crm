@@ -39,7 +39,10 @@ class SettingsController extends Controller
     {
 
         $data = $request->except(['_token', '_method']);
+
         if (Env::update($data)) {
+            Storage::disk('local')->put('settings.json', json_encode($data, JSON_PRETTY_PRINT));
+            $request->session()->forget('appSettings');
             return response($data, 201);
         }
         return response(['message' => 'Unable to update settings.'], 422);

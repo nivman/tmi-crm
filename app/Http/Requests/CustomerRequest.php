@@ -19,12 +19,10 @@ class CustomerRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'phone' => 'nullable',
-            'state' => 'nullable',
-            'address' => 'nullable',
-            'company' => 'nullable',
-            'country' => 'nullable',
-            'name' => 'required|max:55',
+            'phone' => 'nullable|numeric',
+            'address' => 'nullable|alpha_num',
+            'company' => 'nullable|string',
+            'name' => 'required|max:55|string',
             'opening_balance' => 'nullable|numeric',
             'email' => 'nullable|email|unique:customers,email,' . $this->id,
             'datetime' => 'date_format:d/m/y H:i'
@@ -34,12 +32,18 @@ class CustomerRequest extends FormRequest
         $this->attributes = $customer->attributes();
 
         foreach ($this->attributes as $key => $attribute) {
-            $rules = Arr::add($rules, $key, ($attribute->is_required ? 'required' : 'nullable'));
+            $rules = Arr::add($rules, $key, ($attribute->is_required ? 'required|not_regex:/<[^>]*>/' : 'nullable|not_regex:/<[^>]*>/'));
         }
 
         return $rules;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'company' => strip_tags($this->company),
+        ]);
+    }
     public function validated()
     {
         $rules = $this->container->call([$this, 'rules']);

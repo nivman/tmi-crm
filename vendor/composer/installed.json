@@ -2162,7 +2162,8 @@
             "data",
             "faker",
             "fixtures"
-        ]
+        ],
+        "abandoned": true
     },
     {
         "name": "guzzlehttp/guzzle",
@@ -10542,6 +10543,134 @@
             "eloquent",
             "laravel",
             "validation"
+        ]
+    },
+    {
+        "name": "webklex/laravel-imap",
+        "version": "2.2.0",
+        "version_normalized": "2.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Webklex/laravel-imap.git",
+            "reference": "cc316c76c3eabed137fa264949abb0814a2de2b1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Webklex/laravel-imap/zipball/cc316c76c3eabed137fa264949abb0814a2de2b1",
+            "reference": "cc316c76c3eabed137fa264949abb0814a2de2b1",
+            "shasum": ""
+        },
+        "require": {
+            "ext-fileinfo": "*",
+            "ext-iconv": "*",
+            "ext-mbstring": "*",
+            "laravel/framework": ">=5.0.0",
+            "php": ">=5.5.9",
+            "webklex/php-imap": "^2.2"
+        },
+        "time": "2020-10-16T14:29:33+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            },
+            "laravel": {
+                "providers": [
+                    "Webklex\\IMAP\\Providers\\LaravelServiceProvider"
+                ],
+                "aliases": {
+                    "Client": "Webklex\\IMAP\\Facades\\Client"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Webklex\\IMAP\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Malte Goldenbaum",
+                "email": "github@webklex.com",
+                "role": "Developer"
+            }
+        ],
+        "description": "Laravel IMAP client",
+        "homepage": "https://github.com/webklex/laravel-imap",
+        "keywords": [
+            "idle",
+            "imap",
+            "laravel",
+            "laravel-imap",
+            "mail",
+            "oauth",
+            "pop3",
+            "webklex"
+        ]
+    },
+    {
+        "name": "webklex/php-imap",
+        "version": "2.2.3",
+        "version_normalized": "2.2.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Webklex/php-imap.git",
+            "reference": "4b5f38a2ea7ba4228f3eefd2028c59804955bed5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Webklex/php-imap/zipball/4b5f38a2ea7ba4228f3eefd2028c59804955bed5",
+            "reference": "4b5f38a2ea7ba4228f3eefd2028c59804955bed5",
+            "shasum": ""
+        },
+        "require": {
+            "ext-fileinfo": "*",
+            "ext-iconv": "*",
+            "ext-json": "*",
+            "ext-mbstring": "*",
+            "ext-openssl": "*",
+            "illuminate/pagination": ">=5.0.0",
+            "nesbot/carbon": ">=1.0",
+            "php": ">=5.5.9",
+            "symfony/http-foundation": ">=2.8.0"
+        },
+        "time": "2020-11-02T12:43:21+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Webklex\\PHPIMAP\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Malte Goldenbaum",
+                "email": "github@webklex.com",
+                "role": "Developer"
+            }
+        ],
+        "description": "PHP IMAP client",
+        "homepage": "https://github.com/webklex/php-imap",
+        "keywords": [
+            "imap",
+            "mail",
+            "php-imap",
+            "pop3",
+            "webklex"
         ]
     },
     {

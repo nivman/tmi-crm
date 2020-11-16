@@ -147,7 +147,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::get('statuses/{status}', 'StatusController@edit');
         Route::get('templates/{template?}', 'EmailTemplateController@show');
         Route::put('templates/{template?}', 'EmailTemplateController@update');
-
+        Route::get('emails', 'mail\EmailController@create');
         Route::resource('history', 'StatusHistoryController');
         Route::get('history/status/{entity_type}/{entity_id}', 'StatusHistoryController@get');
 

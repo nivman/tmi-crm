@@ -20,14 +20,14 @@ class EventsController extends Controller
     protected function isValid($request)
     {
         return $request->validate([
-            'title'      => 'required|max:55',
+            'title'      => 'required|max:55|string|not_regex:/<[^>]*>/',
             'start_date' => 'required|date_format:Y-m-d H:i',
             'end_date'   => 'nullable|date_format:Y-m-d H:i|after_or_equal:start_date',
-            'color'      => 'nullable',
-            'details'    => 'nullable',
-            'contact_id' => 'required',
-            'type_id'    => 'required',
-            'project_id' => 'nullable'
+            'color'      => 'nullable|string',
+            'details'    => 'nullable|not_regex:/<[^>]*>/',
+            'contact_id' => 'required|integer',
+            'type_id'    => 'required|integer',
+            'project_id' => 'nullable|integer'
         ]);
     }
     /**
@@ -94,6 +94,7 @@ class EventsController extends Controller
         $request->request->set('type_id', $v['type_id']);
         $request->request->set('contact_id', $v['contact_id']);
         $request->request->set('project_id', $v['project_id']);
+
         $v = $this->isValid($request);
 
 
