@@ -145,10 +145,28 @@
                                     class="textarea"
                                     name="description"
                                     v-model="form.description">
-
                                 </textarea>
-
                             </div>
+                          <div class="field">
+                            <div class="modal-card-head" style="border: none">
+                            <label class="label" for="hideInList" style="margin-bottom:0px; margin-left: 5px">הצגה בטבלאות: </label>
+                            <VueToggles
+                                id="hideInList"
+                                style="direction: ltr; margin-left: 9px;"
+                                @click="toggleHideInList"
+                                :value="hideInList"
+                                height="20"
+                                width="60"
+                                fontSize="12"
+                                uncheckedColor="#000000"
+                                checkedColor="#000000"
+                                fontWeight="bold"
+                                uncheckedText="הצג"
+                                checkedText="הסתר"
+                                checkedBg="lightgrey"
+                                uncheckedBg="#b4d455"/>
+                          </div>
+                        </div>
                         </div>
                     </div>
                     <div class="field">
@@ -171,9 +189,11 @@
 </template>
 
 <script>
+import VueToggles from 'vue-toggles';
 export default {
     data() {
         return {
+          hideInList: false,
             form: new this.$form({
                 id: "",
                 name: "",
@@ -182,7 +202,8 @@ export default {
                 sort_order: "",
                 description: "",
                 is_required: "0",
-                entities: []
+                entities: [],
+                hide_in_list: 0
             })
         };
     },
@@ -205,7 +226,7 @@ export default {
                         this.$event.fire("refreshCustomFieldsTable");
                         this.notify(
                             "success",
-                            "Custom field has been successfully updated."
+                            "שדה דינמי עודכן"
                         );
                         this.$router.push("/settings/fields");
                     })
@@ -219,7 +240,7 @@ export default {
                         this.$event.fire("refreshCustomFieldsTable");
                         this.notify(
                             "success",
-                            "Custom field has been successfully added."
+                            "שדה דינמי נוסף"
                         );
                         this.$router.push("/settings/fields");
                     })
@@ -236,12 +257,20 @@ export default {
                     let is_required = res.data.is_required ? "1" : "0";
                     this.form = new this.$form(res.data);
                     this.form.is_required = is_required;
+                    this.form.hide_in_list = res.data.hide_in_list;
+                    this.hideInList = res.data.hide_in_list === 0 ? false : true;
                     this.form.entities = entities;
                 })
                 .catch(err => {
                     this.$event.fire("appError", err.response);
                 });
         },
+      toggleHideInList() {
+
+        this.hideInList = !this.hideInList;
+        this.form.hide_in_list = !this.hideInList ? 0 : 1 ;
+
+      },
         validateForm() {
             this.$validator
                 .validateAll()
@@ -257,6 +286,7 @@ export default {
                 this.form.entities.filter(e => e.entity_type == v).length > 0
             );
         }
-    }
+    },
+  components: {VueToggles}
 };
 </script>

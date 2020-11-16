@@ -34,18 +34,19 @@
               </div>
             </template>
             <template v-for="(slot,i) in customColumn" :slot=customColumn[i] slot-scope="props">
+
               {{ setCustomFieldValue(props.row.custom, i, slot) }}
-              <!--              {{ props.row.custom}}-->
+
 
             </template>
 
 
-            <template :slot="customColumn" slot-scope="props">
-
-              {{ props.row.status ? props.row.custom : '' }}
-              <div class="has-text-right">
-              </div>
-            </template>
+<!--            <template :slot="customColumn" slot-scope="props">-->
+<!--            {{customColumn}}-->
+<!--              {{ props.row.status ? props.row.custom : '' }}-->
+<!--              <div class="has-text-right">-->
+<!--              </div>-->
+<!--            </template>-->
 
 
             <template slot="actions" slot-scope="props">
@@ -98,10 +99,6 @@
                 </p>
               </div>
             </template>
-            <template slot="afterBody">
-              <table-filters-component :filters="filters" :amount="totalAmount"></table-filters-component>
-            </template>
-
           </v-server-table>
         </div>
       </div>
@@ -167,13 +164,12 @@ export default {
     }
   },
   methods: {
-    setCustomFieldValue (customField, i) {
+    setCustomFieldValue (customField, i, slot) {
 
       if (customField) {
         let customRow = Object.entries(customField)
         if (customField) {
-
-          if (customRow[i]) {
+          if (customRow[i] ) {
             return customRow[i][1]
           }
         }

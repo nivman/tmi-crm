@@ -17,8 +17,8 @@ class Customer extends ModelForm
 
     public static $columns = ['id', 'name', 'company', 'email', 'phone', 'address', 'state', 'country'];
 
-    protected $fillable = ['name', 'company', 'email', 'phone', 'user_id', 'opening_balance', 'address', 'state', 'country', 'state_name', 'country_name','status_id','is_lead' ,'arrival_source_id'];
-    protected $hidden   = ['created_at', 'updated_at'];
+    protected $fillable = ['name', 'company', 'email', 'phone', 'user_id', 'opening_balance', 'address', 'state', 'country', 'state_name', 'country_name', 'status_id', 'is_lead', 'arrival_source_id'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     protected static function boot()
     {
@@ -75,35 +75,36 @@ class Customer extends ModelForm
         $customersIds = array_column($customers["data"], 'id');
 
         foreach ($customersIds as $key => $customersId) {
-            /** @var Customer $customer */
+
             $customer = Customer::find($customersId);
             $customerAttributeRelations = array_keys($customer->entityAttributeRelations);
 
             foreach ($customerAttributeRelations as $customerAttributeRelation) {
 
                 $customFieldsSlugs = collect(CustomField::whereSlug($customerAttributeRelation));
-                $customFieldsName = json_decode($customFieldsSlugs->first()->name);
 
-                $attributesNames[$customFieldsName->en] = $customFieldsName->en;
-                $customer->$customerAttributeRelation;
+                if (count($customFieldsSlugs->toArray()) > 0) {
+                    $customFieldsName = json_decode($customFieldsSlugs->first()->name);
 
-                if ($customer->getRelations()[$customerAttributeRelation]) {
+                    $attributesNames[$customFieldsName->en] = $customFieldsName->en;
+                    $customer->$customerAttributeRelation;
 
-                    $attribute = $customer->getRelations()[$customerAttributeRelation]->getAttributes();
+                    if ($customer->getRelation($customerAttributeRelation)) {
 
-                    $customFieldsSlugs = collect(CustomField::find($attribute['attribute_id']-1)->pluck('name')->get($attribute['attribute_id']-1));
+                        $attribute = $customer->getRelation($customerAttributeRelation)->getAttributes();
 
-                    $attribute['attributeName'] = $customFieldsSlugs->first();
+                        $attribute['attributeName'] = $customFieldsName->en;
 
+                    } else {
+                        $attribute = ['attributeName' => $customFieldsName->en, 'content' => '', 'entity_id' => $customersId];
+                    }
                     $attributes[] = $attribute;
-
-                    $customer->customerField = [$attribute['attributeName'] => $attribute['content']];
                 }
             }
         }
 
-       return ['attributes' => $attributes, 'attributesNames' => $attributesNames];
-   }
+        return ['attributes' => $attributes, 'attributesNames' => $attributesNames];
+    }
 
     public function getContactByCustomer($id)
     {
@@ -120,7 +121,7 @@ class Customer extends ModelForm
     {
         $customersIds = explode(',', $ids);
 
-       return DB::table('customers','cu')
+        return DB::table('customers', 'cu')
             ->leftJoin('contacts', 'cu.id', '=', 'contacts.customer_id')
             ->select('cu.*', 'contacts.id as contact_id', 'contacts.first_name as contact_first_name', 'contacts.last_name as contact_last_name')
             ->whereIn('cu.id', $customersIds)

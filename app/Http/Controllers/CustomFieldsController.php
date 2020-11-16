@@ -18,6 +18,7 @@ class CustomFieldsController extends Controller
             'is_required' => 'nullable',
             'sort_order'  => 'nullable|numeric',
             'entities'    => 'required|array',
+            'hide_in_list' => 'nullable'
         ]);
         if (in_array('App\Invoice', $v['entities'])) {
             array_push($v['entities'], 'App\Recurring');
@@ -52,7 +53,9 @@ class CustomFieldsController extends Controller
 
     public function update(Request $request, CustomField $customField)
     {
+
         $v = $this->isValid($request);
+
         $customField->fill($v)->save();
         Cache::flush();
         return $customField->refresh();
