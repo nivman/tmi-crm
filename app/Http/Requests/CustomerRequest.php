@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Customer;
+use DateTime;
 use Illuminate\Support\Arr;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,6 +27,7 @@ class CustomerRequest extends FormRequest
             'name' => 'required|max:55',
             'opening_balance' => 'nullable|numeric',
             'email' => 'nullable|email|unique:customers,email,' . $this->id,
+            'datetime' => 'date_format:d/m/y H:i'
         ];
 
         $customer = new Customer;
@@ -54,7 +56,10 @@ class CustomerRequest extends FormRequest
                 $validated[$attribute->slug] = '---';
             }
             if ($attribute->type == 'datetime' && !empty($validated[$attribute->slug])) {
-                $validated[$attribute->slug] = \Carbon\Carbon::parse($validated[$attribute->slug]);
+                $myDateTime = DateTime::createFromFormat('d/m/y h:i', $validated[$attribute->slug]);
+                $newDateString = $myDateTime->format('Y-m-d h:i');
+
+                $validated[$attribute->slug] = \Carbon\Carbon::parse($newDateString);
             }
         }
 

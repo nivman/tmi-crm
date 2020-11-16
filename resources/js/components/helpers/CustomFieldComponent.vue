@@ -83,12 +83,14 @@ export default {
         return {
             select: 0,
             date: new Date(),
-            config: { enableTime: true, dateFormat: 'Y-m-d H:i' },
+            config: { enableTime: true, dateFormat: 'd/m/y h:m' },
         };
     },
     mounted() {
         if (this.attr.type == 'datetime' && this.value) {
-            this.date = this.value.date;
+
+           const dateTime = moment(this.value, 'YYYY-MM-DD h:m').toDate();
+            this.date = moment(dateTime).format('DD/MM/YY hh:mm');
         }
         if (this.attr.type == 'boolean') {
             this.select = this.value ? 1 : 0;
