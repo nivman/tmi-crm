@@ -52,7 +52,7 @@ class GetEmails extends Command
     public function handle()
     {
         $settings = json_decode(Storage::disk('local')->get('settings.json'), true);
-
+         dd($settings)   ;
         $mailMail = $settings['MAIN_MAIL_ADDRESS'];
 
         $cm = new Clientmanager();
