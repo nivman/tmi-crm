@@ -27,14 +27,14 @@ class Contact extends Model
         $firstName = $customerName[0];
         $lastName = count($customerName) > 1 ? $customerName[1] : '';
 
-        $this::create([
+      $contact = $this::create([
             'first_name'=> $firstName,
             'last_name' => $lastName,
             'email' => $customer['email'],
             'phone' => $customer['phone'],
             'customer_id' => $id
         ]);
-
+          return $contact;
     }
 
     public function getContactByCustomer($id)

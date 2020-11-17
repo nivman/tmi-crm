@@ -101,14 +101,7 @@
                             }"
                             input-id="DEFAULT_ACCOUNT"
                             placeholder="Select Account..."
-                            :class="{
-                              select: true,
-                              'is-danger': errors.has('DEFAULT_ACCOUNT'),
-                            }"
-                          >
-                            <template slot="no-options">
-                              Please type to search...
-                            </template>
+                            :class="{ select: true,'is-danger': errors.has('DEFAULT_ACCOUNT'),}"  >
                           </v-select>
                         </div>
                         <div class="help is-danger">
@@ -123,8 +116,9 @@
                           name="STOCK"
                           v-model="form.STOCK"
                           :checked="!!form.STOCK"
-                          label="אפשר מלאי / כמות מוצרים"
-                        ></checkbox-component>
+                          label="אפשר מלאי / כמות מוצרים">
+
+                        </checkbox-component>
                         <div class="help is-danger">
                           {{ errors.first('STOCK') }}
                         </div>
@@ -137,6 +131,23 @@
                 <div class="panel-heading">הגדרות מייל</div>
                 <div class="panel-body is-shadowless p-t-md">
                   <div class="columns is-multiline">
+                    <div class="column is-one-quarter">
+                      <div class="field">
+                        <label class="label" for="MAIN_MAIL_ADDRESS">כתובת המייל של העסק</label>
+                        <div class="control">
+                          <input
+                              type="text"
+                              class="input"
+                              name="from_name"
+                              id="MAIN_MAIL_ADDRESS"
+                              v-validate="'required'"
+                              v-model="form.MAIN_MAIL_ADDRESS"/>
+                        </div>
+                        <div class="help is-danger">
+                          {{ errors.first('from_name') }}
+                        </div>
+                      </div>
+                    </div>
                     <div class="column is-one-quarter">
                       <div class="field">
                         <label class="label" for="MAIL_FROM_NAME">שם המוען</label>
@@ -160,15 +171,15 @@
                     </div>
                     <div class="column is-one-quarter">
                       <div class="field">
-                        <label class="label" for="MAIL_FROM_ADDRESS">כתובת</label>
+                        <label class="label" for="IMAP_USERNAME"> כתובת מייל אליה יופנו המיילים</label>
                         <div class="control">
                           <input
                             type="email"
                             class="input"
                             name="from_address"
-                            id="MAIL_FROM_ADDRESS"
+                            id="IMAP_USERNAME"
                             v-validate="'required|email'"
-                            v-model="form.MAIL_FROM_ADDRESS"
+                            v-model="form.IMAP_USERNAME"
                             :class="{
                               'is-danger': errors.has('from_address'),
                             }"
@@ -191,18 +202,8 @@
                             input-id="MAIL_MAILER"
                             v-validate="'required'"
                             @input="driverChange"
-                            :style="{
-                              width: '100%',
-                            }"
+                            :style="{width: '100%',}">
 
-                            :class="{
-                              select: true,
-                              'is-danger': errors.has('MAIL_MAILER'),
-                            }"
-                          >
-                            <template slot="no-options">
-                              Please type to search...
-                            </template>
                           </v-select>
                         </div>
                         <div class="help is-danger">
@@ -225,126 +226,7 @@
                     enter-active-class="animated faster fadeInDown"
                     leave-active-class="animated fastest fadeOutLeft"
                   >
-                    <div v-if="form.MAIL_MAILER == 'sparkpost'" class="columns is-multiline">
-                      <div class="column is-one-quarter">
-                        <div class="field">
-                          <label class="label" for="SPARKPOST_ENDPOINT">SparkPost Endpoint</label>
-                          <div class="control">
-                            <input
-                              type="text"
-                              class="input"
-                              v-validate="'required'"
-                              id="SPARKPOST_ENDPOINT"
-                              name="SPARKPOST_ENDPOINT"
-                              v-model="form.SPARKPOST_ENDPOINT"
-                              :class="{
-                                'is-danger': errors.has('SPARKPOST_ENDPOINT'),
-                              }"
-                            />
-                          </div>
-                          <div class="help is-danger">
-                            {{ errors.first('SPARKPOST_ENDPOINT') }}
-                          </div>
-                        </div>
-                      </div>
-                      <div class="column is-one-quarter">
-                        <div class="field">
-                          <label class="label" for="SPARKPOST_SECRET">SparkPost Secret</label>
-                          <div class="control">
-                            <input
-                              type="text"
-                              class="input"
-                              id="SPARKPOST_SECRET"
-                              name="SPARKPOST_SECRET"
-                              v-validate="'required'"
-                              v-model="form.SPARKPOST_SECRET"
-                              :class="{
-                                'is-danger': errors.has('SPARKPOST_SECRET'),
-                              }"
-                            />
-                          </div>
-                          <div class="help is-danger">
-                            {{ errors.first('SPARKPOST_SECRET') }}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </transition>
-                  <transition
-                    mode="out-in"
-                    name="fade"
-                    enter-active-class="animated faster fadeInDown"
-                    leave-active-class="animated fastest fadeOutLeft"
-                    appear
-                  >
-                    <div v-if="form.MAIL_MAILER == 'ses'" class="columns is-multiline">
-                      <div class="column is-one-quarter">
-                        <div class="field">
-                          <label class="label" for="SES_KEY">SES Key</label>
-                          <div class="control">
-                            <input
-                              type="text"
-                              id="SES_KEY"
-                              class="input"
-                              name="SES_KEY"
-                              v-model="form.SES_KEY"
-                              v-validate="'required'"
-                              :class="{
-                                'is-danger': errors.has('SES_KEY'),
-                              }"
-                            />
-                          </div>
-                          <div class="help is-danger">
-                            {{ errors.first('SES_KEY') }}
-                          </div>
-                        </div>
-                      </div>
-                      <div class="column is-one-quarter">
-                        <div class="field">
-                          <label class="label" for="SES_SECRET">SES Secret</label>
-                          <div class="control">
-                            <input
-                              type="text"
-                              class="input"
-                              id="SES_SECRET"
-                              name="SES_SECRET"
-                              v-validate="'required'"
-                              v-model="form.SES_SECRET"
-                              :class="{
-                                'is-danger': errors.has('SES_SECRET'),
-                              }"
-                            />
-                          </div>
-                          <div class="help is-danger">
-                            {{ errors.first('SES_SECRET') }}
-                          </div>
-                        </div>
-                      </div>
-                      <div class="column is-one-quarter">
-                        <div class="field">
-                          <label class="label" for="SES_REGION">SES Region</label>
-                          <div class="control">
-                            <input
-                              type="text"
-                              class="input"
-                              id="SES_REGION"
-                              name="SES_REGION"
-                              v-validate="'required'"
-                              v-model="form.SES_REGION"
-                              :class="{
-                                'is-danger': errors.has('SES_REGION'),
-                              }"
-                            />
-                          </div>
-                          <div class="help">
-                            Default: us-east-1
-                          </div>
-                          <div class="help is-danger">
-                            {{ errors.first('SES_REGION') }}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+
                   </transition>
                   <transition
                     mode="out-in"
@@ -356,7 +238,7 @@
                     <div v-if="form.MAIL_MAILER == 'smtp'" class="columns is-multiline">
                       <div class="column is-one-quarter">
                         <div class="field">
-                          <label class="label" for="MAIL_HOST">Mail Host</label>
+                          <label class="label" for="MAIL_HOST">(לשליחת מיילים) Mail Host</label>
                           <div class="control">
                             <input
                               type="text"
@@ -377,7 +259,7 @@
                       </div>
                       <div class="column is-one-quarter">
                         <div class="field">
-                          <label class="label" for="MAIL_PORT">Mail Port</label>
+                          <label class="label" for="MAIL_PORT">(לשליחת מיילים) Mail Port</label>
                           <div class="control">
                             <input
                               type="text"
@@ -398,7 +280,7 @@
                       </div>
                       <div class="column is-one-quarter">
                         <div class="field">
-                          <label class="label" for="MAIL_USERNAME">Mail Username</label>
+                          <label class="label" for="MAIL_USERNAME">כתובת מייל ממנה ישלחו מיילים</label>
                           <div class="control">
                             <input
                               type="text"
@@ -419,10 +301,10 @@
                       </div>
                       <div class="column is-one-quarter">
                         <div class="field">
-                          <label class="label" for="MAIL_PASSWORD">Mail Password</label>
+                          <label class="label" for="MAIL_PASSWORD">סיסימה למייל</label>
                           <div class="control">
                             <input
-                              type="text"
+                              type="password"
                               class="input"
                               id="MAIL_PASSWORD"
                               name="MAIL_PASSWORD"
@@ -809,12 +691,7 @@ export default {
         { label: 'Authorize.net', value: 'AuthorizeNetApi_Api' },
       ],
       drivers: [
-        { label: 'Amazon SES', value: 'ses' },
-        { label: 'Log', value: 'log' },
-        { label: 'Mailgun', value: 'mailgun' },
-        { label: 'SendMail', value: 'sendmail' },
         { label: 'SMTP', value: 'smtp' },
-        { label: 'SparkPost', value: 'sparkpost' },
       ],
     };
   },

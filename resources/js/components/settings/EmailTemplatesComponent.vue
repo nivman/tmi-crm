@@ -19,13 +19,7 @@
                                 >
                             </select>
                         </div>
-                        Email Templates ({{ template.label }})
-                    </div>
-                    <div class="panel-block">
-                        <p class="block">
-                            Please update the chosen template by modifying html
-                            below
-                        </p>
+                      תבניות אימייל ({{ template.label }})
                     </div>
                     <form
                         autocomplete="off"
@@ -61,7 +55,7 @@
                                     ></iframe>
                                 </div>
                                 <div class="column is-12">
-                                    <strong>Available variables:</strong>
+                                    <strong>שדות </strong>
                                     <code
                                         v-if="template.value == 'user_created'"
                                         v-text="
@@ -135,7 +129,7 @@
                                     :disabled="errors.any()"
                                     :class="{ 'is-loading': isSaving }"
                                 >
-                                    Submit
+                                    אישור
                                 </button>
                             </div>
                         </div>

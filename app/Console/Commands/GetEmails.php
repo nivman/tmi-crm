@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Contact;
+use App\Customer;
 use App\Event;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -50,15 +53,19 @@ class GetEmails extends Command
     {
         $settings = json_decode(Storage::disk('local')->get('settings.json'), true);
 
+        $mailMail = $settings['MAIN_MAIL_ADDRESS'];
+
         $cm = new Clientmanager();
-        // $settings['MAIL_HOST'] = 'imap.googlemail.com'
-        //$settings['MAIL_ENCRYPTION'] = ssl
-       // $settings['MAIL_PORT'] = 993
+
+        // $settings['IMAP_HOST'] = 'imap.googlemail.com'
+        // $settings['MAIL_ENCRYPTION'] = ssl
+        // $settings['MAIL_PORT'] = 993
+
         /** @var Client $message */
         $client = $cm->make([
-            'host'           => $settings['MAIL_HOST'],
-            'port'           => $settings['MAIL_PORT'],
-            'encryption'     => $settings['MAIL_ENCRYPTION'],
+            'host'           => $settings['IMAP_HOST'],
+            'port'           => $settings['IMAP_PORT'],
+            'encryption'     => $settings['IMAP_ENCRYPTION'],
             'validate_cert'  => false,
             'protocol'       => 'imap',
             'username'       => $settings['IMAP_USERNAME'],
@@ -72,32 +79,70 @@ class GetEmails extends Command
         /** @var Folder $folder */
         foreach($folders as $folder){
 
-            //Get all Messages of the current Mailbox $oFolder
             /** @var MessageCollection $aMessage */
 
             if ( $folder->path == 'INBOX') {
                 /** @var  Message $message */
-                $messages = $folder->messages()->unseen()->get();
+                $messagesToMailEmail = $folder->messages()->unseen()->to($mailMail)->get();
 
-                foreach($messages as $message){
-                      $customer = $this->searchCustomersEmails($message->from[0]->mail);
-                      if (count($customer) > 0)
-                      {
-                          $this->createEmailEvent($customer, $message);
-                      }
-                    dd($message->from[0]->mail);
-//                    dump($oMessage->getSubject().'<br />');
-//                    dump('Attachments: '.$oMessage->getAttachments()->count().'<br />');
-//                    dump($oMessage->getHTMLBody(true));
+                $this->incomingEmail($messagesToMailEmail);
+                $messagesFromMainEmail = $folder->messages()->unseen()->from($mailMail)->get();
+                $this->outGoingEmail($messagesFromMainEmail);
+
+            }
+        }
+     }
+
+    private function outGoingEmail($messages)
+    {
+        foreach($messages as $message){
+            $address = $message->to[0]->mail;
+            $customer = $this->searchCustomersEmails($message, $address);
+            if ($customer)
+            {
+                $this->createEmailEvent($customer, $message);
+            }
+        }
+    }
+
+    private function incomingEmail($messages)
+    {
+        foreach($messages as $message){
+
+            if($message->subject == 'Fwd: TMI Productions "פניה דרך האתר"') {
+
+                $this->createLead($message);
+            }else{
+
+                $address = $message->from[0]->mail;
+                $customer =   $this->searchCustomersEmails($message, $address);
+                if ($customer)
+                {
+                    $this->createEmailEvent($customer, $message);
                 }
             }
         }
-        die;
+    }
+    private function createLead($message) {
+        /** @var  Message $message */
+         $email = [];
+         $phone = [];
+         $myStr = str_replace(array("\r","\n"), "", $message->getTextBody());
+         preg_match('/From:.+ <(.+)>/', $myStr, $email);
+         preg_match('/טלפון(\d+)/', $myStr, $phone);
+
+        $v =['name' => 'ליד חדש מהאתר', 'email' => $email[1], 'phone' => $phone[1], 'user_id' => 1, 'is_lead' =>1];
+        $customer = Customer::create($v);
+        $contact = new Contact();
+
+        $contact = $contact->createNewContact($v, $customer->id);
+
+        $customer->contact_id = $contact->id;
+         $this->createEmailEvent($customer, $message);
     }
 
-    private function searchCustomersEmails($mail) {
-
-        return DB::table('customers', 'cu')
+    private function searchCustomersEmails($message, $address) {
+        $customer = DB::table('customers', 'cu')
             ->leftJoin('contacts', 'cu.id', '=', 'contacts.customer_id')
             ->select(
                 'cu.id',
@@ -107,23 +152,38 @@ class GetEmails extends Command
                 'contacts.id as contact_id',
                 'contacts.first_name as contact_first_name',
                 'contacts.last_name as contact_last_name')
-            ->where('cu.email', $mail)
-            ->get()->toArray();
+            ->where('cu.email', $address)
+            ->get();
+        if (count($customer) > 0)
+        {
+            $contacts = $customer->getIterator();
+
+            foreach ($contacts as $contact) {
+
+                    if ($contact->contact_email === $message->from[0]->mail) {
+                        $this->createEmailEvent($contact, $message);
+                        return $contact;
+                    }
+            }
+            return $contacts[0];
+        }
+
+        return false;
     }
 
     private function createEmailEvent($customer, $message) {
-        /** @var  Message $message */
 
-        $start_date = new \DateTime();
+
+        /** @var  Message $message */
         $emailData = [
             'title' => strip_tags($message->getSubject()),
             'details' => strip_tags($message->getTextBody()),
-            'start_date' => $start_date,
+            'start_date' => Carbon::parse($message->date->toArray()['formatted']),
             'type_id' => $this::MAIL_TYPE,
-            'contact_id' => $customer[0]->contact_id,
+            'contact_id' => $customer->contact_id,
             'user_id' => 1];
         Event::create($emailData);
 
-        dd($customer);
+
     }
 }

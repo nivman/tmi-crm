@@ -280,7 +280,7 @@
                                 </router-link>
                             </li>
                             <li>
-                                <router-link to="/settings/email_templates" @click.native="hideMenu">תבניות לאמייל</router-link>
+                                <router-link to="/settings/email_templates" @click.native="hideMenu">הגדרות לאמיילים</router-link>
                             </li>
                         </span>
                         <li>

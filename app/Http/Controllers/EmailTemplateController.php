@@ -8,6 +8,7 @@ class EmailTemplateController extends Controller
 {
     public function show($template = 'user_created')
     {
+
         $view = $this->{camel_case($template)}();
         return response()->json([
             'footer'   => str_after($view, '<!-- Template End -->'),

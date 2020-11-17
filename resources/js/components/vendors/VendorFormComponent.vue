@@ -5,7 +5,7 @@
             <div class="modal-card animated fastest zoomIn">
                 <header class="modal-card-head is-radius-top">
                     <p class="modal-card-title">
-                        {{ form.id ? "Edit Vendor" : "Add New Vendor" }}
+                        {{ form.id ? "עריכת ספק" : "ספק חדש" }}
                     </p>
                     <button
                         type="button"
@@ -18,7 +18,7 @@
                     <div class="columns">
                         <div class="column is-half">
                             <div class="field">
-                                <label class="label" for="name">Name</label>
+                                <label class="label" for="name">שם</label>
                                 <input
                                     id="name"
                                     name="name"
@@ -37,7 +37,7 @@
                             </div>
                             <div class="field">
                                 <label class="label" for="company"
-                                    >Company</label
+                                    >חברה</label
                                 >
                                 <input
                                     type="text"
@@ -58,7 +58,7 @@
                         </div>
                         <div class="column is-half">
                             <div class="field">
-                                <label class="label" for="email">Email</label>
+                                <label class="label" for="email">אימייל</label>
                                 <input
                                     id="email"
                                     type="text"
@@ -78,7 +78,7 @@
                                 ></div>
                             </div>
                             <div class="field">
-                                <label class="label" for="phone">Phone</label>
+                                <label class="label" for="phone">טלפון</label>
                                 <input
                                     id="phone"
                                     type="text"
@@ -98,9 +98,7 @@
                         </div>
                     </div>
                     <div class="field" v-if="form.id ? false : true">
-                        <label class="label" for="opening_balance"
-                            >Opening Balance</label
-                        >
+                        <label class="label" for="opening_balance">תקציב</label>
                         <input
                             type="number"
                             class="input"
@@ -117,7 +115,7 @@
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label" for="address">Address</label>
+                        <label class="label" for="address">כתובת</label>
                         <input
                             type="text"
                             id="address"
@@ -132,74 +130,8 @@
                             v-text="errors.first('address')"
                         ></div>
                     </div>
-                    <div class="columns">
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label" for="country"
-                                    >Country</label
-                                >
-                                <div class="control">
-                                    <v-select
-                                        name="country"
-                                        v-model="country"
-                                        input-id="country"
-                                        max-height="200px"
-                                        :filterable="false"
-                                        :searchable="false"
-                                        :options="countries"
-                                        @input="countryChange"
-                                        v-validate="'required'"
-                                        :style="{ width: '100%' }"
-                                        placeholder="Select Country..."
-                                        :class="{
-                                            select: true,
-                                            'is-danger': errors.has('country')
-                                        }"
-                                    >
-                                        <template slot="no-options">
-                                            Please type to search...
-                                        </template>
-                                    </v-select>
-                                </div>
-                                <div class="help is-danger">
-                                    {{ errors.first("country") }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label" for="state">State</label>
-                                <div class="control">
-                                    <v-select
-                                        name="state"
-                                        input-id="state"
-                                        v-model="state"
-                                        :options="states"
-                                        max-height="200px"
-                                        :filterable="false"
-                                        :searchable="false"
-                                        @input="stateChange"
-                                        v-validate="'required'"
-                                        :style="{ width: '100%' }"
-                                        placeholder="Select State..."
-                                        :class="{
-                                            select: true,
-                                            'is-danger': errors.has('state')
-                                        }"
-                                    >
-                                        <template slot="no-options">
-                                            Please type to search...
-                                        </template>
-                                    </v-select>
-                                </div>
-                                <div class="help is-danger">
-                                    {{ errors.first("state") }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div v-if="attributes">
-                        <h5 class="cf">Custom Fields</h5>
+                        <h5 class="cf">שדות נוספים</h5>
                         <div class="columns is-multiline">
                             <div
                                 class="column is-half"
@@ -219,9 +151,8 @@
                                 type="submit"
                                 class="button is-link is-fullwidth"
                                 :class="{ 'is-loading': isSaving }"
-                                :disabled="errors.any() || isSaving"
-                            >
-                                Submit
+                                :disabled="errors.any() || isSaving">
+                                אישור
                             </button>
                         </div>
                     </div>

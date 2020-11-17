@@ -44,11 +44,11 @@ class PaymentsController extends Controller
     public function email(Payment $payment)
     {
         if ($payment->payable->email) {
-            try {
+          //  try {
                 \Mail::to($payment->payable->email)->send(new \App\Mail\PaymentCreated($payment));
-            } catch (\Exception $e) {
-                \Log::error('Unable to send email, please check your system settings. Error: ' . $e->getMessage());
-            }
+        //    } catch (\Exception $e) {
+        //        \Log::error('Unable to send email, please check your system settings. Error: ' . $e->getMessage());
+        //    }
             return response(['success' => true], 200);
         }
         return response(['message' => 'Payable (customer/vendor) does not have email address.'], 422);

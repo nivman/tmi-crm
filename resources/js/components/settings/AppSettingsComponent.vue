@@ -25,11 +25,7 @@
                                                 data-vv-name="app.name"
                                                 v-model="form.app.name"
                                                 v-validate="'required'"
-                                                :class="{
-                                                    'is-danger': errors.has(
-                                                        'app.name'
-                                                    )
-                                                }"
+                                                :class="{ 'is-danger': errors.has('app.name')}"
                                             />
                                         </div>
                                         <div class="help is-danger">

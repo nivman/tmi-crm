@@ -11,7 +11,7 @@
         </header>
         <section class="modal-card-body is-radius-bottom">
           <loading v-if="loading"></loading>
-          <div class="field" v-if="!selected">
+          <div class="field">
             <checkbox-component id="state" name="state" label="For Vendor" v-model="form.state" :checked="form.state"></checkbox-component>
             <transition
               mode="out-in"
@@ -91,6 +91,7 @@
             <div class="control">
               <v-select
                 label="name"
+                id="account"
                 name="account"
                 v-model="account"
                 input-id="account"
@@ -98,15 +99,12 @@
                 @input="accountChange"
                 v-validate="'required'"
                 :style="{ width: '100%' }"
-                placeholder="Select Account..."
                 :class="{
                   select: true,
                   'is-danger': errors.has('account'),
                 }"
               >
-                <template slot="no-options">
-                  Please type to search...
-                </template>
+
               </v-select>
             </div>
             <div class="help is-danger">
@@ -246,6 +244,7 @@ export default {
       .get('app/accounts?all=1')
       .then(account => {
         this.accounts = account.data;
+        console.log(this.accounts)
         if (this.$route.query.invoice_id) {
           this.form.invoice_id = this.$route.query.invoice_id;
         }
@@ -253,10 +252,12 @@ export default {
           this.form.purchase_id = this.$route.query.purchase_id;
         }
         if (this.$route.query.payer && this.$route.query.payer_id) {
+          console.log(this.$route.query.payer_id)
           this.$http
             .get(`app/${this.$route.query.payer}s/${this.$route.query.payer_id}`)
             .then(payer => {
               this.payer = payer.data;
+
               if (this.$route.query.payer == 'customer') {
                 this.form.customer_id = this.payer.id;
               } else {
@@ -264,6 +265,7 @@ export default {
               }
               this.selected = true;
               this.form.amount = this.$route.query.amount;
+
               if (this.$route.params.id) {
                 this.fetchPayment(this.$route.params.id);
               } else {
@@ -284,6 +286,7 @@ export default {
   },
   watch: {
     'form.gateway': function(val) {
+
       this.form.status = val == 'cash' ? 'receiving' : 'requesting';
     },
     'form.state': function(val) {

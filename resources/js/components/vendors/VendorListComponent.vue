@@ -6,9 +6,9 @@
                     <i class="fas fa-cog" />
                 </button>
                 <router-link to="/vendors/add" class="button is-link is-small is-pulled-right">
-                    <i class="fas fa-plus m-r-sm" /> Add Vendor
+                    <i class="fas fa-plus m-l-sm" /> הוספת ספק
                 </router-link>
-                Vendors
+                ספקים
                 <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
             </div>
             <div class="panel-block table-body-br">
@@ -23,13 +23,13 @@
                             <p class="control tooltip">
                                 <router-link :to="'/vendors/' + props.row.id" class="button is-primary is-small">
                                     <i class="fas fa-file-alt" />
-                                    <span class="tooltip-text">View</span>
+                                    <span class="tooltip-text">הצגה</span>
                                 </router-link>
                             </p>
                             <p class="control tooltip" v-if="$store.getters.admin">
                                 <router-link :to="'/vendors/transactions/' + props.row.id" class="button is-info is-small">
                                     <i class="fas fa-list"></i>
-                                    <span class="tooltip-text">List Transactions</span>
+                                    <span class="tooltip-text">רשימת עסקאות</span>
                                 </router-link>
                             </p>
                             <p class="control tooltip" v-if="$store.getters.admin">
@@ -43,25 +43,22 @@
                                     class="button is-success is-small"
                                 >
                                     <i class="fas fa-money-bill-alt"></i>
-                                    <span class="tooltip-text">Add Payment</span>
+                                    <span class="tooltip-text">הוספת תשלום</span>
                                 </router-link>
                             </p>
                             <p class="control tooltip" v-if="$store.getters.admin">
                                 <router-link :to="'/vendors/edit/' + props.row.id" class="button is-warning is-small">
                                     <i class="fas fa-edit"></i>
-                                    <span class="tooltip-text">Edit</span>
+                                    <span class="tooltip-text">עריכה</span>
                                 </router-link>
                             </p>
                             <p class="control tooltip" v-if="$store.getters.superAdmin">
                                 <button type="button" class="button is-danger is-small" @click="deleteRecord(props.row.id)">
                                     <i class="fas fa-trash"></i>
-                                    <span class="tooltip-text">Delete</span>
+                                    <span class="tooltip-text">מחיקה</span>
                                 </button>
                             </p>
                         </div>
-                    </template>
-                    <template slot="afterBody">
-                        <table-filters-component :filters="filters" :amount="total_amount"></table-filters-component>
                     </template>
                 </v-server-table>
             </div>
@@ -92,6 +89,14 @@ export default {
                 sortable: ['id', 'name', 'company', 'email', 'phone'],
                 columnsClasses: { id: 'w50 has-text-centered', payable: 'w125 has-text-right', actions: 'w175 has-text-centered p-x-none' },
                 filterable: ['id', 'name', 'company', 'email', 'phone'],
+              headings: {
+                name: 'שם',
+                company : 'חברה',
+                email: 'אימייל',
+                phone: 'טלפון',
+                payable: 'תשלום',
+                actions: 'פעולות'
+              },
             },
         };
     },

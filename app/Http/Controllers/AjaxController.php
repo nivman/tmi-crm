@@ -33,14 +33,11 @@ class AjaxController extends Controller
             ] : null,
             'settings' => [
                 'ac'      => true,
-                'dateformat' => $settings['dateformat'],
                 'noRows' => isset($settings['noRows']) ? $settings['noRows'] : 10,
-//                'navPosition' => isset($settings['navPosition']) ? $settings['navPosition'] : 'left',
-//                'idColumn' => isset($settings['idColumn']) ? $settings['idColumn'] : false,
                 'select' => isset($settings['select']) ? $settings['select'] : false,
                 'baseURL' => url('/'),
                 'app'     => ['name' => config('app.name')],
-
+                'system'  => ['card_gateway' => env('CARD_GATEWAY'), 'default_account_id' => env('DEFAULT_ACCOUNT')]
             ],
             'notifications' => [
                 'payment_due'    => \App\Payment::where('received', '!=', 1)->count(),
