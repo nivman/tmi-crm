@@ -189,6 +189,19 @@ class TasksController extends Controller
         return response()->json($tasks);
     }
 
+    public function updateCalendarDates(Request $request)
+    {
+
+        $eventId = $request->request->get('event')['event']['id'];
+        $request->request->set('start_date', $request->request->get('start'));
+        $request->request->set('end_date', $request->request->get('end'));
+        $v = ['start_date' => $request->request->get('start'), 'end_date' => $request->request->get('end')];
+
+        $event = Task::find($eventId);
+        $event->update($v);
+        return $event;
+    }
+
     private function filterBy($request, $entityId, $entityType)
     {
 

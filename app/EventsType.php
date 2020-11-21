@@ -18,7 +18,7 @@ class EventsType extends Model
 
     public function getEventsType()
     {
-        return DB::table('events_types')->select('id', 'name')->get();
+        return DB::table('events_types')->select('id', 'name', 'color')->get();
     }
 
     public function getEventsTypeById($id) {

@@ -59,10 +59,21 @@
                 class="rtl-direction"
                 item-value="id"
                 item-text="name"
+                v-bind:style="{ 'background-color':form.typeColor  }"
                 return-object
                 single-line
                 :options="types"
                 v-model="form.type">
+              <template v-slot:option="types">
+                <div v-html="types.name"
+                     :style="{
+                      background: types.color,
+                      textAlign: 'center',
+                      display: 'block',
+                      marginLeft:'-20px',
+                      marginRight:'-20px'
+                    } "></div>
+              </template>
             </v-select>
           </div>
           <div class="field">
@@ -187,6 +198,7 @@ export default {
       projects: [],
       eventTypes: {id: 1, name: 'שיחה'},
       types: [],
+      typeColor: '',
       contactSelected: false,
       projectSelected: false,
       form: new this.$form({
@@ -232,6 +244,10 @@ export default {
         this.getProjectsByContactId([this.form.contact])
       }
       this.contactSelected = !this.contactSelected
+    },
+    'form.type': function () {
+    this.form.typeColor = this.form.type.color
+  //   console.log(this.form.type)
     }
   },
   methods: {
@@ -288,18 +304,36 @@ export default {
     },
     beforeOpen(e) {
 
+      this.form = new this.$form({
+        id: '',
+        start_date: '',
+        end_date: '',
+        title: '',
+        details: '',
+        color: '',
+        contact: '',
+        contact_id: null,
+        type: 'שיחה',
+        type_id: 1,
+        project: ''
+      })
+
       let moment = require('moment-timezone');
       moment().tz("Asia/Jerusalem").format();
 
       this.form.start_date = moment(new Date()).format("DD/MM/YYYY H:m");
 
       this.create();
-      if (e.params.event) {
+      if(e.params.eventId){
+        this.getEventById(e.params.eventId);
+      }
+      else if (e.params.event) {
 
         this.form = new this.$form(e.params.event)
         this.form.contact = e.params.event.contact.first_name + ' ' + e.params.event.contact.last_name
         this.form.contact_id = e.params.event.contact.id
-
+        this.form.start_date = moment( e.params.event.start_date).format("DD/MM/YYYY H:mm");
+        this.form.end_date = moment( e.params.event.end_date).format("DD/MM/YYYY H:mm");
         let project = e.params.event.project;
         this.form.project = project ? project.name : '';
         this.form.project_id =  project ? project.id : null;
@@ -308,19 +342,6 @@ export default {
 
           this.fetchContact(e.params.customerId)
         }
-        this.form = new this.$form({
-          id: '',
-          start_date: '',
-          end_date: '',
-          title: '',
-          details: '',
-          color: '',
-          contact: '',
-          contact_id: null,
-          type: 'שיחה',
-          type_id: 1,
-          project: ''
-        })
       }
     },
     searchContacts: function (search) {
@@ -382,9 +403,31 @@ export default {
             this.$event.fire('appError', err.response)
           })
     },
+    getEventById(id) {
+      this.$http
+          .get('app/events/' + id)
+          .then(res => {
+            console.log(res.data)
+            this.form.id = res.data.id
+            this.form.title = res.data.title
+            this.form.contact = res.data.contact[0].first_name + ' ' + res.data.contact[0].last_name
+            this.form.contact_id = res.data.contact[0].id
+            this.form.type = res.data.type[0].name;
+            this.form.type_id = res.data.type_id;
+            this.form.details = res.data.details;
+
+            this.form.start_date = moment( res.data.start_date).format("DD/MM/YYYY H:mm");
+            this.form.end_date = moment( res.data.end_date).format("DD/MM/YYYY H:mm");
+
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+    },
     submit() {
       this.isSaving = true
       if (this.form.id && this.form.id !== '') {
+
         this.form
             .put(`app/events/${this.form.id}`)
             .then(() => {

@@ -395,6 +395,11 @@ export default {
         .catch(err => this.$event.fire('appError', err.response))
   },
   watch: {
+    'form.start_date': function () {
+      let parsed = moment(this.form.start_date, 'DD/MM/YYYY H:m');
+
+     this.form.end_date = moment(parsed._d).add(30, 'm').format('DD/MM/YYYY H:mm')
+    },
     'form.end_date': function () {
 
       if (!this.form.start_date) {

@@ -53,6 +53,8 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
 
     Route::get('events/eventsList', 'EventsController@list');
     Route::get('events/eventsList/add', 'EventsController@list');
+    Route::post('events/calender/dates', 'EventsController@updateCalendarDates');
+    Route::post('tasks/calender/dates', 'TasksController@updateCalendarDates');
     Route::get('events/create', 'EventsController@eventsTypes');
   //  Route::delete('events/eventsTypes', 'EventsController@eventsTypes');
     Route::delete('events/delete/{event}', 'EventsController@destroy');

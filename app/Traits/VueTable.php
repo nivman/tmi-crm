@@ -120,14 +120,14 @@ trait VueTable
 
                         if (count($queryFields) > 0 && $joinTables) {
                             foreach ($queryFields as $key => $queryField) {
-                                if ($key == 'date_to_complete') {
+                                if ($key == 'date_to_complete' || $key == 'start_date') {
 
                                     $start = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['start']);
 
                                     $end = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['end']);
                                     $qu->whereBetween('date_to_complete', [$start, $end]);
                                 }
-                                if ($data->getModel()->checkRelation($key) && $key !== 'date_to_complete') {
+                                if ($data->getModel()->checkRelation($key) && $key !== 'date_to_complete' && $key !== 'start_date') {
 
                                     $qu->where($joinTables . '.' . $key, 'like', "%{$queryField}%");
                                 }
@@ -175,7 +175,7 @@ trait VueTable
         foreach ($queryFields as $key => $queryField) {
 
             if ($data->getModel()->checkRelation($key)) {
-                if ($key == 'date_to_complete') {
+                if ($key == 'date_to_complete' || $key == 'start_date') {
 
                     $start = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['start']);
 

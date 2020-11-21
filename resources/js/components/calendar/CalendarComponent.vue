@@ -1,281 +1,284 @@
 <template>
-    <div class="wrapper">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <a
-                    @click="addEvent"
-                    class="button is-link is-small is-pulled-right"
-                >
-                    <i class="fas fa-plus m-r-sm" /> Add New Event
-                </a>
-                Calendar
-                <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
-            </div>
-            <div class="panel-body">
-                <div class="columns is-mobile">
-                    <div class="column">
-                        <calendar-view
-                            :events="events"
-                            :show-date="showDate"
-                            :disable-past="false"
-                            :starting-day-of-week="1"
-                            @setShowDate="setShowDate"
-                            @click-event="onClickEvent"
-                            :display-period-uom="'month'"
-                            @show-date-change="setShowDate"
-                            :time-format-options="{
-                                hour: 'numeric',
-                                minute: '2-digit'
-                            }"
-                        />
-                    </div>
-                </div>
-                <div class="columns is-mobile" v-if="isMobile">
-                    <div class="column">
-                        <ul>
-                            <li
-                                v-for="event in events"
-                                :key="event.id"
-                                class="message"
-                                :class="{
-                                    'is-danger': event.color == 'red',
-                                    'is-success': event.color == 'green',
-                                    'is-info': event.color == 'blue',
-                                    'is-dark': event.color == 'black',
-                                    'is-warning': event.color == 'orange',
-                                    'is-link': event.color == 'purple'
-                                }"
-                            >
-                                <div
-                                    class="message-body"
-                                    @click="onClickEvent(event, true)"
-                                >
-                                    <strong>{{
-                                        event.start_date
-                                            | formatDate(
-                                                $store.state.settings.ac
-                                                    .dateformat
-                                            )
-                                    }}</strong>
-                                    {{ event.end_date ? "to" : "" }}
-                                    <strong>{{
-                                        event.end_date
-                                            | formatDate(
-                                                $store.state.settings.ac
-                                                    .dateformat
-                                            )
-                                    }}</strong
-                                    ><br />
-                                    {{ event.title }}
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+  <div class='wrapper'>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a
+              @click="addEvent"
+              class="button is-link is-small is-pulled-right"
+          >
+            <i class="fas fa-plus m-l-sm" /> הוספת התקשרות
+          </a>
+          יומני היקר
+
         </div>
-        <event-form-modal></event-form-modal>
-    </div>
+        <div class="panel-body">
+      <FullCalendar
+
+          :options='calendarOptions'
+          ref="calendar">
+      </FullCalendar>
+
+        </div>
+      </div>
+  <event-form-modal :eventId="eventId"></event-form-modal>
+  </div>
 </template>
-
 <script>
-import CalendarView from "vue-simple-calendar";
+import FullCalendar from '@fullcalendar/vue'
 import EventFormModal from "./EventFormModal.vue";
-require("vue-simple-calendar/dist/static/css/default.css");
-
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import '@fullcalendar/timegrid/main.css'
+import heLocale from '@fullcalendar/core/locales/he.js';
+import TaskFormModal from "../tasks/TaskFormModal";
 export default {
-    components: { CalendarView, EventFormModal },
-    data() {
-        return {
-            loading: true,
-            showDate: new Date(),
-            events: []
-        };
-    },
-    created() {
-        this.$event.listen("refreshEvents", () => {
-            this.fetchEvents(moment(this.showDate).format("YYYY-MM"));
-        });
-    },
-    beforeMount() {
-        this.fetchEvents(moment(this.showDate).format("YYYY-MM"));
-    },
-    watch: {
-        showDate: function(val) {
-            this.fetchEvents(moment(this.showDate).format("YYYY-MM"));
-        }
-    },
-    methods: {
-        fetchEvents(month) {
-            this.loading = true;
-            this.$http
-                .get(`app/events?date=${month}`)
-                .then(res => {
-                    this.events = res.data.map(event => {
-                        event.startDate = new Date(event.start_date);
-                        event.endDate = event.end_date
-                            ? new Date(event.end_date)
-                            : "";
-                        event.classes = event.color;
-                        return event;
-                    });
-                    this.loading = false;
-                })
-                .catch(err => {
-                    this.$event.fire("appError", err.response);
-                });
+  components: {
+    FullCalendar, EventFormModal, TaskFormModal },
+  data: function() {
+    return {
+      eventId: '',
+      calendarOptions: {
+        locales: [heLocale],
+        plugins: [
+          dayGridPlugin,
+          timeGridPlugin,
+          interactionPlugin // needed for dateClick
+        ],
+        headerToolbar: {
+
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        setShowDate(d) {
-            this.showDate = d;
-        },
-        addEvent() {
-            this.$modal.show("event-form-modal", { event: null });
-        },
-        onClickEvent(e, isE) {
-            this.$modal.show("event-form-modal", {
-                event: isE ? e : e.originalEvent
-            });
-        }
+        initialView: 'timeGridWeek',
+        eventBackgroundColor:'red',
+        displayEventTime: false,
+        eventColor: 'black',
+        editable: true,
+        selectable: true,
+        selectMirror: true,
+        dayMaxEvents: true,
+        weekends: true,
+        select: this.handleDateSelect,
+        eventClick: this.handleEventClick,
+        eventsSet: this.handleEvents,
+        eventDrop: this.handleDrop,
+        eventResize: this.handleDrag,
+        events: []
+      },
+      dir: 'rtl',
     }
-};
+  },
+  created() {
+    console.log(this.$event)
+    this.$event.listen("refreshEvents", () => {
+
+        this.fetchEvents(moment(this.showDate).format("YYYY-MM-DD"));
+    });
+
+  },
+  beforeMount() {
+
+    setTimeout(()=>{
+
+     let dates = this.formatDates(this.$refs.calendar.getApi().currentData.dateProfile.activeRange)
+
+    this.fetchEvents(dates.start, dates.end);
+    this.setButtonsListeners();
+
+    },100)
+
+  },
+
+  watch: {
+    showDate: function(val) {
+      this.fetchEvents(moment(this.showDate).format("YYYY-MM"));
+    }
+  },
+  methods: {
+    fetchEvents(start, end) {
+
+      this.loading = true;
+      this.$http
+          .get(`app/events?start=${start}&end=${end}`)
+          .then(res => {
+            let calendarView =this.$refs.calendar.$vnode.componentInstance.$options.calendar.currentData.currentViewType;
+            let taskAndEvents = [...res.data.tasks, ...res.data.events];
+              this.calendarOptions.events = taskAndEvents.map(event => {
+                if(calendarView === 'dayGridMonth') {
+                  event.allDay = true
+                }
+                event.start =  new Date(event.start_date);
+                event.end =  new Date(event.end_date);
+
+                let statusColor = (event.status !== undefined && event.status !== null) ? event.status.color : '';
+
+                event.backgroundColor = event.type ? event.type.color : statusColor;
+
+                event.textColor = 'black';
+
+                return event;
+              });})
+    },
+    handleWeekendsToggle() {
+      this.calendarOptions.weekends = !this.calendarOptions.weekends // update a property
+    },
+    handleDateSelect(selectInfo) {
+      // let title = prompt('Please enter a new title for your event')
+      // let calendarApi = selectInfo.view.calendar
+      // calendarApi.unselect() // clear date selection
+      // if (title) {
+      //   calendarApi.addEvent({
+      //     id: createEventId(),
+      //     title,
+      //     start: selectInfo.startStr,
+      //     end: selectInfo.endStr,
+      //     allDay: selectInfo.allDay
+      //   })
+      // }
+    },
+    handleEventClick(clickInfo) {
+      //task have customer_id and event have contact_id
+      if (clickInfo.event._def.extendedProps.customer_id) {
+        this.$router.push({ path: `/tasks/edit/${clickInfo.event._def.publicId}` })
+      }else {
+        this.eventId = clickInfo.event._def.publicId
+        this.$modal.show("event-form-modal", { eventId: clickInfo.event._def.publicId });
+      }
+    },
+    handleEvents(events) {
+      this.events = events
+    },
+    handleDrop(event) {
+     let updateRoute = event.event._def.extendedProps.customer_id ? 'tasks' : 'events';
+      console.log(updateRoute)
+     let start = moment.utc(event.event._instance.range.start).format("YYYY-MM-DD H:m:s");
+     let end = moment.utc(event.event._instance.range.end).format("YYYY-MM-DD H:m:s");
+
+      this.$http
+          .post(`app/${updateRoute}/calender/dates`, {'event':event, 'start':start, 'end':end})
+
+          .then(res => {
+            console.log(res.data)
+
+
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+    },
+    handleDrag(event) {
+      let updateRoute = event.event._def.extendedProps.customer_id ? 'tasks' : 'events';
+
+      let start = moment.utc(event.event._instance.range.start).format("YYYY-MM-DD H:m:s");
+      let end = moment.utc(event.event._instance.range.end).format("YYYY-MM-DD H:m:s");
+
+      this.$http
+          .post(`app/${updateRoute}/calender/dates`, {'event':event, 'start':start, 'end':end})
+
+          .then(res => {
+            console.log(res.data)
+
+
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+    },
+    addEvent() {
+      this.$modal.show("event-form-modal", { event: null });
+    },
+    formatDates(dates){
+      let start =   moment(dates.start).format("YYYY-MM-DD")
+      let end =   moment(dates.end).format("YYYY-MM-DD")
+      return {'start' : start, 'end': end};
+    },
+    setButtonsListeners() {
+      let nextButton = this.$el.querySelector('.fc-next-button');
+      let prevButton = this.$el.querySelector('.fc-prev-button');
+      let day = this.$el.querySelector('.fc-timeGridDay-button');
+      let week = this.$el.querySelector('.fc-timeGridWeek-button');
+      let month =  this.$el.querySelector('.fc-dayGridMonth-button');
+
+      day.addEventListener('click', ()=>{
+        let dates = this.formatDates(this.$refs.calendar.getApi().currentData.dateProfile.activeRange)
+        this.fetchEvents(dates.start, dates.end);
+      });
+      week.addEventListener('click', ()=>{
+        let dates = this.formatDates(this.$refs.calendar.getApi().currentData.dateProfile.activeRange)
+
+        this.fetchEvents(dates.start, dates.end);
+      });
+      month.addEventListener('click', ()=>{
+        let dates = this.formatDates(this.$refs.calendar.getApi().currentData.dateProfile.activeRange)
+        this.fetchEvents(dates.start, dates.end);
+      });
+
+      nextButton.addEventListener('click', ()=>{
+        let dates = this.formatDates(this.$refs.calendar.getApi().currentData.dateProfile.activeRange)
+
+        this.fetchEvents(dates.start, dates.end);
+      });
+
+      prevButton.addEventListener('click', ()=>{
+        let dates = this.formatDates(this.$refs.calendar.getApi().currentData.dateProfile.activeRange)
+
+        this.fetchEvents(dates.start, dates.end);
+      });
+    }
+  },
+
+}
 </script>
+<style scoped>
 
-<style lang="scss">
-@import "../../../sass/variables";
-
-.cv-header-days {
-    font-weight: bold;
+.fc-event-title{
+  color: black !important;
 }
-.cv-header,
-.cv-header button,
-.cv-day,
-.cv-event,
-.cv-header-day,
-.cv-header-days,
-.cv-week,
-.cv-weeks {
-    border-color: #eee !important;
+.fc-scrollgrid-sync-table{
+  direction: rtl;
 }
-.cv-wrapper,
-.cv-wrapper .cv-header-nav button,
-.cv-wrapper .cv-event {
-    border-radius: 0 !important;
-    cursor: pointer;
+.fc-col-header{
+  direction: rtl
 }
-.cv-wrapper .cv-header {
-    border-radius: $radius $radius 0 0 !important;
+h2 {
+  margin: 0;
+  font-size: 16px;
 }
-.cv-wrapper .cv-weeks,
-.cv-wrapper .cv-weeks .cv-week:last-child {
-    border-radius: 0 0 $radius $radius !important;
+ul {
+  margin: 0;
+  padding: 0 0 0 1.5em;
 }
-.cv-wrapper .cv-weeks .cv-week:last-child .cv-day:first-child {
-    border-bottom-left-radius: $radius !important;
+li {
+  margin: 1.5em 0;
+  padding: 0;
 }
-.cv-wrapper .cv-weeks .cv-week:last-child .cv-day:last-child {
-    border-bottom-right-radius: $radius !important;
+b { /* used for event dates/times */
+  margin-right: 3px;
 }
-// .cv-wrapper.period-month.periodCount-1,
-// .cv-wrapper.period-week {
-//     height: 40vw;
-// }
-.cv-wrapper .cv-event {
-    margin: 2px 5px;
-    display: inline-block;
-    background-color: $white-bis;
-    border-color: $grey-lighter;
-    border: 0;
-    color: $grey-dark;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    &:hover {
-        font-weight: bold;
-    }
+.demo-app {
+  display: flex;
+  min-height: 100%;
+  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+  font-size: 14px;
 }
-
-.cv-wrapper .cv-event.span1 {
-    width: calc(14.28571% - 10px) !important;
+.demo-app-sidebar {
+  width: 300px;
+  line-height: 1.5;
+  background: #eaf9ff;
+  border-right: 1px solid #d3e2e8;
 }
-.cv-wrapper .cv-event.span2 {
-    width: calc(28.57143% - 10px) !important;
+.demo-app-sidebar-section {
+  padding: 2em;
 }
-.cv-wrapper .cv-event.span3 {
-    width: calc(42.85714% - 10px) !important;
+.demo-app-main {
+  flex-grow: 1;
+  padding: 3em;
 }
-.cv-wrapper .cv-event.span4 {
-    width: calc(57.14286% - 10px) !important;
-}
-.cv-wrapper .cv-event.span5 {
-    width: calc(71.42857% - 10px) !important;
-}
-.cv-wrapper .cv-event.span6 {
-    width: calc(85.71429% - 10px) !important;
-}
-.cv-wrapper .cv-event.span7 {
-    width: calc(100% - 10px) !important;
-}
-
-.cv-wrapper .cv-event.blue {
-    background-color: $blue !important;
-    border-color: $blue !important;
-    color: $white !important;
-}
-.cv-wrapper .cv-event.green {
-    background-color: $green !important;
-    border-color: $green !important;
-    color: $white !important;
-}
-.cv-wrapper .cv-event.red {
-    background-color: $red !important;
-    border-color: $red !important;
-    color: $white !important;
-}
-.cv-wrapper .cv-event.black {
-    background-color: $black !important;
-    border-color: $black !important;
-    color: $white !important;
-}
-.cv-wrapper .cv-event.orange {
-    background-color: $orange !important;
-    border-color: $orange !important;
-    color: $white !important;
-}
-.cv-wrapper .cv-event.purple {
-    background-color: $purple !important;
-    border-color: $purple !important;
-    color: $white !important;
-}
-.cv-wrapper .cv-event.continued::before,
-.cv-wrapper .cv-event.toBeContinued::after {
-    color: $yellow !important;
-}
-.cv-wrapper {
-    .cv-day,
-    .cv-week {
-        height: 120px;
-        min-height: 120px;
-        .outsideOfMonth {
-            color: #aaa;
-        }
-    }
-}
-@include mobile {
-    .cv-wrapper {
-        .cv-header {
-            display: flex;
-            margin-bottom: 5px;
-            flex-direction: column-reverse;
-        }
-        .cv-week,
-        .cv-day {
-            height: 25px !important;
-            min-height: 25px !important;
-        }
-        .cv-event {
-            height: 0 !important;
-            display: none !important;
-        }
-    }
+.fc { /* the calendar root */
+  max-width: 1100px;
+  margin: 0 auto;
 }
 </style>

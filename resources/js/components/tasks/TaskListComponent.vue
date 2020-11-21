@@ -65,6 +65,12 @@
 
             <date-format-component :date="props.row.date_to_complete"></date-format-component>
           </template>
+
+          <template slot="start_date" slot-scope="props">
+
+            <date-format-component :dateTime="props.row.start_date"></date-format-component>
+          </template>
+
           <template slot="priority" slot-scope="props">
             <div class="has-text-centered" :style="{background: props.row.priority ? props.row.priority.color : ''}">
               {{ props.row.priority ? props.row.priority.name : '' }}
@@ -150,6 +156,7 @@ export default {
         'customer',
         'project',
         'category',
+        'start_date',
         'date_to_complete',
         'actual_time',
         'details',
@@ -165,6 +172,7 @@ export default {
         project: 'פרוייקט',
         category: 'קטגוריה',
         date_to_complete: 'תאריך לביצוע',
+        start_date: 'זמן התחלה',
         range: {
             startDate: '',
             endDate: ''
@@ -173,13 +181,13 @@ export default {
         addRoute: null,
         options: {
         filterByColumn:true,
-        dateColumns: ['date_to_complete'],
+        dateColumns: ['date_to_complete','start_date'],
         datepickerOptions: {
           opens: 'right'
         },
-        listColumns: ['customer','name', 'date_to_complete'],
+        listColumns: ['customer','name', 'date_to_complete', 'start_date'],
         orderBy: { ascending: false, column: 'date_to_complete' },
-        sortable: ['name','priority','customer','date_to_complete', 'project', 'status', 'category'],
+        sortable: ['name','priority','customer','date_to_complete', 'project', 'status', 'category','start_date'],
         editableColumns: ['details'],
         perPage: 10,
         columnsClasses: {
@@ -189,7 +197,7 @@ export default {
           details: 'details-td',
           date_to_complete: 'w50 has-text-centered'
         },
-        filterable: ['name','details','customer', 'project', 'status', 'priority', 'category', 'date_to_complete'],
+        filterable: ['name','details','customer', 'project', 'status', 'priority', 'category', 'date_to_complete', 'start_date'],
         headings: {
           name: 'נושא',
           customer: 'לקוח',
@@ -201,6 +209,7 @@ export default {
           priority: 'עדיפות',
           status: 'סטטוס',
           date_to_complete: 'תאריך לביצוע',
+          start_date: 'זמן התחלה',
           actual_time: 'זמן בפועל לביצוע',
           actions: 'פעולות',
           category: 'קטגוריה'

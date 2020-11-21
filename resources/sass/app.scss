@@ -953,3 +953,35 @@ select[name="limit"] option:first-child {
 .expenses-dropdown > div > div  {
   direction: rtl;
 }
+//.cv-weeks{
+//  direction: rtl !important;
+//
+//
+//}
+.cv-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  direction: ltr;
+}
+
+.cv-week{
+  flex-direction: row-reverse !important;
+  direction: rtl  !important;
+
+
+}
+a.fc-event{
+  color: black;
+}
+.fc-scrollgrid-sync-table{
+  direction: rtl;
+}
+.fc-col-header{
+  direction: rtl
+}
