@@ -9,6 +9,7 @@ use App\Helpers\Filters;
 use App\Task;
 use Carbon\Carbon;
 use Doctrine\DBAL\Events;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class EventsController extends Controller
@@ -48,13 +49,16 @@ class EventsController extends Controller
     {
         $start = $request->start == null ? '' : $request->start;
         $end = !$request->end ? '' : $request->end;
-        $events = Event::whereBetween('start_date',[$start,$end])->with('type')->get();
-        $tasks = Task::whereBetween('start_date',[$start,$end])->with('status')->get();
+        $fetchData = $request->fetchData;
+
+        $events = $fetchData === '0' ? [] : Event::whereBetween('start_date',[$start,$end])->with('type')->get();
+        $tasks = $fetchData === '1' ? new Collection() : Task::whereBetween('start_date',[$start,$end])->with('status')->get();
 
         $taskTitles = array_map(function($task) {
             $task['title'] = $task['name'];
             return $task;
         }, $tasks->toArray() );
+
         return ['tasks' => $taskTitles, 'events' => $events];
     }
 

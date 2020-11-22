@@ -385,7 +385,7 @@ export default {
                   this.attributes = res.data.attributes
                   this.optionsStatuses = res.data.statuses
                   this.categories = res.data.categories
-                  this.loading = false
+                 // this.loading = false
                 })
                 .catch(err =>
                     this.$event.fire('appError', err.response)
@@ -397,8 +397,10 @@ export default {
   watch: {
     'form.start_date': function () {
       let parsed = moment(this.form.start_date, 'DD/MM/YYYY H:m');
-
-     this.form.end_date = moment(parsed._d).add(30, 'm').format('DD/MM/YYYY H:mm')
+      if(!this.loading) {
+        this.form.end_date = moment(parsed._d).add(30, 'm').format('DD/MM/YYYY H:mm')
+      }
+      this.loading = false
     },
     'form.end_date': function () {
 
@@ -433,7 +435,6 @@ export default {
 
       this.customerSelected = !this.customerSelected
       if (this.form.customer) {
-        console.log(this.form.customer)
         this.getProjectsByCustomerId([this.form.customer])
       } else {
         this.customerSelected = false
@@ -466,8 +467,13 @@ export default {
       this.form.date_to_complete = moment(new Date()).format('DD/MM/YYYY')
     },
     submit () {
+
       this.isSaving = true
       let route = !this.modal ? '/tasks' : `/${this.modal}`
+      if (this.$route.name === 'calendar-task') {
+        route = '/calendar';
+      }
+
       if (this.form.id && this.form.id !== '') {
 
         this.form
@@ -517,11 +523,12 @@ export default {
             this.form.priority = res.data.task.priority[0]
             this.form.project = res.data.task.project[0]
             this.form.status = taskStatus.length > 0 ? taskStatus[0] : ''
-            this.form.end_date = this.format_date(res.data.task.end_date)
+
             this.form.start_date = this.format_date(res.data.task.start_date)
+            this.form.end_date = this.format_date(res.data.task.end_date)
             this.form.date_to_complete = this.format_date(res.data.task.date_to_complete)
             this.form.notification_time = res.data.task.notification_time
-            this.loading = false
+
           })
           .catch(err => this.$event.fire('appError', err.response))
     },

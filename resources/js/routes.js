@@ -151,6 +151,20 @@ const router = new VueRouter({
             ]
         },
         {
+            path: "/calendar-tasks",
+            component: () => import("./components/tasks/TaskFormModal.vue"),
+            meta: { title: "Tasks", admin: false },
+            children: [
+                {
+                    name: 'calendar-task',
+                    path: "edit/:id",
+                    component: () => import("./components/tasks/TaskFormModal.vue"),
+                    meta: { title: "Edit Task From Calender", admin: true, modal: true }
+                },
+
+            ]
+        },
+        {
             path: "/tasks",
             component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskListComponent.vue"),
             meta: { title: "Tasks", admin: false },

@@ -15,7 +15,7 @@ class Task extends ModelForm
 {
     use AttributableModel, LogActivity, Restrictable, VueTable;
 
-    public static $columns = ['id', 'name', 'details', 'start_date', 'end_date', 'estimated_time', 'actual_time', 'project_id', 'date_to_complete', 'customer.name', 'project.name', 'status'];
+    public static $columns = ['id', 'name', 'details', 'start_date', 'end_date', 'estimated_time', 'actual_time', 'project_id', 'date_to_complete', 'customer.name', 'project.name'];
     protected $fillable = ['id', 'name', 'details', 'start_date', 'end_date', 'customer_id', 'customer_name', 'priority_id', 'status_id', 'estimated_time', 'actual_time', 'date_to_complete', 'notification_time', 'category_id', 'project_id'];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -91,12 +91,13 @@ class Task extends ModelForm
 
         $query = Task::query();
         $result = null;
-
-        if($sortByTaskAttr[0]) {
-            $request->query->set('orderBy', $sortByTaskAttr[1]);
-        }else{
-            $request->query->set('orderBy', $params[0]['orderByValue']);
-        }
+//dd($sortByTaskAttr);
+//        if($sortByTaskAttr[0]) {
+//            $request->query->set('orderBy', $sortByTaskAttr[1]);
+//        }else{
+//            $request->query->set('orderBy', $params[0]['orderByValue']);
+//        }
+        $request->query->set('orderBy', $params[0]['orderByValue']);
 
         foreach ($params as $key => $param) {
 
@@ -115,8 +116,11 @@ class Task extends ModelForm
                             $q->where($params[$key]['orderByValue'], 'LIKE', "%{$params[$key]['query']}%") ;
                         }
                     }else{
+
                         $q->where($params[$key]['orderByValue'], 'LIKE', "%{$params[$key]['query']}%");
+
                         if ($params[$key]['query'] == '') {
+
                             $q->orWhere($params[$key]['orderByValue'], '=', null);
                         }
                     }

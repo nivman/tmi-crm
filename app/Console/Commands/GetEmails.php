@@ -59,7 +59,7 @@ class GetEmails extends Command
 
         // $settings['IMAP_HOST'] = 'imap.googlemail.com'
         // $settings['MAIL_ENCRYPTION'] = ssl
-        // $settings['MAIL_PORT'] = 993
+        // $settings['IMAP_PORT'] = 993
 
         /** @var Client $message */
         $client = $cm->make([
@@ -109,7 +109,7 @@ class GetEmails extends Command
     {
         foreach($messages as $message){
 
-            if($message->subject == 'Fwd: TMI Productions "פניה דרך האתר"') {
+            if($message->subject == 'TMI Productions "פניה דרך האתר"') {
 
                 $this->createLead($message);
             }else{
