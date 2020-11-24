@@ -20,7 +20,7 @@ class CustomerRequest extends FormRequest
     {
         $rules = [
             'phone' => 'nullable|numeric',
-            'address' => 'nullable|alpha_num',
+            'address' => 'nullable|string',
             'company' => 'nullable|string',
             'name' => 'required|max:55|string',
             'opening_balance' => 'nullable|numeric',

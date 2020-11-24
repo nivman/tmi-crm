@@ -5,8 +5,10 @@ namespace App\Console\Commands;
 use App\Contact;
 use App\Customer;
 use App\Event;
+use App\File;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Webklex\PHPIMAP\Client;
@@ -20,6 +22,8 @@ use Webklex\PHPIMAP\Support\MessageCollection;
 class GetEmails extends Command
 {
     const MAIL_TYPE = 3;
+    const MAIN_SYSTEM_CUSTOMER = 36;
+    private $settings = null;
     /**
      * The name and signature of the console command.
      *
@@ -51,9 +55,9 @@ class GetEmails extends Command
      */
     public function handle()
     {
-        $settings = json_decode(Storage::disk('local')->get('settings.json'), true);
+        $this->settings = json_decode(Storage::disk('local')->get('settings.json'), true);
 
-        $mailMail = $settings['MAIN_MAIL_ADDRESS'];
+        $mailMail = $this->settings['MAIN_MAIL_ADDRESS'];
 
         $cm = new Clientmanager();
 
@@ -63,45 +67,45 @@ class GetEmails extends Command
 
         /** @var Client $message */
         $client = $cm->make([
-            'host'           => $settings['IMAP_HOST'],
-            'port'           => $settings['IMAP_PORT'],
-            'encryption'     => $settings['IMAP_ENCRYPTION'],
+            'host'           => $this->settings['IMAP_HOST'],
+            'port'           => $this->settings['IMAP_PORT'],
+            'encryption'     => $this->settings['IMAP_ENCRYPTION'],
             'validate_cert'  => false,
             'protocol'       => 'imap',
-            'username'       => $settings['IMAP_USERNAME'],
-            'password'       => $settings['IMAP_PASSWORD'],
+            'decoder' => false,
+            'username'       => $this->settings['IMAP_USERNAME'],
+            'password'       => $this->settings['IMAP_PASSWORD'],
 
         ]);
         $client->connect();
-
-        /** @var FolderCollection $folders */
-        $folders = $client->getFolders();
         /** @var Folder $folder */
-        foreach($folders as $folder){
+        $folder = $client->getFolder('INBOX');
 
-            /** @var MessageCollection $aMessage */
+        $messagesToMailEmail = $folder->messages()->unseen()->to($mailMail)->get();
+        $this->incomingEmail($messagesToMailEmail);
 
-            if ( $folder->path == 'INBOX') {
-                /** @var  Message $message */
-                $messagesToMailEmail = $folder->messages()->unseen()->to($mailMail)->get();
-
-                $this->incomingEmail($messagesToMailEmail);
-                $messagesFromMainEmail = $folder->messages()->unseen()->from($mailMail)->get();
-                $this->outGoingEmail($messagesFromMainEmail);
-
-            }
-        }
-     }
+        $messagesFromMainEmail = $folder->messages()->unseen()->from($mailMail)->get();
+        $this->outGoingEmail($messagesFromMainEmail);
+    }
 
     private function outGoingEmail($messages)
     {
         foreach($messages as $message){
+
             $address = $message->to[0]->mail;
-            $customer = $this->searchCustomersEmails($message, $address);
-            if ($customer)
-            {
-                $this->createEmailEvent($customer, $message);
+
+            if($address === $this->settings['IMAP_USERNAME'] && $message->subject === 'הקלטה') {
+                $this->createRecordEmailEvent($message);
+
+            }else{
+                $customer = $this->searchCustomersEmails($message, $address);
+
+                if ($customer)
+                {
+                    $this->createEmailEvent($customer, $message);
+                }
             }
+
         }
     }
 
@@ -138,10 +142,11 @@ class GetEmails extends Command
         $contact = $contact->createNewContact($v, $customer->id);
 
         $customer->contact_id = $contact->id;
-         $this->createEmailEvent($customer, $message);
+        $this->createEmailEvent($customer, $message);
     }
 
-    private function searchCustomersEmails($message, $address) {
+    private function searchCustomersEmails($message, $address, $createFile = false)
+    {
         $customer = DB::table('customers', 'cu')
             ->leftJoin('contacts', 'cu.id', '=', 'contacts.customer_id')
             ->select(
@@ -153,6 +158,7 @@ class GetEmails extends Command
                 'contacts.first_name as contact_first_name',
                 'contacts.last_name as contact_last_name')
             ->where('cu.email', $address)
+            ->orWhere('contacts.email', $address)
             ->get();
         if (count($customer) > 0)
         {
@@ -161,7 +167,6 @@ class GetEmails extends Command
             foreach ($contacts as $contact) {
 
                     if ($contact->contact_email === $message->from[0]->mail) {
-                        $this->createEmailEvent($contact, $message);
                         return $contact;
                     }
             }
@@ -171,19 +176,53 @@ class GetEmails extends Command
         return false;
     }
 
-    private function createEmailEvent($customer, $message) {
-
-
+    private function createEmailEvent($customer, $message, $createFile = false)
+    {
         /** @var  Message $message */
         $emailData = [
             'title' => strip_tags($message->getSubject()),
             'details' => strip_tags($message->getTextBody()),
             'start_date' => Carbon::parse($message->date->toArray()['formatted']),
+            'end_date' => Carbon::parse($message->date->toArray()['formatted'])->addMinutes(30),
             'type_id' => $this::MAIL_TYPE,
             'contact_id' => $customer->contact_id,
             'user_id' => 1];
-        Event::create($emailData);
+        $event = Event::create($emailData);
+
+        if ($createFile) {
+
+            $this->saveFileInDb($message, $event, $createFile);
+
+        }
+    }
 
 
+    /** @var  Message $message */
+    private function createRecordEmailEvent($message)
+    {
+        $path = storage_path("app/public/upload/");
+
+        if(!is_dir($path)){
+            Storage::makeDirectory("public/upload/", 0775, true);
+        }
+        $attachments = $message->getAttachments();
+        $path = storage_path("app/public/upload/".$this::MAIN_SYSTEM_CUSTOMER);
+
+        if(!is_dir($path)){
+            Storage::makeDirectory("public/upload/".$this::MAIN_SYSTEM_CUSTOMER, 0775, true);
+        }
+        $attachments->each(function ($attachment) use($message){
+
+            /** @var \Webklex\PHPIMAP\Attachment $attachment */
+            $attachment->save(storage_path("app/public/upload/".$this::MAIN_SYSTEM_CUSTOMER.'/'));
+            $customer = $this->searchCustomersEmails($message, $this->settings['MAIN_MAIL_ADDRESS'], $attachment->getName());
+            $this->createEmailEvent($customer, $message, $attachment->getName());
+        },);
+    }
+
+    private function saveFileInDb($message, $event, $createFile)
+    {
+        $fileData = ['name'=> $createFile, 'customer_id' => $this::MAIN_SYSTEM_CUSTOMER, 'event_id' => $event->id];
+        File::create($fileData);
     }
 }

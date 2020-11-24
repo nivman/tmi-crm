@@ -29,7 +29,7 @@ class ModelForm extends  Model
         return $this->status;
     }
 
-    public static function convertEntityName($data)
+    public static function convertEntityName($data, $count)
     {
         $result = array_map(
             function($key, $value) {
@@ -51,7 +51,7 @@ class ModelForm extends  Model
             array_values($data->data)
         );
 
-        return json_encode(array('data' => $result, 'count' => count($result)));
+        return json_encode(array('data' => $result, 'count' => $count));
 
     }
 }
