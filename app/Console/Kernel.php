@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('email:get')->everyMinute();
+        $schedule->command('email:get')->hourly();
      //   $schedule->command('payment:request')->daily();
      //   $schedule->command('recurring:create')->daily();
      //   $schedule->command('activitylog:clean')->weekly()->mondays()->at('01:00');
