@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Event;
 use App\EventsType;
+use App\File;
 use App\Helpers\Date;
 use App\Helpers\Filters;
 use App\Task;
@@ -11,6 +12,7 @@ use Carbon\Carbon;
 use Doctrine\DBAL\Events;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EventsController extends Controller
 {
@@ -40,6 +42,12 @@ class EventsController extends Controller
      */
     public function destroy(Event $event)
     {
+
+        $fileArr = (new File)->getFileByEventId($event->id);
+        if (count($fileArr)> 0) {
+             $fileObject = File::find($fileArr[0]->id);
+             $fileObject->update(['event_id' => null]);
+        }
 
         $event->delete();
         return response(['success' => true], 204);
@@ -118,6 +126,11 @@ class EventsController extends Controller
     public function update(Request $request, Event $event)
     {
         $date = Date::formatDateTime($request);
+        if($event->contact_id == 5 && $event->title === 'הקלטה') {
+            (new File)->moveFiles($request, $event);
+
+        }
+
 
         $request->request->set('start_date', $date['start_date']);
         $request->request->set('end_date', $date['end_date']);

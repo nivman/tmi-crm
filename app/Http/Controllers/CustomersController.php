@@ -7,9 +7,11 @@ use App\Contact;
 use App\Customer;
 use App\Events\StatusChange;
 use App\Events\StatusChangeEvent;
+use App\File;
 use App\Status;
 use Illuminate\Http\Request;
 use App\Http\Requests\CustomerRequest;
+use Symfony\Component\Console\Input\Input;
 
 class CustomersController extends Controller
 {
@@ -43,9 +45,7 @@ class CustomersController extends Controller
 
     public function index(Request $request)
     {
-
         $leadRequest = strpos($request->getPathInfo(), 'lead') ? 1 : 0;
-
         $customers = Customer::with(['journal', 'status'])->where('is_lead','=',$leadRequest)->vueTable(Customer::$columns);
         $attributes = (new Customer)->getCustomFields($customers);
 
@@ -59,7 +59,6 @@ class CustomersController extends Controller
                     $customers['data'][$key] = $customer;
                 }
             }
-
         }
 
         $customers['attributesNames'] = $attributes['attributesNames'];
@@ -150,7 +149,7 @@ class CustomersController extends Controller
      * @param $status_id
      * @param $customer_id
      */
-    public function setStatusHistory($status_id, $customer_id): void
+    public function setStatusHistory($status_id, $customer_id)
     {
         $status = (new Status)->getStatus($status_id);
 
@@ -161,4 +160,8 @@ class CustomersController extends Controller
         }
     }
 
+    public function saveCustomerFile(Request $request)
+    {
+        (new File)->saveFile($request);
+    }
 }

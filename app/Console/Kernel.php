@@ -7,7 +7,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    protected $commands = [];
+    protected $commands = [ Commands\GetEmails::class];
 
     protected function commands()
     {
@@ -18,8 +18,9 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('payment:request')->daily();
-        $schedule->command('recurring:create')->daily();
-        $schedule->command('activitylog:clean')->weekly()->mondays()->at('01:00');
+        $schedule->command('email:get')->everyTenMinutes();
+     //   $schedule->command('payment:request')->daily();
+     //   $schedule->command('recurring:create')->daily();
+     //   $schedule->command('activitylog:clean')->weekly()->mondays()->at('01:00');
     }
 }

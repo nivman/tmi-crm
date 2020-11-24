@@ -28,6 +28,18 @@
                     <span class="tooltip-text bottom"> התקשרות חדשה</span>
                   </a>
             </span>
+              <span class="control tooltip">
+                  <a @click="addFile" class="button is-primary is-small">
+                    <i class="far fa-file"></i>
+                    <span class="tooltip-text bottom">העלת קבצים</span>
+                  </a>
+            </span>
+              <span class="control tooltip">
+                  <a @click="showFiles" class="button is-danger is-small">
+                    <i class="far fa-copy"></i>
+                    <span class="tooltip-text bottom">רשימת קבצים</span>
+                  </a>
+            </span>
             </div>
 
             <p class="control tooltip" style="bottom: 10px; margin-right: 10px;">
@@ -276,13 +288,12 @@
       </status-history-view-component>
     </div>
     <div v-if="showContactsList">
-      <customer-contacts-list
-
-          :customerId="customerId"
-
-          @showContacts="showContacts">
-      </customer-contacts-list>
+      <customer-contacts-list :customerId="customerId"  @showContacts="showContacts"></customer-contacts-list>
     </div>
+    <div v-if="showFilesList">
+      <customers-files-list-component :customerId="customerId"  @showFiles="showFiles"></customers-files-list-component>
+    </div>
+    <input @change="selectFile" id="fileUpload" type="file" hidden>
   </div>
 
 </template>
@@ -295,6 +306,7 @@ import "animate.css"
 import Lightbulb from "../Lightbulb";
 import StatusHistoryViewComponent from "../statusHistory/StatusHistoryViewComponent";
 import CustomerContactsList from "./CustomerContactsListComponent";
+import CustomersFilesListComponent from "../files/CustomersFilesListComponent"
 import VueToggles from 'vue-toggles';
 import Velocity from 'velocity-animate'
 export default {
@@ -310,8 +322,10 @@ export default {
       isSaving: false,
       showStatusHistory: false,
       showContactsList: false,
+      showFilesList: false,
       createLead: false,
       customerId: null,
+      file: null,
       form: new this.$form({
         id: "",
         name: "",
@@ -428,6 +442,31 @@ export default {
 
       this.$modal.show("event-form-modal", {customerId: this.$route.params.id});
     },
+    addFile() {
+      document.getElementById("fileUpload").click()
+    },
+    showFiles() {
+
+      this.showFilesList = this.showFilesList !== true
+    },
+    selectFile(event) {
+
+      this.file = event.target.files[0];
+      const upload = new FormData();
+      upload.append('file', this.file);
+      upload.append('customerId', this.customerId);
+      this.$http
+          .post(`app/file/customers`, upload)
+
+          .then(res => {
+
+            this.notify(
+                "success",
+                "קובץ נוסף בהצלחה"
+            );
+          })
+          .catch(err => this.$event.fire("appError", err.response));
+    },
     statusHistory() {
 
       this.showStatusHistory = this.showStatusHistory !== true;
@@ -442,7 +481,15 @@ export default {
     },
   },
 
-  components: {EventFormModal, CustomerContactsList, RockerSwitch, Lightbulb, StatusHistoryViewComponent, VueToggles, Velocity},
+  components: {
+    EventFormModal,
+    CustomerContactsList,
+    RockerSwitch,
+    Lightbulb,
+    StatusHistoryViewComponent,
+    VueToggles,
+    Velocity,
+    CustomersFilesListComponent},
 };
 </script>
 <style>

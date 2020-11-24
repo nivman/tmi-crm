@@ -65,6 +65,11 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('tasks/projects/{id}', 'TasksController@getProject');
     Route::get('customers/tasks/{id}', 'TasksController@getCustomerTasks');
     Route::get('customers/leads', 'CustomersController@index');
+    Route::get('files/customers/{customerId}', 'FilesController@showCustomerFiles');
+    Route::resource('files/show', 'FilesController');
+    Route::get('files/download', 'FilesController@downloadFile');
+    Route::get('files/delete/{id}', 'FilesController@deleteFile');
+    Route::post('file/customers', 'CustomersController@saveCustomerFile');
     Route::post('tasks/add', 'TasksController@store');
     Route::resource('tasks', 'TasksController');
 

@@ -39,11 +39,11 @@ class CategoriesController extends Controller
         if ($request->all) {
             return Category::select(['id', 'name', 'id as value'])->orderBy('name', 'asc')->get();
         }
-        if (!auth()->user()->hasRole('admin')) {
-            abort(403, 'Access denied!');
-        }
+
         $categories = response()->json(Category::vueTable(Category::$columns));
-        $entityConvert = Category::convertEntityName($categories->getData());
+
+        $entityConvert = Category::convertEntityName($categories->getData(), $categories->original['count']);
+
         return response($entityConvert);
     }
 
