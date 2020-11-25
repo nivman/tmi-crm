@@ -37,9 +37,16 @@ class ProjectsController extends Controller
         return $results;
     }
 
-    public function getProjectsCustomersByIds($customersIds)
+    public function getCustomerProjectsList($id)
     {
+        $projects = Project::with(['customer', 'type'])->where(['customer_id' => $id])->mine()->vueTable(Project::$columns);
+        $percentageDone = (new Project)->getPercentageDone($projects);
 
+        return response()->json($percentageDone);
+    }
+
+    public function getProjectsFormCustomersByIds($customersIds)
+    {
         return (new Project)->getProjectsCustomersByIds($customersIds);
     }
 

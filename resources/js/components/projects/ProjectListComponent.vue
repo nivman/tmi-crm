@@ -175,7 +175,7 @@ export default {
        this.projectId = projectId
        this.projectName = projectName
        this.showTaskList = true
-      this.showEventsList = false
+       this.showEventsList = false
     },
     showEvents (projectId, projectName) {
 
@@ -196,6 +196,11 @@ export default {
     goBack() {
       //this.$emit("showCustomerList", true);
     },
+    test(customerId) {
+      return `app/customers-projects/${customerId}`
+      // let x =    this.$http.post(`app/customers-projects/${customerId}`).then(res => {console.log(res)})
+      // console.log(x)
+    },
     percentageCalculation(tasksTime, price) {
       if (tasksTime) {
 
@@ -215,7 +220,7 @@ export default {
   },
   created () {
     this.showTaskList = false
-    this.addRoute = !this.customerId ? '/projects/add' : `/projects/add?customerId=${this.customerId}`;
+    this.addRoute = !this.customerId ? '/projects/add' : `app/customers/projects/${this.customerId}`;
     this.$root.$refs.ProjectListComponent = this;
   },
   computed: {

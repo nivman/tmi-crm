@@ -451,7 +451,7 @@ export default {
     setRoute () {
 
       let route = !this.modal ? 'app/tasks' : `app/tasks/${this.modal}/${this.cusId}`
-      if (this.$route.query.customerId) {
+      if (this.$route.query.customerId ) {
         route = `app/tasks/customers/${this.$route.query.customerId}`
       }
       if (this.$route.query.projectId) {

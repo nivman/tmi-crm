@@ -201,7 +201,7 @@
 <script>
 
 export default {
-
+  props:['customerId', 'customerName'],
   data () {
     return {
       customers: [],
@@ -218,6 +218,7 @@ export default {
         price: '',
         type: '',
         expenses: '',
+        customer: ''
       }),
       config: {
         altInput: true,
@@ -230,33 +231,41 @@ export default {
   created () {
 
     let route = this.setRoute()
-    this.$http
-        .get(route)
-        .then(res => {
 
-          if (this.$route.params.id) {
+    if(this.$route.params.id && !this.customerId) {
+      this.$http
+          .get(route)
+          .then(res => {
 
-            this.fetchProject(this.$route.params.id)
-            this.projectId = this.$route.params.id
+            if (this.$route.params.id) {
 
-          } else {
+              this.fetchProject(this.$route.params.id)
+              this.projectId = this.$route.params.id
 
-            this.setDateTime()
-            this.$http
-                .get(`app/projects/create`)
-                .then(res => {
+            }
+          })
+          .catch(err => this.$event.fire('appError', err.response))
+    }
+    else {
 
-                  this.attributes = res.data.attributes
+      this.setDateTime()
+      this.$http
+          .get(`app/projects/create`)
+          .then(res => {
+            if(this.customerId) {
 
-                  this.types = res.data.projectTypes
-                  this.loading = false
-                })
-                .catch(err =>
-                    this.$event.fire('appError', err.response)
-                )
-          }
-        })
-        .catch(err => this.$event.fire('appError', err.response))
+              this.form.customer = {'id' : this.customerId, 'name' : this.customerName};
+            }
+            this.attributes = res.data.attributes
+
+            this.types = res.data.projectTypes
+            this.loading = false
+          })
+          .catch(err =>
+              this.$event.fire('appError', err.response)
+          )
+    }
+
   },
 
   methods: {
@@ -281,7 +290,12 @@ export default {
     },
     submit () {
       this.isSaving = true
+
       let route = !this.modal ? '/projects' : `/${this.modal}`
+      if(this.customerId) {
+        route = '/customers';
+      }
+
       if (this.form.id && this.form.id !== '') {
 
         this.form
@@ -323,9 +337,7 @@ export default {
             this.attributes = res.data.project.attributes
             delete res.data.project.attributes
             this.form = new this.$form(res.data.project)
-
             this.types = res.data.projectTypes
-
             this.form.type = res.data.project.type[0];
             this.form.end_date = this.format_date(res.data.project.end_date)
             this.form.start_date = this.format_date(res.data.project.start_date)

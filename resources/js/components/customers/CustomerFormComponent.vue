@@ -10,42 +10,80 @@
           </p>
           <div class="buttons">
             <div v-if="customerId" class="buttons has-addons is-centered" style="direction: ltr">
+              <div class="button-child">
             <span class="control tooltip">
                   <a @click="statusHistory" class="button is-success is-small">
                     <i class="fas fa-history"></i>
                     <span class="tooltip-text bottom">היסטוריית סטטוסים</span>
                   </a>
             </span>
+              </div>
+              <div class="button-child">
               <span class="control tooltip">
                   <a @click="showContacts" class="button is-warning is-small">
                     <i style="color: white" class="fas fa-user-friends"></i>
                     <span class="tooltip-text bottom">אנשי קשר</span>
                   </a>
             </span>
-              <span class="control tooltip">
+              </div>
+              <div class="button-child">
+                <span class="control tooltip">
                   <a @click="addEvent" class="button is-info is-small">
                     <i class="fas fa-comment-dots"></i>
                     <span class="tooltip-text bottom"> התקשרות חדשה</span>
                   </a>
-            </span>
-              <span class="control tooltip">
+               </span>
+                <span class="control tooltip">
                   <a @click="showEvents" class="button is-success is-small">
                     <i class="far fa-comments"></i>
                     <span class="tooltip-text bottom">רשימת התקשרויות</span>
                   </a>
-            </span>
-              <span class="control tooltip">
-                  <a @click="addFile" class="button is-primary is-small">
-                    <i class="far fa-file"></i>
-                    <span class="tooltip-text bottom">העלת קבצים</span>
+                </span>
+              </div>
+              <div class="button-child">
+                <span class="control tooltip">
+                  <a @click="addTask" class="button is-warning	has-text-white is-small">
+                 <i class="fas fa-thumbtack"></i>
+                    <span class="tooltip-text bottom"> משימה חדשה</span>
                   </a>
-            </span>
-              <span class="control tooltip">
-                  <a @click="showFiles" class="button is-danger is-small">
-                    <i class="far fa-copy"></i>
-                    <span class="tooltip-text bottom">רשימת קבצים</span>
+               </span>
+                <span class="control tooltip">
+                  <a @click="showTasks" class="button is-danger has-text-white is-small">
+                   <i class="fas fa-tasks"></i>
+                    <span class="tooltip-text bottom">רשימת משימות</span>
                   </a>
-            </span>
+                </span>
+              </div>
+              <div class="button-child">
+                <span class="control tooltip">
+                  <a @click="addProject" class="button is-warning	has-text-white is-small">
+                 <i class="fas fa-thumbtack"></i>
+                    <span class="tooltip-text bottom"> פרוייקט חדש</span>
+                  </a>
+               </span>
+                <span class="control tooltip">
+                  <a @click="showProjects" class="button is-danger has-text-white is-small">
+                   <i class="fas fa-tasks"></i>
+                    <span class="tooltip-text bottom">רשימת פרוייקטים</span>
+                  </a>
+                </span>
+              </div>
+              <div class="button-child">
+                  <span class="control tooltip">
+                    <a @click="addFile" class="button is-primary is-small">
+                      <i class="far fa-file"></i>
+                      <span class="tooltip-text bottom">העלת קבצים</span>
+                    </a>
+                  </span>
+                <span style="margin-bottom: 0px;" class="control tooltip">
+                    <a @click="showFiles" class="button is-danger is-small">
+                      <i class="far fa-copy"></i>
+                      <span class="tooltip-text bottom">רשימת קבצים</span>
+                    </a>
+                </span>
+              </div>
+
+
             </div>
 
             <p class="control tooltip" style="bottom: 10px; margin-right: 10px;">
@@ -299,27 +337,54 @@
     <div v-if="showFilesList">
       <customers-files-list-component :customerId="customerId" @showFiles="showFiles"></customers-files-list-component>
     </div>
+    <div v-if="showProjectForm">
+      <project-form-modal :customerId="customerId" :customerName="customerName" ></project-form-modal>
+    </div>
+    <div v-if="showTaskForm">
+      <task-form-modal :cusId="customerId" modal="customers"></task-form-modal>
+    </div>
+    <div class="modal is-active" v-if="showProjectsList">
+      <div class="modal-background"></div>
+      <div style="margin: 10%" class="animated fastest zoomIn">
+        <header style="direction: ltr" class="modal-card-head is-radius-top">
+          <button type="button" class="delete" @click="showProjects"></button>
+        </header>
+        <section class="modal-card-body is-radius-bottom customer-form-task-list">
+          <project-list-component
+              :customerName="customerName"
+              :customerId="customerId"
+          ></project-list-component>
+        </section>
+      </div>
+    </div>
+    <div class="modal is-active" v-if="showTasksList">
+      <div class="modal-background"></div>
+      <div style="margin: 10%" class="animated fastest zoomIn">
+        <header style="direction: ltr" class="modal-card-head is-radius-top">
+          <button type="button" class="delete" @click="showTasks"></button>
+        </header>
+        <section class="modal-card-body is-radius-bottom customer-form-task-list">
+          <task-list-component
+              :customerName="customerName"
+              :customerId="customerId"
+           ></task-list-component>
+        </section>
+      </div>
+    </div>
     <div class="modal is-active" v-if="showEventsList">
-
-
-        <div class="modal-background"></div>
-        <div style="margin: 10%" class="animated fastest zoomIn">
-          <header  style="direction: ltr" class="modal-card-head is-radius-top">
-            <button type="button" class="delete" @click="showEvents"></button>
-
-          </header>
-          <section class="modal-card-body is-radius-bottom customer-form-event-list">
-            <events-list-component
-                :customerName="customerName"
-                :customerId="customerId"
-                @showEvents="showEvents"
-                modal="customer"></events-list-component>
-          </section>
-
-        </div>
-
-
-      <!--      <events-list-component :customerId="customerId" @showEvents="showEvents"></events-list-component>-->
+      <div class="modal-background"></div>
+      <div style="margin: 10%" class="animated fastest zoomIn">
+        <header style="direction: ltr" class="modal-card-head is-radius-top">
+          <button type="button" class="delete" @click="showEvents"></button>
+        </header>
+        <section class="modal-card-body is-radius-bottom customer-form-event-list">
+          <events-list-component
+              :customerName="customerName"
+              :customerId="customerId"
+              @showEvents="showEvents"
+              modal="customer"></events-list-component>
+        </section>
+      </div>
     </div>
     <input @change="selectFile" id="fileUpload" type="file" hidden>
   </div>
@@ -338,7 +403,10 @@ import CustomersFilesListComponent from "../files/CustomersFilesListComponent"
 import VueToggles from 'vue-toggles';
 import Velocity from 'velocity-animate'
 import EventsListComponent from "../events/EventsListComponent";
-
+import TaskFormModal from "../tasks/TaskFormModal";
+import TaskListComponent from "../tasks/TaskListComponent";
+import ProjectFormModal from "../projects/ProjectFormModal";
+import ProjectListComponent from "../projects/ProjectListComponent";
 export default {
   data() {
     return {
@@ -351,6 +419,10 @@ export default {
       arrivalSources: [],
       optionsStatuses: [],
       isSaving: false,
+      showProjectForm: false,
+      showTaskForm: false,
+      showTasksList:false,
+      showProjectsList:false,
       showStatusHistory: false,
       showContactsList: false,
       showFilesList: false,
@@ -473,12 +545,23 @@ export default {
     addEvent() {
       this.$modal.show("event-form-modal", {customerId: this.$route.params.id});
     },
+    addTask() {
+      this.showTaskForm = this.showTaskForm !== true
+    },
+    addProject() {
+      this.showProjectForm = this.showProjectForm !== true
+    },
     addFile() {
       document.getElementById("fileUpload").click()
     },
+    showTasks() {
+      this.showTasksList = this.showTasksList !== true
+    },
     showEvents() {
-
       this.showEventsList = this.showEventsList !== true
+    },
+    showProjects() {
+      this.showProjectsList = this.showProjectsList !== true
     },
     showFiles() {
       this.showFilesList = this.showFilesList !== true
@@ -515,6 +598,10 @@ export default {
 
   components: {
     EventFormModal,
+    TaskFormModal,
+    TaskListComponent,
+    ProjectListComponent,
+    ProjectFormModal,
     CustomerContactsList,
     EventsListComponent,
     RockerSwitch,
@@ -567,21 +654,37 @@ export default {
 .bounce-leave-active {
   animation: bounce-in .8s reverse;
 }
+
 .customer-form-event-list .wrapper {
   margin-top: 1px !important;
 }
-
-.customer-form-event-list .wrapper .panel .table-body-br{
+.customer-form-task-list .wrapper {
+  margin-top: 1px !important;
+}
+.customer-form-event-list .wrapper .panel .table-body-br {
   overflow-y: scroll;
   position: relative;
   max-height: 300px;
 }
+.customer-form-task-list .wrapper .panel .table-body-br {
+  overflow-y: hidden;
+  position: relative;
 
+}
+.button-child {
+  margin: 0px 2px 0px 2px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 
-
+}
+.customer-form-task-list {
+  max-height: 500px;
+}
 .customer-form-event-list {
   max-height: 500px;
 }
+
 @keyframes bounce-in {
   0% {
     transform: scale(0);
