@@ -57,13 +57,13 @@
               <div class="button-child">
                 <span class="control tooltip">
                   <a @click="addProject" class="button is-success	has-text-white is-small">
-                 <i class="fas fa-thumbtack"></i>
+                 <i class="far fa-edit"></i>
                     <span class="tooltip-text bottom"> פרוייקט חדש</span>
                   </a>
                </span>
                 <span class="control tooltip">
                   <a @click="showProjects" class="button is-info has-text-white is-small">
-                   <i class="fas fa-tasks"></i>
+                   <i class="fas fa-th-list"></i>
                     <span class="tooltip-text bottom">רשימת פרוייקטים</span>
                   </a>
                 </span>
