@@ -10,21 +10,21 @@
           </p>
           <div class="buttons">
             <div v-if="customerId" class="buttons has-addons is-centered" style="direction: ltr">
-              <div class="button-child">
-            <span class="control tooltip">
-                  <a @click="statusHistory" class="button is-success is-small">
-                    <i class="fas fa-history"></i>
-                    <span class="tooltip-text bottom">היסטוריית סטטוסים</span>
-                  </a>
-            </span>
+            <div class="button-child">
+                <span class="control tooltip">
+                      <a @click="statusHistory" class="button is-success is-small">
+                        <i class="fas fa-history"></i>
+                        <span class="tooltip-text bottom">היסטוריית סטטוסים</span>
+                      </a>
+                </span>
               </div>
               <div class="button-child">
-              <span class="control tooltip">
-                  <a @click="showContacts" class="button is-warning is-small">
-                    <i style="color: white" class="fas fa-user-friends"></i>
-                    <span class="tooltip-text bottom">אנשי קשר</span>
-                  </a>
-            </span>
+                <span class="control tooltip">
+                    <a @click="showContacts" class="button is-warning is-small">
+                      <i style="color: white" class="fas fa-user-friends"></i>
+                      <span class="tooltip-text bottom">אנשי קשר</span>
+                    </a>
+                </span>
               </div>
               <div class="button-child">
                 <span class="control tooltip">
@@ -56,13 +56,13 @@
               </div>
               <div class="button-child">
                 <span class="control tooltip">
-                  <a @click="addProject" class="button is-warning	has-text-white is-small">
+                  <a @click="addProject" class="button is-success	has-text-white is-small">
                  <i class="fas fa-thumbtack"></i>
                     <span class="tooltip-text bottom"> פרוייקט חדש</span>
                   </a>
                </span>
                 <span class="control tooltip">
-                  <a @click="showProjects" class="button is-danger has-text-white is-small">
+                  <a @click="showProjects" class="button is-info has-text-white is-small">
                    <i class="fas fa-tasks"></i>
                     <span class="tooltip-text bottom">רשימת פרוייקטים</span>
                   </a>

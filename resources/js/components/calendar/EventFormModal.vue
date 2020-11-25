@@ -191,7 +191,7 @@ import 'flatpickr/dist/flatpickr.css'
 
 export default {
   components: {flatPickr},
-  props: ['eventId', 'event'],
+  props: ['eventId', 'event', 'calendarDates'],
   data() {
     return {
       contacts: [],
@@ -314,7 +314,7 @@ export default {
         type_id: 1,
         project: ''
       })
-
+      let calendarDates = e.params;
       let moment = require('moment-timezone');
       moment().tz("Asia/Jerusalem").format();
 
@@ -323,6 +323,7 @@ export default {
       this.create();
 
       if(e.params.eventId){
+
         this.getEventById(e.params.eventId);
       }
       else if (e.params.event) {
@@ -336,6 +337,12 @@ export default {
         this.form.project = project ? project.name : '';
         this.form.project_id =  project ? project.id : null;
       } else {
+        // task-or-event-dialog = click on slot in the calendar
+        if(calendarDates.name === 'task-or-event-dialog') {
+          this.form.start_date = moment( e.params.params.startStr).format("DD/MM/YYYY H:mm");
+          this.form.end_date = moment( e.params.params.endStr).format("DD/MM/YYYY H:mm");
+        }
+
         if (e.params.customerId) {
 
           this.fetchContact(e.params.customerId)

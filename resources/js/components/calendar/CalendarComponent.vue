@@ -4,20 +4,30 @@
     <div class="panel panel-default">
       <div class="panel-heading">
         <div class="control is-pulled-right">
+          <div style="direction: ltr" class="buttons">
+            <span class="control tooltip">
+              <select class="button select fetch-calendar-data " v-model="fetchData">
+                <option value="0">משימות</option>
+                <option value="1">התקשרויות</option>
+                <option value="2">משימות + התקשרויות</option>
 
-          <select class="select fetch-calendar-data " v-model="fetchData" >
-            <option value="0">משימות</option>
-            <option value="1">התקשרויות</option>
-            <option value="2">משימות + התקשרויות</option>
-
-          </select>
-
-
-        <a @click="addEvent"
-           class="button is-link is-small is-pulled-right">
-          <i class="fas fa-plus m-l-sm"/> הוספת התקשרות
-        </a>
+              </select>
+            </span>
+            <span class="control tooltip">
+               <a @click="addEvent" class="button is-link is-small is-pulled-left">
+                     <i class="fas fa-comment-dots"></i>
+                     <span class="tooltip-text bottom">התקשרותחדשה</span>
+               </a>
+            </span>
+            <span class="control tooltip">
+                  <a @click="addTask" class="button is-info is-small is-pulled-right">
+                     <i class="fas fa-thumbtack"/>
+                     <span class="tooltip-text bottom"> משימה חדשה</span>
+                  </a>
+            </span>
+          </div>
         </div>
+
         יומני היקר
 
       </div>
@@ -31,6 +41,7 @@
       </div>
     </div>
     <event-form-modal :eventId="eventId"></event-form-modal>
+    <task-or-event-dialog></task-or-event-dialog>
   </div>
 </template>
 <script>
@@ -42,10 +53,10 @@ import interactionPlugin from '@fullcalendar/interaction'
 import '@fullcalendar/timegrid/main.css'
 import heLocale from '@fullcalendar/core/locales/he.js';
 import TaskFormModal from "../tasks/TaskFormModal";
-
+import TaskOrEventDialog from "./TaskOrEventDialog";
 export default {
   components: {
-    FullCalendar, EventFormModal, TaskFormModal
+    FullCalendar, EventFormModal, TaskFormModal,TaskOrEventDialog
   },
   data: function () {
     return {
@@ -107,18 +118,18 @@ export default {
   },
 
   watch: {
-    showDate: function(val) {
+    showDate: function (val) {
       this.fetchEvents(moment(this.showDate).format("YYYY-MM"));
     },
-    fetchData: function(val) {
-     let dates = this.formatDates(this.$refs.calendar.getApi().currentData.dateProfile.activeRange)
+    fetchData: function (val) {
+      let dates = this.formatDates(this.$refs.calendar.getApi().currentData.dateProfile.activeRange)
       this.fetchData = val;
       this.fetchEvents(dates.start, dates.end);
     }
   },
   methods: {
     fetchEvents(start, end) {
-    console.log(this.fetchData)
+
       this.loading = true;
       this.$http
           .get(`app/events?start=${start}&end=${end}&fetchData=${this.fetchData}`)
@@ -145,19 +156,8 @@ export default {
     handleWeekendsToggle() {
       this.calendarOptions.weekends = !this.calendarOptions.weekends // update a property
     },
-    handleDateSelect(selectInfo) {
-      // let title = prompt('Please enter a new title for your event')
-      // let calendarApi = selectInfo.view.calendar
-      // calendarApi.unselect() // clear date selection
-      // if (title) {
-      //   calendarApi.addEvent({
-      //     id: createEventId(),
-      //     title,
-      //     start: selectInfo.startStr,
-      //     end: selectInfo.endStr,
-      //     allDay: selectInfo.allDay
-      //   })
-      // }
+    handleDateSelect(calendarDates) {
+      this.$modal.show("task-or-event-dialog", calendarDates);
     },
     handleEventClick(clickInfo) {
       //task have customer_id and event have contact_id
@@ -173,17 +173,14 @@ export default {
     },
     handleDrop(event) {
       let updateRoute = event.event._def.extendedProps.customer_id ? 'tasks' : 'events';
-      console.log(updateRoute)
+
       let start = moment.utc(event.event._instance.range.start).format("YYYY-MM-DD H:m:s");
       let end = moment.utc(event.event._instance.range.end).format("YYYY-MM-DD H:m:s");
 
       this.$http
           .post(`app/${updateRoute}/calender/dates`, {'event': event, 'start': start, 'end': end})
-
           .then(res => {
-            console.log(res.data)
-
-
+            //Todo
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
@@ -197,11 +194,8 @@ export default {
 
       this.$http
           .post(`app/${updateRoute}/calender/dates`, {'event': event, 'start': start, 'end': end})
-
           .then(res => {
-            console.log(res.data)
-
-
+          //Todo
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
@@ -209,6 +203,9 @@ export default {
     },
     addEvent() {
       this.$modal.show("event-form-modal", {event: null});
+    },
+    addTask() {
+      this.$router.push({path: `/tasks/add/`})
     },
     formatDates(dates) {
       let start = moment(dates.start).format("YYYY-MM-DD")
@@ -259,8 +256,8 @@ export default {
   margin-left: 5px;
   border-radius: 4px;
   font-weight: bold;
+  background: lightgray;
 }
-
 
 
 .fc-event-title {

@@ -339,43 +339,51 @@ export default {
   },
   created () {
 
+    let calendarDates = this.$route.query.calendarDates;
+
     let route = this.setRoute()
     this.$http
         .get(route)
         .then(res => {
-
+          //click from customer form
           if (this.$route.query.customerId) {
             this.form.customer = res.data
             this.customerId = this.$route.query.customerId
           }
+          //click from project list
           if (this.$route.query.projectId) {
 
             this.form.project = res.data
-
             let result = [{'customer_id' : res.data.customer_id}]
             this.getCustomersById(result)
             this.projectId = this.$route.query.projectId
           }
-
+          //add task from customer form
           if (this.modal === 'customers') {
-
             this.form.customer = res.data
             this.customerId = this.cusId
 
           }
+          //add task from project from
           if (this.modal === 'projects') {
             this.form.project = res.data
             this.projectId = this.projId
           }
-
+          //click from task list
           if (this.$route.params.id && !this.modal && !this.$route.query.customerId) {
 
             this.fetchTask(this.$route.params.id)
             this.customerId = this.$route.params.id
 
           } else {
-
-            this.setDateTime()
+            //click from calendar slot
+            if(calendarDates) {
+              this.form.start_date = moment(this.$route.query.startDate.split(" ")[0]).format('DD/MM/YYYY HH:mm');
+              this.form.end_date = moment(this.$route.query.endDate.split(" ")[0]).format('DD/MM/YYYY HH:mm');
+            }else{
+              //create new task
+              this.setDateTime()
+            }
             this.$http
                 .get(`app/tasks/create`)
                 .then(res => {
