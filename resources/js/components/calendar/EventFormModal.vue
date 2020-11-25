@@ -247,7 +247,7 @@ export default {
     },
     'form.type': function () {
     this.form.typeColor = this.form.type.color
-  //   console.log(this.form.type)
+
     }
   },
   methods: {
@@ -270,10 +270,7 @@ export default {
                 })
               })
               this.contacts = contacts;
-             // this.form.contact = '';
-          //    this.form.contact_id = null;
             } else {
-              debugger
               this.form.contact = res.data[0].contact_first_name + ' ' + res.data[0].contact_last_name;
               this.form.contact_id = res.data[0].contact_id;
             }
@@ -282,8 +279,8 @@ export default {
             this.$event.fire('appError', err.response)
           })
     },
-    getProjectsByContactId(customers) {
-      let id = customers.map(a => a.customer_id)
+    getProjectsByContactId(contacts) {
+      let id = contacts.map(a => a.customer_id)
 
       if(!id[0]) {
         return false;
@@ -324,6 +321,7 @@ export default {
       this.form.start_date = moment(new Date()).format("DD/MM/YYYY H:m");
 
       this.create();
+
       if(e.params.eventId){
         this.getEventById(e.params.eventId);
       }
@@ -341,6 +339,10 @@ export default {
         if (e.params.customerId) {
 
           this.fetchContact(e.params.customerId)
+        }
+        if (e.params.projectId) {
+
+          this.getProject(e.params.projectId)
         }
       }
     },
@@ -395,19 +397,33 @@ export default {
           .get(`app/contacts/${customer_id}`)
           .then(res => {
 
-            this.form.contact = res.data[0].first_name
+            this.form.contact = res.data[0].full_name
             this.form.contact_id = res.data[0].id
+            this.contacts = res.data
 
+            this.getProjectsByContactId([res.data[0]])
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
           })
     },
+    getProject (id) {
+
+      this.$http
+          .get(`app/projects/${id}`)
+          .then(res => {
+
+            this.form.project = res.data.project.name
+            this.form.project_id = res.data.project.id
+            this.contacts = res.data.contacts
+          })
+          .catch(err => this.$event.fire('appError', err.response))
+    },
     getEventById(id) {
       this.$http
           .get('app/events/' + id)
           .then(res => {
-            console.log(res.data)
+
             this.form.id = res.data.id
             this.form.title = res.data.title
             this.form.contact = res.data.contact[0].first_name + ' ' + res.data.contact[0].last_name

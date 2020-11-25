@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <button @click="goBack" v-if="customerName || projectName" class="button is-primary is-small is-pulled-right">
+        <button @click="goBack" v-if="projectName" class="button is-primary is-small is-pulled-right">
           <p class="back-title"> חזרה </p>
           <i class="fas fa-backward"/>
         </button>
@@ -24,7 +24,8 @@
 
               <p class="control tooltip">
                 <router-link :to="'/customer/contact/' + props.row.contact_id">
-                  {{ props.row.contact ? props.row.contact.first_name + ' ' + props.row.contact.last_name : '' }}
+                  {{ props.row.contact ?
+                    props.row.contact.first_name + ' ' + (props.row.contact.last_name ? props.row.contact.last_name: '') : '' }}
                 </router-link>
               </p>
             </div>
@@ -54,7 +55,11 @@
               {{ format_date(props.row.end_date) }}
             </div>
           </template>
-
+          <template slot="details" slot-scope="props">
+            <div class="has-text-centered">
+              {{ props.row.details| truncate(300, '...', props.row.details)}}
+            </div>
+          </template>
           <template slot="actions" slot-scope="props">
             <div class="buttons has-addons is-centered">
               <p class="control tooltip">
@@ -63,10 +68,6 @@
                   <i class="fas fa-edit"/>
                   <span class="tooltip-text">עריכה</span>
                 </a>
-                <!--                <router-link :to="'/events/edit/' + props.row.id" class="button is-warning is-small">-->
-                <!--                  <i class="fas fa-edit"></i>-->
-                <!--                  <span class="tooltip-text">עריכה</span>-->
-                <!--                </router-link>-->
               </p>
               <p class="control tooltip">
                 <button type="button" class="button is-danger is-small" @click="deleteEvent(props.row.id)">
@@ -204,6 +205,7 @@ export default {
       })
     }
   },
+
   computed: {
     url: {
       get () {

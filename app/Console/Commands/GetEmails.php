@@ -86,24 +86,39 @@ class GetEmails extends Command
 
         $messagesFromMainEmail = $folder->messages()->unseen()->from($mailMail)->get();
         $this->outGoingEmail($messagesFromMainEmail);
+
+        $mailsToRemove = $folder->messages()->unseen()->get();
+        foreach($mailsToRemove as $message){
+            $message->delete();
+        }
     }
 
     private function outGoingEmail($messages)
     {
         foreach($messages as $message){
 
-            $address = $message->to[0]->mail;
-
-            if($address === $this->settings['IMAP_USERNAME'] && $message->subject === 'הקלטה') {
+            if($message->to[0]->mail === $this->settings['IMAP_USERNAME'] && $message->subject === 'הקלטה') {
                 $this->createRecordEmailEvent($message);
 
             }else{
-                $customer = $this->searchCustomersEmails($message, $address);
+                $addresses = $message->to;
+                foreach ($addresses as $key => $address) {
 
-                if ($customer)
-                {
-                    $this->createEmailEvent($customer, $message);
+                    if($address->mail) {
+                        $customer = $this->searchCustomersEmails($message, $address->mail);
+
+                        if ($customer)
+                        {
+                            $this->createEmailEvent($customer, $message);
+                        }
+                    }
                 }
+//                $customer = $this->searchCustomersEmails($message, $address);
+//
+//                if ($customer)
+//                {
+//                    $this->createEmailEvent($customer, $message);
+//                }
             }
 
         }
@@ -118,11 +133,17 @@ class GetEmails extends Command
                 $this->createLead($message);
             }else{
 
-                $address = $message->from[0]->mail;
-                $customer =   $this->searchCustomersEmails($message, $address);
-                if ($customer)
-                {
-                    $this->createEmailEvent($customer, $message);
+                $addresses = $message->from;
+                foreach ($addresses as $key => $address) {
+
+                    if($address->mail) {
+                        $customer = $this->searchCustomersEmails($message, $address->mail);
+
+                        if ($customer)
+                        {
+                            $this->createEmailEvent($customer, $message);
+                        }
+                    }
                 }
             }
         }
@@ -147,6 +168,7 @@ class GetEmails extends Command
 
     private function searchCustomersEmails($message, $address, $createFile = false)
     {
+
         $customer = DB::table('customers', 'cu')
             ->leftJoin('contacts', 'cu.id', '=', 'contacts.customer_id')
             ->select(

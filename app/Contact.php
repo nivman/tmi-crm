@@ -25,7 +25,7 @@ class Contact extends Model
         $customerName =  explode(' ', $customer['name']);
 
         $firstName = $customerName[0];
-        $lastName = count($customerName) > 1 ? $customerName[1] : '';
+        $lastName = count($customerName) > 1 ? $customerName[1] : ' ';
 
       $contact = $this::create([
             'first_name'=> $firstName,
@@ -39,7 +39,7 @@ class Contact extends Model
 
     public function getContactByCustomer($id)
     {
-        return DB::table('contacts')->select('id', DB::raw('CONCAT(first_Name, " ", last_Name) As full_name'))
+        return DB::table('contacts')->select('id', DB::raw('CONCAT(first_name, " ", last_name) As full_name'), 'customer_id')
             ->where('customer_id', $id)
             ->get();
     }

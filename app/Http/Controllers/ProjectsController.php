@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contact;
 use App\Http\Requests\ProjectRequest;
 use App\Project;
 use App\ProjectTypes;
@@ -69,6 +70,7 @@ class ProjectsController extends Controller
         $project->attributes = $project->attributes();
         $project->type = $project->getType($project->getAttribute('type_id'));
         $project->customer = $project->getCustomer($project->getAttribute('customer_id'));
+        $project->contacts =  (new Contact)->getContactByCustomer($project->getAttribute('customer_id'));
         $projectTypes = ProjectTypes::all();
         $project->load($project->attributes->pluck('slug')->toArray());
 
@@ -79,15 +81,10 @@ class ProjectsController extends Controller
             'customer' => $project->customer,
             'projectTypes' => $projectTypes,
             'type' => $project->type,
-            'percentageDone' =>$percentageDone
+            'percentageDone' => $percentageDone,
+            'contacts' => $project->contacts
         ];
     }
-
-    public function edit(Project $project)
-    {
-
-    }
-
     /**
      * Update the specified resource in storage.
      *

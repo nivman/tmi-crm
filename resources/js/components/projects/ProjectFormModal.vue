@@ -8,7 +8,7 @@
             {{ form.id ? 'עריכת פרויקט' : 'יצירת פרויקט' }}
           </p>
           <div class="buttons is-centered">
-            <p class="control tooltip" v-if="customerId">
+            <p class="control tooltip" v-if="projectId">
               <a
                   @click="addEvent"
                   class="fas fa-comment-dots is-small button is-info">
@@ -209,7 +209,7 @@ export default {
       loading: true,
       attributes: [],
       isSaving: false,
-      customerId: null,
+      projectId: null,
       form: new this.$form({
         id: '',
         name: '',
@@ -237,7 +237,7 @@ export default {
           if (this.$route.params.id) {
 
             this.fetchProject(this.$route.params.id)
-            this.customerId = this.$route.params.id
+            this.projectId = this.$route.params.id
 
           } else {
 
@@ -362,7 +362,7 @@ export default {
     },
     addEvent () {
 
-      this.$modal.show('event-form-modal', { customerId: this.$route.params.id })
+      this.$modal.show('event-form-modal', { projectId: this.$route.params.id })
     },
   },
 

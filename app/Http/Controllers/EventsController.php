@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contact;
 use App\Event;
 use App\EventsType;
 use App\File;
@@ -149,7 +150,14 @@ class EventsController extends Controller
 
     public function getProjectEvents(Request $request ,$projectId)
     {
-        return $this->filterBy($request, $projectId, 'project_id');
+        return $this->filterBy($request, [$projectId], 'project_id');
+    }
+
+    public function getCustomersEvents(Request $request ,$customerId)
+    {
+        $contacts = (new Contact)->getContactByCustomer($customerId);
+        $contactsIds = array_column($contacts->toArray(), 'id');
+        return $this->filterBy($request, $contactsIds, 'contact_id');
     }
 
     public function updateCalendarDates(Request $request)
@@ -166,7 +174,8 @@ class EventsController extends Controller
 
     private function filterBy($request, $entityId, $entityType)
     {
-        $events = Event::where($entityType, $entityId)->with(['contact',  'project'])->mine()->vueTable(Event::$columns);
+
+        $events = Event::whereIn($entityType, $entityId)->with(['contact',  'project'])->mine()->vueTable(Event::$columns);
         return response()->json($events)->original;
     }
 

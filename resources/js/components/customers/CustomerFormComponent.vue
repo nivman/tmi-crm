@@ -29,6 +29,12 @@
                   </a>
             </span>
               <span class="control tooltip">
+                  <a @click="showEvents" class="button is-success is-small">
+                    <i class="far fa-comments"></i>
+                    <span class="tooltip-text bottom">רשימת התקשרויות</span>
+                  </a>
+            </span>
+              <span class="control tooltip">
                   <a @click="addFile" class="button is-primary is-small">
                     <i class="far fa-file"></i>
                     <span class="tooltip-text bottom">העלת קבצים</span>
@@ -195,69 +201,69 @@
             ></div>
           </div>
           <header class="modal-card-head modal-card-head-customer">
-          <div>
-            <VueToggles
-                style="direction: ltr; margin-left: 9px;"
-                @click="displayExtraFields"
-                :value="showExtraFields"
-                height="20"
-                width="60"
-                fontSize="12"
-                checkedColor="#000000"
-                uncheckedColor="#000000"
-                fontWeight="bold"
-                checkedText="הסתר"
-                uncheckedText="הצג"
-                checkedBg="#b4d455"
-                uncheckedBg="lightgrey"/>
-          </div>
-          <h5 class="modal-card-title">שדות נוספים</h5>
+            <div>
+              <VueToggles
+                  style="direction: ltr; margin-left: 9px;"
+                  @click="displayExtraFields"
+                  :value="showExtraFields"
+                  height="20"
+                  width="60"
+                  fontSize="12"
+                  checkedColor="#000000"
+                  uncheckedColor="#000000"
+                  fontWeight="bold"
+                  checkedText="הסתר"
+                  uncheckedText="הצג"
+                  checkedBg="#b4d455"
+                  uncheckedBg="lightgrey"/>
+            </div>
+            <h5 class="modal-card-title">שדות נוספים</h5>
           </header>
           <transition
 
               v-on:before-enter="beforeEnter"
-                       v-on:enter="enter"
-                       v-on:leave="leave"
-                       v-bind:css="false">
-          <div class="animated zoomIn" style="overflow:auto; height: max-content "  v-show="showExtraFields">
+              v-on:enter="enter"
+              v-on:leave="leave"
+              v-bind:css="false">
+            <div class="animated zoomIn" style="overflow:auto; height: max-content " v-show="showExtraFields">
 
-              <section class="modal-card-body  zoomIn" >
+              <section class="modal-card-body  zoomIn">
 
-                    <div class="field">
-                      <label class="label" for="arrivalSource">מקורות הגעה</label>
-                      <select
-                          class="input"
-                          type=""
-                          id="arrivalSource"
-                          name="arrivalSource"
-                          v-model="form.arrivalSource">
-                        <option
-                            v-for="arrivalSource in arrivalSources"
-                            :value="arrivalSource.id"
-                            :selected="arrivalSource.id === form.arrivalSource"
-                            :style="{background: arrivalSource.color}">
-                          {{ arrivalSource.name }}
-                        </option>
-                      </select>
-                      <div class="help is-danger">
-                        {{ errors.first("arrivalSources") }}
-                      </div>
-                    </div>
-                  <div v-if="attributes">
-                    <div class="columns is-multiline">
-                      <div
-                          class="column is-half"
-                          v-for="attr in attributes"
-                          :key="attr.slug">
-                        <custom-field-component
-                            :attr="attr"
-                            v-model="form[attr.slug]"
-                        ></custom-field-component>
-                      </div>
+                <div class="field">
+                  <label class="label" for="arrivalSource">מקורות הגעה</label>
+                  <select
+                      class="input"
+                      type=""
+                      id="arrivalSource"
+                      name="arrivalSource"
+                      v-model="form.arrivalSource">
+                    <option
+                        v-for="arrivalSource in arrivalSources"
+                        :value="arrivalSource.id"
+                        :selected="arrivalSource.id === form.arrivalSource"
+                        :style="{background: arrivalSource.color}">
+                      {{ arrivalSource.name }}
+                    </option>
+                  </select>
+                  <div class="help is-danger">
+                    {{ errors.first("arrivalSources") }}
+                  </div>
+                </div>
+                <div v-if="attributes">
+                  <div class="columns is-multiline">
+                    <div
+                        class="column is-half"
+                        v-for="attr in attributes"
+                        :key="attr.slug">
+                      <custom-field-component
+                          :attr="attr"
+                          v-model="form[attr.slug]"
+                      ></custom-field-component>
                     </div>
                   </div>
+                </div>
               </section>
-          </div>
+            </div>
           </transition>
           <div class="columns">
             <div class="column">
@@ -288,10 +294,32 @@
       </status-history-view-component>
     </div>
     <div v-if="showContactsList">
-      <customer-contacts-list :customerId="customerId"  @showContacts="showContacts"></customer-contacts-list>
+      <customer-contacts-list :customerId="customerId" @showContacts="showContacts"></customer-contacts-list>
     </div>
     <div v-if="showFilesList">
-      <customers-files-list-component :customerId="customerId"  @showFiles="showFiles"></customers-files-list-component>
+      <customers-files-list-component :customerId="customerId" @showFiles="showFiles"></customers-files-list-component>
+    </div>
+    <div class="modal is-active" v-if="showEventsList">
+
+
+        <div class="modal-background"></div>
+        <div style="margin: 10%" class="animated fastest zoomIn">
+          <header  style="direction: ltr" class="modal-card-head is-radius-top">
+            <button type="button" class="delete" @click="showEvents"></button>
+
+          </header>
+          <section class="modal-card-body is-radius-bottom customer-form-event-list">
+            <events-list-component
+                :customerName="customerName"
+                :customerId="customerId"
+                @showEvents="showEvents"
+                modal="customer"></events-list-component>
+          </section>
+
+        </div>
+
+
+      <!--      <events-list-component :customerId="customerId" @showEvents="showEvents"></events-list-component>-->
     </div>
     <input @change="selectFile" id="fileUpload" type="file" hidden>
   </div>
@@ -309,9 +337,12 @@ import CustomerContactsList from "./CustomerContactsListComponent";
 import CustomersFilesListComponent from "../files/CustomersFilesListComponent"
 import VueToggles from 'vue-toggles';
 import Velocity from 'velocity-animate'
+import EventsListComponent from "../events/EventsListComponent";
+
 export default {
   data() {
     return {
+      customerName: null,
       showExtraFields: false,
       states: [],
       loading: true,
@@ -323,6 +354,7 @@ export default {
       showStatusHistory: false,
       showContactsList: false,
       showFilesList: false,
+      showEventsList: false,
       createLead: false,
       customerId: null,
       file: null,
@@ -366,13 +398,13 @@ export default {
       el.style.height = 0;
     },
     enter: function (el, done) {
-      Velocity(el, { opacity: 1,width: "auto" ,  height: 300}, { duration: "fast" })
+      Velocity(el, {opacity: 1, width: "auto", height: 300}, {duration: "fast"})
     },
     leave: function (el, done) {
-      Velocity(el, { opacity:0,width: 0 ,  height: 0}, { duration: "slow" })
+      Velocity(el, {opacity: 0, width: 0, height: 0}, {duration: "slow"})
     },
     displayExtraFields() {
-       this.showExtraFields = !this.showExtraFields;
+      this.showExtraFields = !this.showExtraFields;
     },
     submit() {
       this.isSaving = true;
@@ -413,7 +445,7 @@ export default {
       this.$http
           .get(`app/customers/${id}`)
           .then(res => {
-
+            this.customerName = res.data.customer.name;
             this.attributes = res.data.customer.attributes;
             delete res.data.customer.attributes;
             this.form = new this.$form(res.data.customer);
@@ -439,15 +471,27 @@ export default {
           .catch(err => this.$event.fire("appError", err));
     },
     addEvent() {
-
       this.$modal.show("event-form-modal", {customerId: this.$route.params.id});
     },
     addFile() {
       document.getElementById("fileUpload").click()
     },
-    showFiles() {
+    showEvents() {
 
+      this.showEventsList = this.showEventsList !== true
+    },
+    showFiles() {
       this.showFilesList = this.showFilesList !== true
+    },
+    statusHistory() {
+      this.showStatusHistory = this.showStatusHistory !== true;
+    },
+    showContacts() {
+      this.showContactsList = this.showContactsList !== true
+    },
+    showStatusesHistory: function () {
+      this.showStatusHistory = false
+
     },
     selectFile(event) {
 
@@ -467,29 +511,19 @@ export default {
           })
           .catch(err => this.$event.fire("appError", err.response));
     },
-    statusHistory() {
-
-      this.showStatusHistory = this.showStatusHistory !== true;
-
-    },
-    showContacts() {
-      this.showContactsList = this.showContactsList !== true
-    },
-    showStatusesHistory: function () {
-      this.showStatusHistory = false
-
-    },
   },
 
   components: {
     EventFormModal,
     CustomerContactsList,
+    EventsListComponent,
     RockerSwitch,
     Lightbulb,
     StatusHistoryViewComponent,
     VueToggles,
     Velocity,
-    CustomersFilesListComponent},
+    CustomersFilesListComponent
+  },
 };
 </script>
 <style>
@@ -510,6 +544,7 @@ export default {
 .modal-card-head-customer {
   padding-right: 0px !important;
 }
+
 .list-enter,
 .list-leave-to {
   visibility: hidden;
@@ -524,11 +559,28 @@ export default {
   transition: all 0.3s;
 
 }
+
 .bounce-enter-active {
   animation: bounce-in .8s;
 }
+
 .bounce-leave-active {
   animation: bounce-in .8s reverse;
+}
+.customer-form-event-list .wrapper {
+  margin-top: 1px !important;
+}
+
+.customer-form-event-list .wrapper .panel .table-body-br{
+  overflow-y: scroll;
+  position: relative;
+  max-height: 300px;
+}
+
+
+
+.customer-form-event-list {
+  max-height: 500px;
 }
 @keyframes bounce-in {
   0% {

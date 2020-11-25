@@ -25,7 +25,15 @@ const Filters = {
 
     formatDecimal: (value = 0, d = 4) => accounting.formatNumber(value, d, "", "."),
 
-    unformatNumber: (value = 0, ds = ".") => accounting.unformat(value, ds)
+    unformatNumber: (value = 0, ds = ".") => accounting.unformat(value, ds),
+
+    truncate: function(text, length, clamp) {
+        clamp = clamp || '...';
+        var node = document.createElement('span');
+        node.innerHTML = text;
+        var content = node.textContent;
+        return content.length > length ? content.slice(0, length) + clamp : content;
+    }
 };
 
 export default Filters;
