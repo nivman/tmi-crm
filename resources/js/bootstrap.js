@@ -2,6 +2,15 @@ window.axios = require("axios");
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 window.axios.defaults.headers.common["X-CSRF-TOKEN"] = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
 
+import Echo from 'laravel-echo'
+window.Pusher = require('pusher-js')
+window.Echo = new Echo({
+   broadcaster: 'pusher',
+   key: 'c84bb6b118946cf464b6',
+   cluster: 'eu',
+   encrypted: false
+});
+
 window.isUpdateAvailable = new Promise(function(resolve, reject) {
     if ("serviceWorker" in navigator) {
         window.addEventListener("load", function() {

@@ -20,6 +20,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\StatusChangeEvent' => [
             'App\Listeners\StatusChangeListener',
         ],
+        'App\Events\EmailEvent' => [
+            'App\Listeners\EmailListener',
+        ],
         // 'App\Events\InvoiceCreated' => [
         //     'App\Listeners\InvoiceCreated',
         // ],

@@ -64,6 +64,9 @@ export default {
     if (!this.$store.getters.user) {
       this.$router.push({ path: '/login' });
     }
+    Echo.private('email').listen('EmailEvent', (e)=>{
+      console.log(e)
+    })
   },
   beforeMount() {
     if (this.$store.getters.admin) {

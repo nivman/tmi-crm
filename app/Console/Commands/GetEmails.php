@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Contact;
 use App\Customer;
 use App\Event;
+use App\Events\EmailEvent;
 use App\File;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -164,6 +165,7 @@ class GetEmails extends Command
 
         $customer->contact_id = $contact->id;
         $this->createEmailEvent($customer, $message);
+        event( new EmailEvent($v));
     }
 
     private function searchCustomersEmails($message, $address, $createFile = false)

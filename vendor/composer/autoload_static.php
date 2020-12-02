@@ -39,6 +39,7 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'b6ec61354e97f32c0ae683041c78392a' => __DIR__ . '/..' . '/scrivo/highlight.php/HighlightUtilities/functions.php',
         'ed962a97bd972bc82007176b647d4e36' => __DIR__ . '/..' . '/facade/ignition/src/helpers.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        '3109cb1a231dcd04bee1f9f620d46975' => __DIR__ . '/..' . '/paragonie/sodium_compat/autoload.php',
         '573214ce1ef6f18100c43e366703d73c' => __DIR__ . '/..' . '/rinvex/laravel-support/src/Support/helpers.php',
         '17d016dc52a631c1e74d2eb8fdd57342' => __DIR__ . '/..' . '/laravel/helpers/src/helpers.php',
         '72b1e3f4a2af9b30b3f137b3ec2057fc' => __DIR__ . '/..' . '/spatie/laravel-activitylog/src/helpers.php',
@@ -128,6 +129,7 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         ),
         'P' => 
         array (
+            'Pusher\\' => 7,
             'Psy\\' => 4,
             'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
@@ -471,6 +473,10 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'Ramsey\\Collection\\' => 
         array (
             0 => __DIR__ . '/..' . '/ramsey/collection/src',
+        ),
+        'Pusher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/pusher/pusher-php-server/src',
         ),
         'Psy\\' => 
         array (
@@ -897,6 +903,7 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'App\\Customer' => __DIR__ . '/../..' . '/app/Customer.php',
         'App\\Event' => __DIR__ . '/../..' . '/app/Event.php',
         'App\\EventsType' => __DIR__ . '/../..' . '/app/EventsType.php',
+        'App\\Events\\EmailEvent' => __DIR__ . '/../..' . '/app/Events/EmailEvent.php',
         'App\\Events\\InvoiceEvent' => __DIR__ . '/../..' . '/app/Events/InvoiceEvent.php',
         'App\\Events\\PaymentEvent' => __DIR__ . '/../..' . '/app/Events/PaymentEvent.php',
         'App\\Events\\PurchaseEvent' => __DIR__ . '/../..' . '/app/Events/PurchaseEvent.php',
@@ -984,6 +991,7 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'App\\InvoiceItem' => __DIR__ . '/../..' . '/app/InvoiceItem.php',
         'App\\Listeners\\CheckPaymentsForInvoice' => __DIR__ . '/../..' . '/app/Listeners/CheckPaymentsForInvoice.php',
         'App\\Listeners\\CheckPaymentsForPurchase' => __DIR__ . '/../..' . '/app/Listeners/CheckPaymentsForPurchase.php',
+        'App\\Listeners\\EmailListener' => __DIR__ . '/../..' . '/app/Listeners/EmailListener.php',
         'App\\Listeners\\StatusChangeListener' => __DIR__ . '/../..' . '/app/Listeners/StatusChangeListener.php',
         'App\\Listeners\\SyncPaymentToInvoices' => __DIR__ . '/../..' . '/app/Listeners/SyncPaymentToInvoices.php',
         'App\\Listeners\\SyncPaymentToPurchases' => __DIR__ . '/../..' . '/app/Listeners/SyncPaymentToPurchases.php',
@@ -6434,6 +6442,11 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'Psy\\VersionUpdater\\IntervalChecker' => __DIR__ . '/..' . '/psy/psysh/src/VersionUpdater/IntervalChecker.php',
         'Psy\\VersionUpdater\\NoopChecker' => __DIR__ . '/..' . '/psy/psysh/src/VersionUpdater/NoopChecker.php',
         'PurchasesTableSeeder' => __DIR__ . '/../..' . '/database/seeds/PurchasesTableSeeder.php',
+        'Pusher\\Pusher' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/Pusher.php',
+        'Pusher\\PusherCrypto' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/PusherCrypto.php',
+        'Pusher\\PusherException' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/PusherException.php',
+        'Pusher\\PusherInstance' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/PusherInstance.php',
+        'Pusher\\Webhook' => __DIR__ . '/..' . '/pusher/pusher-php-server/src/Webhook.php',
         'Ramsey\\Collection\\AbstractArray' => __DIR__ . '/..' . '/ramsey/collection/src/AbstractArray.php',
         'Ramsey\\Collection\\AbstractCollection' => __DIR__ . '/..' . '/ramsey/collection/src/AbstractCollection.php',
         'Ramsey\\Collection\\AbstractSet' => __DIR__ . '/..' . '/ramsey/collection/src/AbstractSet.php',
