@@ -2,15 +2,16 @@
   <div>
     <top-bar-component></top-bar-component>
     <nav-bar-component v-if="$store.getters.settings.ac.navPosition == 'top' && user"></nav-bar-component>
-    <div class="is-app" :class="{ topMenu: $store.getters.settings.ac.navPosition == 'top' }">
+    <div class="is-app" :class="{ topMenu: $store.getters.settings.ac.navPosition == 'top' }"  ref="container">
       <div class="container">
-        <div class="is-app" :class="{ 'hide-side-bar': toggleSideBar || $store.getters.settings.ac.navPosition == 'top' }">
+        <div class="is-app"
+             :class="{ 'hide-side-bar': toggleSideBar || $store.getters.settings.ac.navPosition == 'top' }">
           <transition
-            appear
-            name="fade"
-            mode="out-in"
-            enter-active-class="animated faster fadeInRight"
-            leave-active-class="animated fastest fadeOutLeft"
+              appear
+              name="fade"
+              mode="out-in"
+              enter-active-class="animated faster fadeInRight"
+              leave-active-class="animated fastest fadeOutLeft"
           >
             <div class="is-sidebar is-shadow">
               <side-bar-component></side-bar-component>
@@ -18,11 +19,11 @@
           </transition>
           <div class="is-main">
             <transition
-              appear
-              name="fade"
-              mode="out-in"
-              enter-active-class="animated faster fadeInDown"
-              leave-active-class="animated fastest fadeOutRight"
+                appear
+                name="fade"
+                mode="out-in"
+                enter-active-class="animated faster fadeInDown"
+                leave-active-class="animated fastest fadeOutRight"
             >
               <router-view></router-view>
             </transition>
@@ -35,8 +36,13 @@
     <login-modal></login-modal>
     <modals-container></modals-container>
     <vue-progress-bar></vue-progress-bar>
-    <notifications group="app" classes="notification" />
+    <notifications group="app" classes="notification"/>
     <event-form-modal></event-form-modal>
+
+<!--    <div v-if="firstEnter">-->
+
+<!--      <customer-form-component :popupCustomerId="popupCustomerId"></customer-form-component>-->
+<!--    </div>-->
   </div>
 </template>
 
@@ -47,8 +53,27 @@ import NavBarComponent from './NavBarComponent.vue';
 import FooterComponent from './FooterComponent.vue';
 import SideBarComponent from './SideBarComponent.vue';
 import EventFormModal from "./calendar/EventFormModal.vue";
+import CustomerFormComponent from "./customers/CustomerFormComponent";
+import Noty from 'noty';
+
 export default {
-  components: { LoginModal, TopBarComponent, NavBarComponent, SideBarComponent, FooterComponent,EventFormModal },
+  data() {
+    return {
+      firstEnter: false,
+      popupCustomerId: ''
+    }
+  },
+  components: {
+    LoginModal,
+    TopBarComponent,
+    NavBarComponent,
+    SideBarComponent,
+    FooterComponent,
+    EventFormModal,
+    CustomerFormComponent,
+    Noty
+
+  },
   computed: {
     menu() {
       return this.$store.state.sideBar;
@@ -61,14 +86,17 @@ export default {
     },
   },
   mounted() {
+    this.firstEnter =  localStorage.getItem("firstEnter");
+
     if (!this.$store.getters.user) {
-      this.$router.push({ path: '/login' });
+      this.$router.push({path: '/login'});
+    }else{
+      this.checkForUnSeenPopUps();
+
     }
-    Echo.private('email').listen('EmailEvent', (e)=>{
-      console.log(e)
-    })
   },
   beforeMount() {
+
     if (this.$store.getters.admin) {
       if (this.$route.meta.super && !this.$route.meta.admin) {
         this.$Progress.fail();
@@ -110,7 +138,7 @@ export default {
     this.$event.listen('logOut', () => {
       this.$http.get('/logout').then(() => {
         this.$store.commit('UPDATE_USER', null);
-        this.$router.push({ path: '/login' });
+        this.$router.push({path: '/login'});
       });
     });
     this.$event.listen('appError', res => {
@@ -120,7 +148,7 @@ export default {
         } else if (res.status == 403) {
           if (!this.$store.getters.user) {
             this.notify('warn', 'You are not allowed to access the requested resource.', 'Access denied!');
-            this.$router.push({ path: '/login' });
+            this.$router.push({path: '/login'});
           } else {
             this.redirectBack();
           }
@@ -130,10 +158,10 @@ export default {
           this.displayErrors(res.data);
         } else {
           let error = res.data.error
-            ? res.data.error
-            : res.data.message
-            ? res.data.message
-            : 'Unknown error occurred! please try again later.';
+              ? res.data.error
+              : res.data.message
+                  ? res.data.message
+                  : 'Unknown error occurred! please try again later.';
           let nf = "We are sorry but the requested page can't be found.";
           let ua = 'Your session has been expired! Please login again';
           this.$modal.show('dialog', {
@@ -177,11 +205,67 @@ export default {
         document.body.classList.remove('modal-open');
       }
     },
-    isMobile: function(v) {
+    isMobile: function (v) {
       this.$store.commit('TOGGLE_SIDEBAR', v);
     },
   },
   methods: {
+    getUnseenLeads() {
+        Echo.private('email').listen('EmailEvent', (e) => {
+            this.showPopup(e.email, [])
+        })
+    },
+    checkForUnSeenPopUps() {
+
+      this.$http
+          .get(`app/customers/leads/unseen`)
+          .then((e) => {
+            let unseenLeads = e.data;
+            unseenLeads.forEach((lead)=>{
+
+                this.showPopup(lead,unseenLeads)
+
+            })
+
+            this.getUnseenLeads();
+          })
+          .catch(err => this.$event.fire("appError", err.response))
+      this.firstEnter = false
+
+    },
+    showPopup(ev, unseenLeads) {
+
+      let em = this;
+      Noty.setMaxVisible(10);
+
+      let noty = new Noty({
+        type: 'success',
+        // sounds:{sources : "/var/www/html/tmi/storage/app/public/sound/kitchen"},
+
+        closeWith: ['click'],
+        text: '<stronge style="font-size: 18px;font-weight: bold">ליד חדש</stronge>' +
+            '<p style="font-size: 14px;font-weight: bold"> אמייל: '+ev.email+' </p>'+
+            '<p style="font-size: 14px;font-weight: bold"> טלפון: '+ev.phone+' </p>',
+        buttons: [
+          Noty.button('לעריכת הליד', 'button', function (e) {
+
+            em.popupCustomerId = ev.customer_id;
+            var ComponentClass = Vue.extend(CustomerFormComponent)
+
+            var instance = new ComponentClass({
+              propsData: { popupCustomerId: ev.customer_id }
+            })
+            instance.$mount()
+            em.$refs.container.appendChild(instance.$el)
+        //    em.firstEnter = true
+            noty.close()
+          }, {id: 'button1', 'data-status': 'ok'}),
+        ]
+      }).show();
+
+
+
+    },
     login() {
       this.$modal.hide('dialog');
       this.$modal.show('login-modal');
@@ -225,12 +309,12 @@ export default {
     },
     refreshToken() {
       this.$http
-        .get(`app/token`)
-        .then(res => {
-          document.head.querySelector('meta[name="csrf-token"]').setAttribute('content', res.data.token);
-          window.axios.defaults.headers.common['X-CSRF-TOKEN'] = res.data.token;
-        })
-        .catch(err => this.$event.fire('appError', err.response));
+          .get(`app/token`)
+          .then(res => {
+            document.head.querySelector('meta[name="csrf-token"]').setAttribute('content', res.data.token);
+            window.axios.defaults.headers.common['X-CSRF-TOKEN'] = res.data.token;
+          })
+          .catch(err => this.$event.fire('appError', err.response));
     },
   },
 };
@@ -238,6 +322,10 @@ export default {
 
 <style lang="scss">
 @import '../../sass/variables';
+
+.noty-button {
+  width: 100%;
+}
 
 .notification {
   padding: 10px;
@@ -247,15 +335,18 @@ export default {
   background: hsl(204, 86%, 53%);
   border-radius: 3px;
   border-left: 4px solid darken(hsl(204, 86%, 53%), 10%);
+
   &.warn {
     color: hsl(0, 0%, 29%);
     background: hsl(48, 100%, 67%);
     border-left-color: darken(hsl(48, 100%, 67%), 20%);
   }
+
   &.error {
     background: hsl(348, 100%, 61%);
     border-left-color: darken(hsl(348, 100%, 61%), 20%);
   }
+
   &.success {
     background: hsl(141, 71%, 48%);
     border-left-color: darken(hsl(141, 71%, 48%), 10%);
@@ -272,9 +363,11 @@ export default {
       position: relative;
       overflow-x: scroll;
       border-collapse: collapse;
+
       td:empty:before {
         content: '\00a0';
       }
+
       th,
       td {
         margin: 0;
@@ -282,14 +375,17 @@ export default {
         vertical-align: top;
         min-height: 38px !important;
         text-align: left !important;
+
         div {
           text-align: left !important;
         }
+
         .buttons.has-addons {
           padding: 0 0.75em;
           justify-content: flex-start !important;
         }
       }
+
       th:last-child {
         padding: 0.5em 0.75em !important;
       }
@@ -299,14 +395,17 @@ export default {
         display: block;
         float: left;
         padding-right: 5px;
+
         tr span:first-child {
           margin-right: 0;
         }
+
         th,
         td {
           background-color: $white !important;
         }
       }
+
       tr {
         display: block;
         padding: 0 10px 0 0;
@@ -324,17 +423,21 @@ export default {
         white-space: nowrap;
         margin-left: 120px;
       }
+
       tr {
         display: inline-block;
         vertical-align: top;
       }
+
       th {
         display: block;
         text-align: right;
+
         span:last-child {
           margin-right: -20px;
         }
       }
+
       td {
         display: block;
         min-height: 1.25em;
@@ -347,6 +450,7 @@ export default {
 .input-filter {
   border: 0;
   background-color: transparent;
+
   &:focus {
     box-shadow: none;
   }
@@ -357,38 +461,47 @@ export default {
   td {
     vertical-align: middle;
   }
+
   thead th,
   thead th,
   .is-active th,
   .is-active td {
     background-color: #f5f5f5;
+
     &.filter {
       padding: 0;
     }
   }
+
   &.is-rounded {
     border-spacing: 0;
     border-collapse: inherit;
+
     th,
     td {
       vertical-align: middle !important;
     }
+
     thead tr:first-child th:first-child,
     tbody:first-child tr:first-child td:first-child {
       border-top-left-radius: $radius;
     }
+
     thead tr:first-child th:last-child,
     tbody:first-child tr:first-child td:last-child {
       border-top-right-radius: $radius;
     }
+
     thead + tbody tr:last-child td:first-child,
     tfoot tr:last-child td:first-child {
       border-bottom-left-radius: $radius;
     }
+
     thead + tbody tr:last-child td:last-child,
     tfoot tr:last-child td:last-child {
       border-bottom-right-radius: $radius;
     }
+
     thead + tbody tr td,
     tfoot + tbody tr td,
     tfoot tr td,
@@ -396,38 +509,47 @@ export default {
     tr + tr td {
       border-top: 0 !important;
     }
+
     tr th + th,
     tr td + td {
       border-left: 0 !important;
     }
   }
 }
+
 .table-body-br .table.is-rounded {
   tbody tr:last-child td:first-child {
     border-bottom-left-radius: 0;
   }
+
   tbody tr:last-child td:last-child {
     border-bottom-right-radius: 0;
   }
 }
+
 .table-head-br .table.is-rounded {
   thead tr:first-child th:first-child {
     border-top-left-radius: 0;
   }
+
   thead tr:first-child th:last-child {
     border-top-right-radius: 0;
   }
 }
+
 table.is-rounded-body {
   tbody tr:first-child td:first-child {
     border-top-left-radius: $radius;
   }
+
   tbody tr:first-child td:last-child {
     border-top-right-radius: $radius;
   }
+
   tbody tr:last-child td:first-child {
     border-bottom-left-radius: $radius;
   }
+
   tbody tr:last-child td:last-child {
     border-bottom-right-radius: $radius;
   }
@@ -435,23 +557,28 @@ table.is-rounded-body {
 
 .pagination.is-gapless {
   margin: 0 !important;
+
   li + li .pagination-link {
     border-left-width: 0;
   }
+
   .pagination-link {
     margin: 0;
     border-radius: 0;
     border-color: $grey-lighter;
+
     &:hover {
       background-color: $blue;
       border-color: $blue;
       color: $white;
     }
   }
+
   .pagination-list {
     li:first-child .pagination-link {
       border-radius: $radius 0 0 $radius;
     }
+
     li:last-child .pagination-link {
       border-radius: 0 $radius $radius 0;
     }
@@ -460,14 +587,17 @@ table.is-rounded-body {
 
 .VueTables {
   width: 100%;
+
   div:first-child div:first-child {
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
+
     div {
       flex-direction: row !important;
     }
   }
+
   label {
     line-height: 36px;
     float: left;
@@ -475,21 +605,26 @@ table.is-rounded-body {
     margin-right: 0.5rem;
     font-weight: normal;
   }
+
   .field {
     min-width: 50%;
     margin-bottom: 0;
+
     &:first-child {
       justify-content: flex-end !important;
     }
   }
+
   .VueTables__sortable {
     .VueTables__sort-icon {
       margin-top: 0.25rem;
     }
   }
+
   .VueTables__table .form-group {
     margin-bottom: 0.5rem;
   }
+
   .VueTables__dropdown-pagination {
     float: right;
     margin-left: 0.5rem;
@@ -500,34 +635,42 @@ table.is-rounded-body {
       }
     }
   }
+
   @include mobile {
     & {
       font-size: 0.9rem;
+
       .label {
         font-size: 0.9rem;
       }
+
       .field {
         min-width: auto !important;
         // justify-content: space-between;
       }
+
       .VueTables__search .input {
         width: 100px;
         font-size: 0.9rem;
         padding: $control-padding-vertical $control-padding-horizontal;
       }
+
       .VueTables__limit-field label {
         display: none;
       }
     }
   }
+
   .VueTables__pagination-wrapper {
     float: right;
+
     .VueTables__dropdown-pagination {
       min-width: 100px !important;
       @include mobile {
         & {
           float: none !important;
           min-width: 100% !important;
+
           .VueTables__dropdown-pagination {
             min-width: 100% !important;
           }
@@ -535,6 +678,7 @@ table.is-rounded-body {
       }
     }
   }
+
   .VuePagination {
     display: block;
     min-height: 38px;
@@ -546,27 +690,33 @@ table.is-rounded-body {
         }
       }
     }
+
     li + li .pagination-link {
       border-left-width: 0;
     }
+
     .pagination-link {
       margin: 0;
       border-radius: 0;
       border-color: $grey-lighter;
+
       &:hover {
         background-color: $blue;
         border-color: $blue;
         color: $white;
       }
     }
+
     .pagination-list {
       li:first-child .pagination-link {
         border-radius: $radius 0 0 $radius;
       }
+
       li:last-child .pagination-link {
         border-radius: 0 $radius $radius 0;
       }
     }
+
     @include mobile {
       li {
         flex-grow: 0;
@@ -586,30 +736,36 @@ table.is-rounded-body {
         text-align: left !important;
       }
     }
+
     .VuePagination__count {
       margin-top: 0.45rem;
       float: left;
       margin-bottom: 0;
     }
+
     .VuePagination__pagination {
       float: right;
       margin-bottom: 0;
     }
+
     .pagination-link.disabled {
       background-color: $light;
       color: $grey-light;
       cursor: default;
+
       &:hover {
         border-color: $grey-lighter;
         box-shadow: none;
       }
     }
+
     .pagination-link.active,
     .pagination-link.is-current {
       background-color: $blue;
       border-color: $blue;
       color: $white;
       cursor: default;
+
       &:hover {
         box-shadow: none;
       }
@@ -621,6 +777,7 @@ table.is-rounded-body {
   position: relative;
   display: inline-block;
   height: 100%;
+
   .tooltip-text {
     visibility: hidden;
     background-color: rgba(0, 0, 0, 0.9);
@@ -633,6 +790,7 @@ table.is-rounded-body {
     z-index: 999;
     font-weight: bold;
     font-size: 13px;
+
     &::after {
       content: ' ';
       top: 100%;
@@ -643,26 +801,32 @@ table.is-rounded-body {
       border-style: solid;
       border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
     }
+
     &.bottom {
       bottom: auto;
       top: 100%;
+
       &::after {
         border-width: 0;
       }
     }
+
     &.left {
       bottom: auto;
       top: -12px;
       right: 110%;
+
       &::after {
         border-width: 0;
       }
     }
   }
+
   &:hover .tooltip-text {
     visibility: visible;
   }
 }
+
 @media print {
   html,
   body,
@@ -679,25 +843,31 @@ table.is-rounded-body {
     margin: 0 !important;
     width: 100% !important;
     box-shadow: none !important;
+
     .print {
       .print-none {
         display: none !important;
       }
+
       .p-m-none {
         margin: 0 !important;
       }
+
       .p-p-none {
         padding: 0 !important;
       }
+
       .p-b-none {
         border: 0 !important;
       }
     }
+
     * {
       border-color: #ddd !important;
     }
   }
 }
+
 .no-caret::after {
   display: none;
 }

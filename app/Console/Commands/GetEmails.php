@@ -157,7 +157,14 @@ class GetEmails extends Command
          preg_match('/From:.+ <(.+)>/', $myStr, $email);
          preg_match('/טלפון(\d+)/', $myStr, $phone);
 
-        $v =['name' => 'ליד חדש מהאתר', 'email' => $email[1], 'phone' => $phone[1], 'user_id' => 1, 'is_lead' =>1];
+        $v = [
+            'name' => 'ליד חדש מהאתר',
+            'email' => $email[1],
+            'phone' => $phone[1],
+            'user_id' => 1,
+            'is_lead' => 1,
+            'opening_balance' => -1
+        ];
         $customer = Customer::create($v);
         $contact = new Contact();
 
@@ -165,6 +172,7 @@ class GetEmails extends Command
 
         $customer->contact_id = $contact->id;
         $this->createEmailEvent($customer, $message);
+        $v['customer_id'] = $customer->id;
         event( new EmailEvent($v));
     }
 

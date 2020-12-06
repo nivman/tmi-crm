@@ -149,6 +149,8 @@ export default {
                         "נכנסת למערכת"
                     );
                     this.$router.push("/");
+                    //need to refresh the page in order to pusher to start listen
+                    location.reload();
                     this.$http
                         .get(`app/token`)
                         .then(res => {

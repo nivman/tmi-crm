@@ -8,7 +8,8 @@
 // $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import 'vue-select/src/scss/vue-select.scss';
-
+@import "~noty/src/noty.scss";
+@import "~noty/src/themes/mint.scss";
 html,
 body,
 #app {

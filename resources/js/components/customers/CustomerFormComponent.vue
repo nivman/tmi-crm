@@ -1,5 +1,5 @@
 <template>
-  <div class="modal is-active">
+  <div class="modal is-active customer-form-modal">
     <div class="modal-background"></div>
     <form action="#" autocomplete="off" @submit.prevent="validateForm()">
       <div class="modal-card animated fastest zoomIn">
@@ -90,7 +90,7 @@
               <button
                   type="button"
                   class="delete"
-                  @click="$router.go(-1)">
+                  @click="closeModal">
               </button>
             </p>
           </div>
@@ -408,6 +408,7 @@ import TaskListComponent from "../tasks/TaskListComponent";
 import ProjectFormModal from "../projects/ProjectFormModal";
 import ProjectListComponent from "../projects/ProjectListComponent";
 export default {
+  props: ['popupCustomerId'],
   data() {
     return {
       customerName: null,
@@ -445,9 +446,15 @@ export default {
     };
   },
   created() {
-    if (this.$route.params.id) {
-      this.fetchCustomer(this.$route.params.id);
-      this.customerId = this.$route.params.id
+
+    if(this.popupCustomerId !== undefined) {
+      this.fetchCustomer(this.popupCustomerId);
+      this.customerId = this.popupCustomerId
+    }
+    else if (this.$route.params.id) {
+      this.customerId = this.$route.params.id;
+      this.fetchCustomer(this.customerId );
+
     } else {
       this.$http
           .get(`app/customers/create`)
@@ -517,6 +524,7 @@ export default {
       this.$http
           .get(`app/customers/${id}`)
           .then(res => {
+            this.modalShow = true
             this.customerName = res.data.customer.name;
             this.attributes = res.data.customer.attributes;
             delete res.data.customer.attributes;
@@ -529,8 +537,19 @@ export default {
             this.form.arrivalSource = res.data.customer.arrival_source_id;
             this.loading = false;
             this.form.is_lead = res.data.customer.is_lead === 0 ? false : true
+
           })
           .catch(err => this.$event.fire("appError", err.response));
+    },
+    closeModal() {
+      if (!this.popupCustomerId ) {
+        this.$router.go(-1)
+      }else{
+        let modal = document.querySelector(".customer-form-modal")
+        modal.parentNode.removeChild( modal );
+
+      }
+
     },
     validateForm() {
       this.$validator

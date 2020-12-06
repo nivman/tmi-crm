@@ -127,4 +127,12 @@ class Customer extends ModelForm
             ->whereIn('cu.id', $customersIds)
             ->get();
     }
+
+    public function getUnseenLeads()
+    {
+        return DB::table('customers', 'cu')
+            ->select('cu.*')
+            ->where(['cu.is_lead'=> 1, 'opening_balance' => -1])
+            ->get()->toArray();
+    }
 }

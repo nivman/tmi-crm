@@ -10,6 +10,7 @@ window.Echo = new Echo({
    cluster: 'eu',
    encrypted: false
 });
+window.Noty = require('noty');
 
 window.isUpdateAvailable = new Promise(function(resolve, reject) {
     if ("serviceWorker" in navigator) {

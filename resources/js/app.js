@@ -8,7 +8,8 @@ import VeeValidate from 'vee-validate';
 import Filters from './core/Filters.js';
 import VueProgressBar from 'vue-progressbar';
 import Notifications from 'vue-notification';
-
+import VueMoJS from 'vue-mo-js'
+Vue.use(VueMoJS)
 window.jQuery = require('jquery');
 window.jQuery.moment = require('moment');
 window.jQuery.daterangepicker = require('daterangepicker');

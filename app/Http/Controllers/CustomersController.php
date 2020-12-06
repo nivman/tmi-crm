@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\ArrivalSources;
 use App\Contact;
 use App\Customer;
+use App\Events\EmailEvent;
 use App\Events\StatusChange;
 use App\Events\StatusChangeEvent;
 use App\File;
@@ -21,7 +22,7 @@ class CustomersController extends Controller
         $arrivalSources = ArrivalSources::all();
 
         $customer = new Customer;
-        return ['attributes' => $customer->attributes(), 'statuses' => $customerStatuses, 'arrivalSources' =>$arrivalSources];
+        return ['attributes' => $customer->attributes(), 'statuses' => $customerStatuses, 'arrivalSources' => $arrivalSources];
     }
 
     public function destroy(Customer $customer)
@@ -35,9 +36,9 @@ class CustomersController extends Controller
         }
 
         $contacts = (new Contact)->getContactByCustomerId($customer->getQueueableId());
-          foreach ($contacts->getIterator() as $contact){
-              $contact->delete();
-          }
+        foreach ($contacts->getIterator() as $contact) {
+            $contact->delete();
+        }
 
         $customer->delete();
         return response(['success' => true], 204);
@@ -46,7 +47,7 @@ class CustomersController extends Controller
     public function index(Request $request)
     {
         $leadRequest = strpos($request->getPathInfo(), 'lead') ? 1 : 0;
-        $customers = Customer::with(['journal', 'status'])->where('is_lead','=',$leadRequest)->vueTable(Customer::$columns);
+        $customers = Customer::with(['journal', 'status'])->where('is_lead', '=', $leadRequest)->vueTable(Customer::$columns);
         $attributes = (new Customer)->getCustomFields($customers);
 
         foreach ($customers['data'] as $key => $customer) {
@@ -83,10 +84,14 @@ class CustomersController extends Controller
 
     public function show(Customer $customer)
     {
+        if ($customer->opening_balance == -1) {
+            $customer->update(['opening_balance' => 0]);
+        }
         $customer->attributes = $customer->attributes();
 
+
         $customer->status = $customer->getStatus($customer->getAttribute('status_id'));
-        $customer->arrivalSources = ArrivalSources::select('id','name','color')->find($customer->getAttribute('arrival_source_id'));
+        $customer->arrivalSources = ArrivalSources::select('id', 'name', 'color')->find($customer->getAttribute('arrival_source_id'));
 
         $customerStatuses = (new Status)->getAllEntityStatus('App\Customer');
         $arrivalSources = ArrivalSources::all();
@@ -124,7 +129,7 @@ class CustomersController extends Controller
         return $customer;
     }
 
-    public function update (CustomerRequest $request, Customer $customer)
+    public function update(CustomerRequest $request, Customer $customer)
     {
         $v = $request->validated();
 
@@ -142,9 +147,11 @@ class CustomersController extends Controller
         return (new Customer)->getCustomersByIds($ids);
     }
 
-    public function getCustomerById($id) {
+    public function getCustomerById($id)
+    {
         return Customer::find($id);
     }
+
     /**
      * @param $status_id
      * @param $customer_id
@@ -163,5 +170,42 @@ class CustomersController extends Controller
     public function saveCustomerFile(Request $request)
     {
         (new File)->saveFile($request);
+    }
+
+    public function unseenLeads()
+    {
+
+        $unseenLeads = (new Customer)->getUnseenLeads();
+        $x = [];
+        array_filter($unseenLeads, function ($element) {
+
+            $v = [
+                'customer_id' => $element->id,
+                'name' => $element->name,
+                'email' => $element->email,
+                'phone' => $element->phone,
+                'user_id' => 1,
+                'is_lead' => 1,
+                'opening_balance' => -1
+            ];
+            event(new EmailEvent($v));
+
+        });
+        if (count($unseenLeads) > 0) {
+            foreach ($unseenLeads as $unseenLead) {
+                $v = [
+                    'customer_id' => $unseenLead->id,
+                    'name' => $unseenLead->name,
+                    'email' => $unseenLead->email,
+                    'phone' => $unseenLead->phone,
+                    'user_id' => 1,
+                    'is_lead' => 1,
+                    'opening_balance' => -1
+                ];
+                $x[] = $v;
+            }
+        }
+
+        return $x;
     }
 }
