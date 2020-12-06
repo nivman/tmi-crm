@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\ArrivalSources;
 use App\Contact;
 use App\Customer;
+use App\Event;
 use App\Events\EmailEvent;
 use App\Events\StatusChange;
 use App\Events\StatusChangeEvent;
 use App\File;
 use App\Status;
+use App\Task;
 use Illuminate\Http\Request;
 use App\Http\Requests\CustomerRequest;
 use Symfony\Component\Console\Input\Input;
@@ -36,11 +38,21 @@ class CustomersController extends Controller
         }
 
         $contacts = (new Contact)->getContactByCustomerId($customer->getQueueableId());
+        $contactsIds = array_column($contacts->toArray(), 'id');
+        $events = (new Event)->getEventsByContacts($contactsIds);
+        $tasks = (new Task)->getTasksByCustomerId($customer->id);
+        foreach ($tasks->getIterator() as $task) {
+            $task->delete();
+        }
+        foreach ($events->getIterator() as $event) {
+            $event->delete();
+        }
         foreach ($contacts->getIterator() as $contact) {
             $contact->delete();
         }
 
         $customer->delete();
+
         return response(['success' => true], 204);
     }
 

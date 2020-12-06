@@ -6,6 +6,7 @@ use App\Traits\LogActivity;
 use App\Traits\Restrictable;
 use App\Traits\VueTable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Event extends Model
 {
@@ -40,5 +41,13 @@ class Event extends Model
         return (new EventsType())->getStatusById($typeId);
     }
 
+    public function getEventsByContacts($contactssIds)
+    {
+        $events = DB::table('events', )
+            ->select('*')
+            ->whereIn('contact_id', $contactssIds)
+            ->get()->toArray();
 
+        return Event::hydrate($events);;
+    }
 }

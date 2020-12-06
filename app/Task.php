@@ -147,4 +147,13 @@ class Task extends ModelForm
         return in_array($key, Task::$columns);
 
     }
+
+    public function getTasksByCustomerId($customerId)
+    {
+        $tasks =  DB::table('tasks')->select('*')
+            ->where('customer_id', $customerId)
+            ->get()->toArray();
+
+        return Task::hydrate($tasks);
+    }
 }
