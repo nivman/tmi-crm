@@ -159,8 +159,8 @@ class GetEmails extends Command
 
         $v = [
             'name' => 'ליד חדש מהאתר',
-            'email' => $email[1],
-            'phone' => $phone[1],
+            'email' => count($email) > 0 ?$email[1] : '',
+            'phone' => count($phone) > 0 ?$phone[1] : '',
             'user_id' => 1,
             'is_lead' => 1,
             'opening_balance' => -1
