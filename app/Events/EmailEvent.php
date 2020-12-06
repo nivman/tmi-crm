@@ -32,6 +32,6 @@ class EmailEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('email');
+        return new PrivateChannel('email-rec');
     }
 }
