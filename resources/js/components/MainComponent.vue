@@ -211,7 +211,7 @@ export default {
   },
   methods: {
     getUnseenLeads() {
-      window.Echo.channel('email-rec').listen('EmailEvent', (e) => {
+      Echo.channel('email-rec').listen('EmailEvent', (e) => {
             this.showPopup(e.email, [])
         })
     },
