@@ -94,7 +94,6 @@ export default {
       this.checkForUnSeenPopUps();
 
     }
-    this.checkForUnSeenPopUps();
   },
   beforeMount() {
 
