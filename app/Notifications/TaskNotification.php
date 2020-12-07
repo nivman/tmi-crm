@@ -45,7 +45,7 @@ class TaskNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         $serverIp = getenv('SERVER_IP');
-
+        dd($serverIp);
         return (new MailMessage)
                     ->theme('default')
                     ->greeting('יש משימה לעשות.., אין מה לעשות')
