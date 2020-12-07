@@ -109,7 +109,6 @@ class Task extends ModelForm
                 ->where(function ($q) use ($params, $key, $filterByEntity) {
                     if (count($filterByEntity) > 0) {
 
-
                         $q->where('tasks.'.$filterByEntity['entityType'], '=', $filterByEntity['entityId']);
 
                         if ($params[0]['tableToJoin'] === 'categories' || $params[0]['tableToJoin'] === 'statuses' || $params[0]['tableToJoin'] === 'task_priorities') {
@@ -127,8 +126,6 @@ class Task extends ModelForm
                             $q->orWhere($params[$key]['orderByValue'], '=', null);
                         }
                     }
-
-
                 })
                 ->with(['customer', 'project', 'priority', 'status', 'category'])
                 ->mine()
@@ -162,21 +159,17 @@ class Task extends ModelForm
 
     public function setNotification($taskCreated)
     {
+        if (!$taskCreated->notification_time) {
+            return false;
+        }
         $target = (new AnonymousNotifiable)
-            ->route('mail', 'nivman1980@gmail.com')
-            ->route('sms', '56546456566');
+            ->route('mail', env('MAIL_USERNAME'));
 
-//        ScheduledNotification::create(
-//            $target, // Target
-//            new TaskNotification($task), // Notification
-//            Carbon::now()->addDay() // Send At
-//        );
-
-   //     Auth::user()->notifyAt(new TaskNotification($taskCreated),  Carbon::now());
         ScheduledNotification::create(
-            $target, // Target
-            new TaskNotification($taskCreated), // Notification
-            Carbon::now()// Send At
+            $target,
+            new TaskNotification($taskCreated),
+            Carbon::parse($taskCreated->notification_time)
         );
+        return true;
     }
 }
