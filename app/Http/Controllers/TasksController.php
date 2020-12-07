@@ -89,32 +89,9 @@ class TasksController extends Controller
 
 
        $taskCreated = Task::create($v);
-     //   Auth::user()->notifyAt(new TaskNotification($taskCreated),  \Carbon\Carbon::now());
-     //   $user = User::first();
-     //   Notification::send($user, new TaskNotification($taskCreated));
-//        $target = (new AnonymousNotifiable)
-//            ->route('mail', 'nivman1980@gmail.com')
-//            ->route('sms', '56546456566');
 
-//        ScheduledNotification::create(
-//            $target, // Target
-//            new TaskNotification($task), // Notification
-//            Carbon::now()->addDay() // Send At
-//        );
-
-        //     Auth::user()->notifyAt(new TaskNotification($taskCreated),  Carbon::now());
-//        ScheduledNotification::create(
-//             User::first(), // Target
-//            new TaskNotification($taskCreated), // Notification
-//            \Carbon\Carbon::now()->addHour() // Send At
-//        );
          (new Task)->setNotification($taskCreated);
 
-//        ScheduledNotification::create(
-//            Auth::user(), // Target
-//            $x, // Notification
-//            Carbon::now()->addHour() // Send At
-//        );
 
         return $task;
     }
