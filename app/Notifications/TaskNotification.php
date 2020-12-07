@@ -5,12 +5,14 @@ namespace App\Notifications;
 use App\Task;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class TaskNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
     private $task;
     /**
      * Create a new notification instance.
@@ -42,7 +44,8 @@ class TaskNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        dd(request()->ip());
+
+        dd(request()->getHttpHost());
         return (new MailMessage)
                     ->theme('default')
                     ->greeting('יש משימה לעשות.., אין מה לעשות')
