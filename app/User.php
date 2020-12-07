@@ -6,12 +6,14 @@ use App\Traits\VueTable;
 use App\Traits\LogActivity;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Thomasjohnkane\Snooze\Traits\SnoozeNotifiable;
 
 class User extends Authenticatable
 {
     use LogActivity;
     use Notifiable;
     use VueTable;
+    use SnoozeNotifiable;
 
     public static $columns = ['id', 'name', 'username', 'email', 'phone'];
 

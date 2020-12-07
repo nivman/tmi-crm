@@ -61,11 +61,6 @@
 <!--            //TODO hour wage should be dynamic-->
             {{ props.row.actual_time ?  parseFloat(props.row.actual_time / 60 * 150).toFixed(2) : '' }}
           </template>
-          <template slot="date_to_complete" slot-scope="props">
-
-            <date-format-component :date="props.row.date_to_complete"></date-format-component>
-          </template>
-
           <template slot="start_date" slot-scope="props">
 
             <date-format-component :dateTime="props.row.start_date"></date-format-component>
@@ -157,7 +152,6 @@ export default {
         'project',
         'category',
         'start_date',
-        'date_to_complete',
         'actual_time',
         'details',
         'priority',
@@ -181,13 +175,13 @@ export default {
         addRoute: null,
         options: {
         filterByColumn:true,
-        dateColumns: ['date_to_complete','start_date'],
+        dateColumns: ['start_date'],
         datepickerOptions: {
           opens: 'right'
         },
-        listColumns: ['customer','name', 'date_to_complete', 'start_date'],
-        orderBy: { ascending: false, column: 'date_to_complete' },
-        sortable: ['name','priority','customer','date_to_complete', 'project', 'status', 'category','start_date'],
+        listColumns: ['customer','name', 'start_date'],
+        orderBy: { ascending: false, column: 'start_date' },
+        sortable: ['name','priority','customer','start_date', 'project', 'status', 'category','start_date'],
         editableColumns: ['details'],
         perPage: 10,
         columnsClasses: {
@@ -197,7 +191,7 @@ export default {
           details: 'details-td',
           date_to_complete: 'w50 has-text-centered'
         },
-        filterable: ['name','details','customer', 'project', 'status', 'priority', 'category', 'date_to_complete', 'start_date'],
+        filterable: ['name','details','customer', 'project', 'status', 'priority', 'category', 'start_date'],
         headings: {
           name: 'נושא',
           customer: 'לקוח',
@@ -208,7 +202,6 @@ export default {
           percentageOfProject : 'אחוז עבודה ביחס למחיר הפרוייקט',
           priority: 'עדיפות',
           status: 'סטטוס',
-          date_to_complete: 'תאריך לביצוע',
           start_date: 'זמן התחלה',
           actual_time: 'זמן בפועל לביצוע',
           actions: 'פעולות',
@@ -269,7 +262,7 @@ export default {
 
   created () {
       this.setTextFilter()
-    if(this.customerId != undefined)    {
+    if(this.customerId != undefined) {
 
        this.addRoute = `/tasks/add?customerId=${this.customerId}`;
      }
@@ -280,7 +273,7 @@ export default {
 
        this.addRoute = '/tasks/add';
      }
-  //  this.addRoute = !this.customerId ? '/tasks/add' : `/tasks/add?customerId=${this.customerId}`;
+
   },
   computed: {
     url: {

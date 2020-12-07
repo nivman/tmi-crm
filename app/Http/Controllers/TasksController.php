@@ -6,12 +6,20 @@ use App\Category;
 use App\Customer;
 use App\Helpers\Filters;
 use App\Http\Requests\TaskRequest;
+use App\Notifications\TaskNotification;
 use App\Project;
 use App\Status;
 use App\Task;
 use App\TaskPriority;
+
+use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
+use Thomasjohnkane\Snooze\ScheduledNotification;
 
 
 /**
@@ -78,7 +86,35 @@ class TasksController extends Controller
         $v['status_id'] = $request->request->get('status') ? $request->request->get('status')['id'] : null;
         $v['project_id'] = $request->request->get('project') ? $request->request->get('project')['id'] : null;
         $task =  new Task();
-        Task::create($v);
+
+
+       $taskCreated = Task::create($v);
+     //   Auth::user()->notifyAt(new TaskNotification($taskCreated),  \Carbon\Carbon::now());
+     //   $user = User::first();
+     //   Notification::send($user, new TaskNotification($taskCreated));
+//        $target = (new AnonymousNotifiable)
+//            ->route('mail', 'nivman1980@gmail.com')
+//            ->route('sms', '56546456566');
+
+//        ScheduledNotification::create(
+//            $target, // Target
+//            new TaskNotification($task), // Notification
+//            Carbon::now()->addDay() // Send At
+//        );
+
+        //     Auth::user()->notifyAt(new TaskNotification($taskCreated),  Carbon::now());
+//        ScheduledNotification::create(
+//             User::first(), // Target
+//            new TaskNotification($taskCreated), // Notification
+//            \Carbon\Carbon::now()->addHour() // Send At
+//        );
+         (new Task)->setNotification($taskCreated);
+
+//        ScheduledNotification::create(
+//            Auth::user(), // Target
+//            $x, // Notification
+//            Carbon::now()->addHour() // Send At
+//        );
 
         return $task;
     }

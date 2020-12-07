@@ -3,13 +3,16 @@
 namespace App;
 
 use App\Http\ModelForm;
+use App\Notifications\TaskNotification;
 use App\Traits\AccountingJournal;
 use App\Traits\AttributableModel;
 use App\Traits\LogActivity;
 use App\Traits\Restrictable;
 use App\Traits\VueTable;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Carbon\Carbon;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Facades\DB;
+use Thomasjohnkane\Snooze\ScheduledNotification;
 
 class Task extends ModelForm
 {
@@ -155,5 +158,25 @@ class Task extends ModelForm
             ->get()->toArray();
 
         return Task::hydrate($tasks);
+    }
+
+    public function setNotification($taskCreated)
+    {
+        $target = (new AnonymousNotifiable)
+            ->route('mail', 'nivman1980@gmail.com')
+            ->route('sms', '56546456566');
+
+//        ScheduledNotification::create(
+//            $target, // Target
+//            new TaskNotification($task), // Notification
+//            Carbon::now()->addDay() // Send At
+//        );
+
+   //     Auth::user()->notifyAt(new TaskNotification($taskCreated),  Carbon::now());
+        ScheduledNotification::create(
+            $target, // Target
+            new TaskNotification($taskCreated), // Notification
+            Carbon::now()// Send At
+        );
     }
 }

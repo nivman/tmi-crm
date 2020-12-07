@@ -74,6 +74,7 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'T' => 
         array (
             'TijsVerkoyen\\CssToInlineStyles\\' => 31,
+            'Thomasjohnkane\\Snooze\\' => 22,
             'Tests\\' => 6,
         ),
         'S' => 
@@ -289,6 +290,10 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'TijsVerkoyen\\CssToInlineStyles\\' => 
         array (
             0 => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src',
+        ),
+        'Thomasjohnkane\\Snooze\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/thomasjohnkane/snooze/src',
         ),
         'Tests\\' => 
         array (
@@ -7560,6 +7565,22 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'TheSeer\\Tokenizer\\TokenCollectionException' => __DIR__ . '/..' . '/theseer/tokenizer/src/TokenCollectionException.php',
         'TheSeer\\Tokenizer\\Tokenizer' => __DIR__ . '/..' . '/theseer/tokenizer/src/Tokenizer.php',
         'TheSeer\\Tokenizer\\XMLSerializer' => __DIR__ . '/..' . '/theseer/tokenizer/src/XMLSerializer.php',
+        'Thomasjohnkane\\Snooze\\Console\\Commands\\PruneScheduledNotifications' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Console/Commands/PruneScheduledNotifications.php',
+        'Thomasjohnkane\\Snooze\\Console\\Commands\\SendScheduledNotifications' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Console/Commands/SendScheduledNotifications.php',
+        'Thomasjohnkane\\Snooze\\Events\\NotificationInterrupted' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Events/NotificationInterrupted.php',
+        'Thomasjohnkane\\Snooze\\Events\\NotificationSent' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Events/NotificationSent.php',
+        'Thomasjohnkane\\Snooze\\Exception\\LaravelSnoozeException' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Exception/LaravelSnoozeException.php',
+        'Thomasjohnkane\\Snooze\\Exception\\NotificationAlreadySentException' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Exception/NotificationAlreadySentException.php',
+        'Thomasjohnkane\\Snooze\\Exception\\NotificationCancelledException' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Exception/NotificationCancelledException.php',
+        'Thomasjohnkane\\Snooze\\Exception\\SchedulingFailedException' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Exception/SchedulingFailedException.php',
+        'Thomasjohnkane\\Snooze\\Exception\\SendingFailedException' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Exception/SendingFailedException.php',
+        'Thomasjohnkane\\Snooze\\Facades\\Snooze' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Facades/Snooze.php',
+        'Thomasjohnkane\\Snooze\\Models\\ScheduledNotification' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Models/ScheduledNotification.php',
+        'Thomasjohnkane\\Snooze\\ScheduledNotification' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/ScheduledNotification.php',
+        'Thomasjohnkane\\Snooze\\Serializer' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Serializer.php',
+        'Thomasjohnkane\\Snooze\\ServiceProvider' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/ServiceProvider.php',
+        'Thomasjohnkane\\Snooze\\Snooze' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Snooze.php',
+        'Thomasjohnkane\\Snooze\\Traits\\SnoozeNotifiable' => __DIR__ . '/..' . '/thomasjohnkane/snooze/src/Traits/SnoozeNotifiable.php',
         'TijsVerkoyen\\CssToInlineStyles\\CssToInlineStyles' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/CssToInlineStyles.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Processor' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Processor.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Property\\Processor' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Property/Processor.php',

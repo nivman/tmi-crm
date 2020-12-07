@@ -16,6 +16,7 @@ return array(
     'Watson\\Validating\\' => array($vendorDir . '/watson/validating/src'),
     'Ulid\\' => array($vendorDir . '/robinvdvleuten/ulid/src'),
     'TijsVerkoyen\\CssToInlineStyles\\' => array($vendorDir . '/tijsverkoyen/css-to-inline-styles/src'),
+    'Thomasjohnkane\\Snooze\\' => array($vendorDir . '/thomasjohnkane/snooze/src'),
     'Tests\\' => array($baseDir . '/tests'),
     'Symfony\\Polyfill\\Util\\' => array($vendorDir . '/symfony/polyfill-util'),
     'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
