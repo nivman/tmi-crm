@@ -44,13 +44,13 @@ class TaskNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+        $serverIp = getenv('SERVER_IP');
 
-        dd(request()->getHttpHost());
         return (new MailMessage)
                     ->theme('default')
                     ->greeting('יש משימה לעשות.., אין מה לעשות')
                     ->line('The introduction to the notification.')
-                    ->action('למשימה', url("http://159.65.220.173/tasks/edit/{$this->task->id}"))
+                    ->action('למשימה', url("http://{$serverIp}/tasks/edit/{$this->task->id}"))
                     ->line('Thank you for using our application!');
     }
 
