@@ -29,8 +29,7 @@ class TaskRequest extends FormRequest
             'category_id' => 'nullable',
             'estimated_time' => 'nullable',
             'actual_time' => 'nullable',
-            'date_to_complete' => 'nullable|date_format:Y-m-d',
-            'notification_time' => 'nullable'
+            'notification_time' => 'nullable|date_format:Y-m-d H:i'
         ];
 
         $task = new Task;
@@ -50,11 +49,9 @@ class TaskRequest extends FormRequest
 
             $this->merge(['start_date' => $format_date['start_date'], 'end_date' => $format_date['end_date']]);
         }
-
-        if ($this['date_to_complete']) {
-
-            $format_date = Date::formatDate($this);
-            $this->merge(['date_to_complete' => $format_date]);
+        if ($this['notification_time']) {
+            $format_date = Date::formatDateGeneralTime($this, 'notification_time');
+            $this->merge(['notification_time' => $format_date]);
         }
     }
 

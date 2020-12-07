@@ -42,7 +42,7 @@ class TasksController extends Controller
 
         $orderByTaskValue = $request->query->get('orderBy');
 
-        $hasRelation =  (new Task())->checkRelation($orderByTaskValue);
+        $hasRelation = (new Task())->checkRelation($orderByTaskValue);
 
         $sortByTaskAttr = [$hasRelation, $orderByTaskValue];
 
@@ -51,7 +51,7 @@ class TasksController extends Controller
             return (new Task())->sortBy($ascending, $request, $params['params'], $sortByTaskAttr);
         }
 
-        $tasks = Task::with(['customer',  'project', 'priority', 'status','category'])->mine()->vueTable(Task::$columns);
+        $tasks = Task::with(['customer', 'project', 'priority', 'status', 'category'])->mine()->vueTable(Task::$columns);
 
         $tasksPercentage = (new Task())->getPercentage($tasks);
         return response()->json($tasksPercentage);
@@ -61,7 +61,7 @@ class TasksController extends Controller
     {
         $taskStatuses = (new Status)->getAllEntityStatus('App\Task');
         $priorities = (new TaskPriority)->getAllTaskPriority()->toArray();
-        $taskCategories =   (new Category())->getAllEntityCategories('App\Task');
+        $taskCategories = (new Category())->getAllEntityCategories('App\Task');
 
         $task = new Task;
         return [
@@ -69,7 +69,7 @@ class TasksController extends Controller
             'statuses' => $taskStatuses,
             'priorities' => $priorities,
             'categories' => $taskCategories
-            ];
+        ];
     }
 
     /**
@@ -78,20 +78,17 @@ class TasksController extends Controller
      */
     public function store(TaskRequest $request)
     {
-
         $v = $request->validated();
         $v['customer_id'] = $request->request->get('customer') ? $request->request->get('customer')['id'] : null;
         $v['priority_id'] = $request->request->get('priority') ? $request->request->get('priority')['id'] : null;
         $v['category_id'] = $request->request->get('category') ? $request->request->get('category')['id'] : null;
         $v['status_id'] = $request->request->get('status') ? $request->request->get('status')['id'] : null;
         $v['project_id'] = $request->request->get('project') ? $request->request->get('project')['id'] : null;
-        $task =  new Task();
 
+        $task = new Task();
+        $taskCreated = Task::create($v);
 
-       $taskCreated = Task::create($v);
-
-         (new Task)->setNotification($taskCreated);
-
+        (new Task)->setNotification($taskCreated);
 
         return $task;
     }
@@ -118,7 +115,7 @@ class TasksController extends Controller
         return [
             'task' => $task,
             'status' => $task->status,
-            'priority' =>$task->priority,
+            'priority' => $task->priority,
             'customer' => $task->customer,
             'statuses' => $tasksStatuses,
             'priorities' => $priorities,
@@ -131,7 +128,7 @@ class TasksController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Task  $task
+     * @param \App\Task $task
      * @return \Illuminate\Http\Response
      */
     public function edit(Task $task)
@@ -154,13 +151,15 @@ class TasksController extends Controller
         $v['category_id'] = $request->request->get('category') ? $request->request->get('category')['id'] : null;
         $v['project_id'] = $request->request->get('project') ? $request->request->get('project')['id'] : null;
         $task->update($v);
+
+        (new Task)->setNotification($task);
         return $task;
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Task  $task
+     * @param \App\Task $task
      * @return \Illuminate\Http\Response
      */
     public function destroy(Task $task)
@@ -180,7 +179,7 @@ class TasksController extends Controller
 
     public function getCustomer($id)
     {
-       return Customer::find($id);
+        return Customer::find($id);
     }
 
     public function getProject($id)
@@ -188,14 +187,14 @@ class TasksController extends Controller
         return Project::find($id);
     }
 
-    public function getCustomerTasks(Request $request ,$customerId)
+    public function getCustomerTasks(Request $request, $customerId)
     {
         $tasks = $this->filterBy($request, $customerId, 'customer_id');
 
         return response()->json($tasks);
     }
 
-    public function getProjectTasks(Request $request ,$projectId)
+    public function getProjectTasks(Request $request, $projectId)
     {
         $tasks = $this->filterBy($request, $projectId, 'project_id');
 
@@ -224,16 +223,16 @@ class TasksController extends Controller
 
         $orderByTaskValue = $request->query->get('orderBy');
 
-        $hasRelation =  (new Task())->checkRelation($orderByTaskValue);
+        $hasRelation = (new Task())->checkRelation($orderByTaskValue);
         $sortByTaskAttr = [$hasRelation, $orderByTaskValue];
 
         if ($params['filter']) {
 
-            $filterByEntity = ['entityType' =>$entityType, 'entityId' => $entityId];
+            $filterByEntity = ['entityType' => $entityType, 'entityId' => $entityId];
             return (new Task())->sortBy($ascending, $request, $params['params'], $sortByTaskAttr, $filterByEntity)->original;
         }
 
-        $tasks = Task::where($entityType, $entityId)->with(['customer',  'project', 'priority', 'status','category'])->mine()->vueTable(Task::$columns);
+        $tasks = Task::where($entityType, $entityId)->with(['customer', 'project', 'priority', 'status', 'category'])->mine()->vueTable(Task::$columns);
 
         $tasksPercentage = (new Task())->getPercentage($tasks);
 

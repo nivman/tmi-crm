@@ -2,6 +2,9 @@
 
 namespace App\Notifications;
 
+use App\Events\EmailEvent;
+use App\Events\TaskEvent;
+use App\Helpers\Date;
 use App\Task;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -46,12 +49,19 @@ class TaskNotification extends Notification implements ShouldQueue
     {
         $serverIp = env('SERVER_IP');
 
+        $format_date = Date::convertToViewFormat($this->task->start_date);
+        $task = ['id'=>$this->task->id, 'name' => $this->task->name, 'start_date' => $format_date];
+
+        event( new TaskEvent($task));
+
         return (new MailMessage)
                     ->theme('default')
-                    ->greeting('יש משימה לעשות.., אין מה לעשות')
-                    ->line('The introduction to the notification.')
+                    ->greeting('יש משימה לעשות')
+                    ->subject($this->task->name)
+                    ->line($this->task->name)
+                    ->line($format_date.' : זמן התחלה ')
                     ->action('למשימה', url("http://{$serverIp}/tasks/edit/{$this->task->id}"))
-                    ->line('Thank you for using our application!');
+                    ->line($this->task->details);
     }
 
     /**

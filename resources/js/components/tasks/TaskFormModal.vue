@@ -1,5 +1,5 @@
 <template>
-  <div class="modal is-active">
+  <div class="modal is-active task-form-modal">
     <div class="modal-background"></div>
     <form action="#" autocomplete="off" @submit.prevent="validateForm()">
       <div class="modal-card animated fastest zoomIn">
@@ -20,7 +20,7 @@
               <button
                   type="button"
                   class="delete"
-                  @click="$router.go(-1)"
+                  @click="closeModal"
               ></button>
             </p>
 
@@ -99,18 +99,18 @@
             </div>
           </div>
           <div class="columns">
-            <div class="column">
-              <div class="field">
-                <label class="label" for="date_to_complete">תאריך לביצוע</label>
-                <flat-pickr
-                    class="input"
-                    id="date_to_complete"
-                    name="date_to_complete"
-                    :config="config_to_complete"
-                    v-model="form.date_to_complete">
-                </flat-pickr>
-              </div>
-            </div>
+            <!--            <div class="column">-->
+            <!--              <div class="field">-->
+            <!--                <label class="label" for="date_to_complete">תאריך לביצוע</label>-->
+            <!--                <flat-pickr-->
+            <!--                    class="input"-->
+            <!--                    id="date_to_complete"-->
+            <!--                    name="date_to_complete"-->
+            <!--                    :config="config_to_complete"-->
+            <!--                    v-model="form.date_to_complete">-->
+            <!--                </flat-pickr>-->
+            <!--              </div>-->
+            <!--            </div>-->
             <div class="column">
               <div class="field">
                 <label class="label" for="categories">קטגוריה</label>
@@ -234,12 +234,19 @@
                   <div class="column">
                     <div class="field">
                       <label class="label" for="notification_time">תזכורת לפני בשעות</label>
-                      <input
-                          type="text"
-                          id="notification_time"
+                      <flat-pickr
+
                           class="input"
+                          id="notification_time"
                           name="notification_time"
-                          v-model="form.notification_time"/>
+                          enableTime="true"
+                          :config="config"
+                          v-model="form.notification_time"
+                          :class="{'is-danger': errors.has('notification_time'),}"
+                      ></flat-pickr>
+                      <div class="help is-danger">
+                        {{ errors.first('notification_time') }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -292,9 +299,10 @@ export default {
   props: [
     'modal',
     'cusId',
-    'projId'
+    'projId',
+    'popupTaskId'
   ],
-  data () {
+  data() {
     return {
       customers: [],
       projects: [],
@@ -321,7 +329,6 @@ export default {
         priority: '',
         estimated_time: '',
         actual_time: '',
-        date_to_complete: '',
         category: ''
       }),
       config: {
@@ -329,6 +336,7 @@ export default {
         enableTime: true,
         altFormat: 'd/m/Y H:i',
         dateFormat: 'd/m/Y H:i',
+        time_24hr: true
       },
       config_to_complete: {
         altInput: true,
@@ -337,75 +345,80 @@ export default {
       }
     }
   },
-  created () {
+  created() {
+    if (this.popupTaskId !== undefined) {
+      this.fetchTask(this.popupTaskId);
 
-    let calendarDates = this.$route.query.calendarDates;
+    } else {
+      let calendarDates = this.$route.query.calendarDates;
 
-    let route = this.setRoute()
-    this.$http
-        .get(route)
-        .then(res => {
-          //click from customer form
-          if (this.$route.query.customerId) {
-            this.form.customer = res.data
-            this.customerId = this.$route.query.customerId
-          }
-          //click from project list
-          if (this.$route.query.projectId) {
-
-            this.form.project = res.data
-            let result = [{'customer_id' : res.data.customer_id}]
-            this.getCustomersById(result)
-            this.projectId = this.$route.query.projectId
-          }
-          //add task from customer form
-          if (this.modal === 'customers') {
-            this.form.customer = res.data
-            this.customerId = this.cusId
-
-          }
-          //add task from project from
-          if (this.modal === 'projects') {
-            this.form.project = res.data
-            this.projectId = this.projId
-          }
-          //click from task list
-          if (this.$route.params.id && !this.modal && !this.$route.query.customerId) {
-
-            this.fetchTask(this.$route.params.id)
-            this.customerId = this.$route.params.id
-
-          } else {
-            //click from calendar slot
-            if(calendarDates) {
-              this.form.start_date = moment(this.$route.query.startDate.split(" ")[0]).format('DD/MM/YYYY HH:mm');
-              this.form.end_date = moment(this.$route.query.endDate.split(" ")[0]).format('DD/MM/YYYY HH:mm');
-            }else{
-              //create new task
-              this.setDateTime()
+      let route = this.setRoute()
+      this.$http
+          .get(route)
+          .then(res => {
+            //click from customer form
+            if (this.$route.query.customerId) {
+              this.form.customer = res.data
+              this.customerId = this.$route.query.customerId
             }
-            this.$http
-                .get(`app/tasks/create`)
-                .then(res => {
-                  this.priorities = res.data.priorities.map(item => {
-                    return item
+            //click from project list
+            if (this.$route.query.projectId) {
+
+              this.form.project = res.data
+              let result = [{'customer_id': res.data.customer_id}]
+              this.getCustomersById(result)
+              this.projectId = this.$route.query.projectId
+            }
+            //add task from customer form
+            if (this.modal === 'customers') {
+              this.form.customer = res.data
+              this.customerId = this.cusId
+
+            }
+            //add task from project from
+            if (this.modal === 'projects') {
+              this.form.project = res.data
+              this.projectId = this.projId
+            }
+            //click from task list
+            if (this.$route.params.id && !this.modal && !this.$route.query.customerId) {
+
+              this.fetchTask(this.$route.params.id)
+              this.customerId = this.$route.params.id
+
+            } else {
+              //click from calendar slot
+              if (calendarDates) {
+                this.form.start_date = moment(this.$route.query.startDate.split(" ")[0]).format('DD/MM/YYYY HH:mm');
+                this.form.end_date = moment(this.$route.query.endDate.split(" ")[0]).format('DD/MM/YYYY HH:mm');
+              } else {
+                //create new task
+                this.setDateTime()
+              }
+              this.$http
+                  .get(`app/tasks/create`)
+                  .then(res => {
+                    this.priorities = res.data.priorities.map(item => {
+                      return item
+                    })
+                    this.attributes = res.data.attributes
+                    this.optionsStatuses = res.data.statuses
+                    this.categories = res.data.categories
+                    // this.loading = false
                   })
-                  this.attributes = res.data.attributes
-                  this.optionsStatuses = res.data.statuses
-                  this.categories = res.data.categories
-                 // this.loading = false
-                })
-                .catch(err =>
-                    this.$event.fire('appError', err.response)
-                )
-          }
-        })
-        .catch(err => this.$event.fire('appError', err.response))
+                  .catch(err =>
+                      this.$event.fire('appError', err.response)
+                  )
+            }
+          })
+          .catch(err => this.$event.fire('appError', err.response))
+    }
+
   },
   watch: {
     'form.start_date': function () {
       let parsed = moment(this.form.start_date, 'DD/MM/YYYY H:m');
-      if(!this.loading) {
+      if (!this.loading) {
         this.form.end_date = moment(parsed._d).add(30, 'm').format('DD/MM/YYYY H:mm')
       }
       this.loading = false
@@ -450,16 +463,16 @@ export default {
     }
   },
   methods: {
-    format_date (value) {
+    format_date(value) {
 
       if (value) {
         return moment(String(value)).format('DD/MM/YYYY hh:mm')
       }
     },
-    setRoute () {
+    setRoute() {
 
       let route = !this.modal ? 'app/tasks' : `app/tasks/${this.modal}/${this.cusId}`
-      if (this.$route.query.customerId ) {
+      if (this.$route.query.customerId) {
         route = `app/tasks/customers/${this.$route.query.customerId}`
       }
       if (this.$route.query.projectId) {
@@ -467,14 +480,14 @@ export default {
       }
       return route
     },
-    setDateTime () {
+    setDateTime() {
       let moment = require('moment-timezone')
       moment().tz('Asia/Jerusalem').format()
       this.form.start_date = moment(new Date()).format('DD/MM/YYYY H:mm')
       this.form.end_date = moment(new Date()).add(30, 'm').format('DD/MM/YYYY H:mm')
       this.form.date_to_complete = moment(new Date()).format('DD/MM/YYYY')
     },
-    submit () {
+    submit() {
 
       this.isSaving = true
       let route = !this.modal ? '/tasks' : `/${this.modal}`
@@ -514,7 +527,7 @@ export default {
             .finally(() => (this.isSaving = false))
       }
     },
-    fetchTask (id) {
+    fetchTask(id) {
 
       this.$http
           .get(`app/tasks/${id}`)
@@ -534,13 +547,12 @@ export default {
 
             this.form.start_date = this.format_date(res.data.task.start_date)
             this.form.end_date = this.format_date(res.data.task.end_date)
-            this.form.date_to_complete = this.format_date(res.data.task.date_to_complete)
-            this.form.notification_time = res.data.task.notification_time
+            this.form.notification_time = this.format_date(res.data.task.notification_time)
 
           })
           .catch(err => this.$event.fire('appError', err.response))
     },
-    validateForm () {
+    validateForm() {
       this.$validator
           .validateAll()
           .then(result => {
@@ -550,31 +562,27 @@ export default {
           })
           .catch(err => this.$event.fire('appError', err))
     },
-    addEvent () {
-
-      this.$modal.show('event-form-modal', { customerId: this.$route.params.id })
+    addEvent() {
+      this.$modal.show('event-form-modal', {customerId: this.$route.params.id})
     },
-    searchCustomers (search) {
+    searchCustomers(search) {
 
       if (search === '') {
         return
       }
-
       this.$http
           .get('app/customers/search?query=' + search)
           .then(res => {
-
             this.customers = res.data
             if (this.customers.length > 0) {
               this.getProjectsByCustomerId(this.customers)
             }
-
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
           })
     },
-    searchProjects (search) {
+    searchProjects(search) {
 
       if (search === '' || this.customerSelected) {
         return
@@ -590,20 +598,18 @@ export default {
             this.$event.fire('appError', err.response)
           })
     },
-    getCustomersById (projects) {
+    getCustomersById(projects) {
       let customer_id = projects.map(a => a.customer_id)
       this.$http
           .post('app/project-customers/' + customer_id)
           .then(res => {
-
             this.form.customer = res.data[0]
-
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
           })
     },
-    getProjectsByCustomerId (customers) {
+    getProjectsByCustomerId(customers) {
 
       let id = customers.map(a => a.id)
       this.$http
@@ -613,15 +619,23 @@ export default {
             if (res.data.length > 0) {
               this.projects = res.data
             }
-
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
           })
+    },
+    closeModal() {
+      if (!this.popupTaskId ) {
+        this.$router.go(-1)
+      }else{
+        let modal = document.querySelector(".task-form-modal")
+        modal.parentNode.removeChild( modal );
 
-    }
+      }
+
+    },
   },
-  components: { EventFormModal },
+  components: {EventFormModal},
 }
 </script>
 <style>

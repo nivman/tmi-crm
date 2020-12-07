@@ -82,10 +82,7 @@
                     </a>
                 </span>
               </div>
-
-
             </div>
-
             <p class="control tooltip" style="bottom: 10px; margin-right: 10px;">
               <button
                   type="button"

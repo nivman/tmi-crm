@@ -202,6 +202,7 @@ return array(
     'App\\Mail\\PurchaseCreated' => $baseDir . '/app/Mail/PurchaseCreated.php',
     'App\\Mail\\UserCreated' => $baseDir . '/app/Mail/UserCreated.php',
     'App\\Mail\\UserPasswoedReset' => $baseDir . '/app/Mail/UserPasswordReset.php',
+    'App\\Notifications\\TaskNotification' => $baseDir . '/app/Notifications/TaskNotification.php',
     'App\\Observers\\ExpenseObserver' => $baseDir . '/app/Observers/ExpenseObserver.php',
     'App\\Observers\\IncomeObserver' => $baseDir . '/app/Observers/IncomeObserver.php',
     'App\\Observers\\InvoiceItemObserver' => $baseDir . '/app/Observers/InvoiceItemObserver.php',

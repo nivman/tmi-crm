@@ -23,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\EmailEvent' => [
             'App\Listeners\EmailListener',
         ],
+        'App\Events\TaskEvent' => [
+            'App\Listeners\TaskListener',
+        ],
         // 'App\Events\InvoiceCreated' => [
         //     'App\Listeners\InvoiceCreated',
         // ],

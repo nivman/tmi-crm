@@ -1006,6 +1006,7 @@ class ComposerStaticInitce293d148511f0e5baf8e78b245f4b49
         'App\\Mail\\PurchaseCreated' => __DIR__ . '/../..' . '/app/Mail/PurchaseCreated.php',
         'App\\Mail\\UserCreated' => __DIR__ . '/../..' . '/app/Mail/UserCreated.php',
         'App\\Mail\\UserPasswoedReset' => __DIR__ . '/../..' . '/app/Mail/UserPasswordReset.php',
+        'App\\Notifications\\TaskNotification' => __DIR__ . '/../..' . '/app/Notifications/TaskNotification.php',
         'App\\Observers\\ExpenseObserver' => __DIR__ . '/../..' . '/app/Observers/ExpenseObserver.php',
         'App\\Observers\\IncomeObserver' => __DIR__ . '/../..' . '/app/Observers/IncomeObserver.php',
         'App\\Observers\\InvoiceItemObserver' => __DIR__ . '/../..' . '/app/Observers/InvoiceItemObserver.php',

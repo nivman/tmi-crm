@@ -181,7 +181,7 @@ export default {
         },
         listColumns: ['customer','name', 'start_date'],
         orderBy: { ascending: false, column: 'start_date' },
-        sortable: ['name','priority','customer','start_date', 'project', 'status', 'category','start_date'],
+        sortable: ['id', 'name','priority','customer','start_date', 'project', 'status', 'category','start_date'],
         editableColumns: ['details'],
         perPage: 10,
         columnsClasses: {

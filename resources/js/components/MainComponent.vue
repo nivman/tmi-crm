@@ -39,10 +39,6 @@
     <notifications group="app" classes="notification"/>
     <event-form-modal></event-form-modal>
 
-<!--    <div v-if="firstEnter">-->
-
-<!--      <customer-form-component :popupCustomerId="popupCustomerId"></customer-form-component>-->
-<!--    </div>-->
   </div>
 </template>
 
@@ -54,13 +50,15 @@ import FooterComponent from './FooterComponent.vue';
 import SideBarComponent from './SideBarComponent.vue';
 import EventFormModal from "./calendar/EventFormModal.vue";
 import CustomerFormComponent from "./customers/CustomerFormComponent";
+import TaskFormModal from "./tasks/TaskFormModal";
 import Noty from 'noty';
 
 export default {
   data() {
     return {
       firstEnter: false,
-      popupCustomerId: ''
+      popupCustomerId: '',
+      popupTaskId:''
     }
   },
   components: {
@@ -71,6 +69,7 @@ export default {
     FooterComponent,
     EventFormModal,
     CustomerFormComponent,
+    TaskFormModal,
     Noty
 
   },
@@ -212,8 +211,14 @@ export default {
   methods: {
     getUnseenLeads() {
       Echo.channel('email-rec').listen('EmailEvent', (e) => {
-            this.showPopup(e.email, [])
+            this.showEmailPopup(e.email, [])
         })
+    },
+    taskNotification() {
+      Echo.channel('task-notification').listen('TaskEvent', (e) => {
+
+       this.showTaskPopup(e.task, [])
+      })
     },
     checkForUnSeenPopUps() {
 
@@ -222,18 +227,43 @@ export default {
           .then((e) => {
             let unseenLeads = e.data;
             unseenLeads.forEach((lead)=>{
-
-                this.showPopup(lead,unseenLeads)
-
+                this.showEmailPopup(lead,unseenLeads)
             })
-
             this.getUnseenLeads();
+            this.taskNotification();
           })
           .catch(err => this.$event.fire("appError", err.response))
       this.firstEnter = false
 
     },
-    showPopup(ev, unseenLeads) {
+    showTaskPopup(task) {
+      let em = this;
+      Noty.setMaxVisible(10);
+      let noty = new Noty({
+        type: 'info',
+        // sounds:{sources : "/var/www/html/tmi/storage/app/public/sound/kitchen"},
+
+        closeWith: ['click'],
+        text: '<stronge style="font-size: 18px;font-weight: bold">יש משימה לעשות</stronge>' +
+            '<p style="font-size: 14px;font-weight: bold"> כותרת: '+task.name+' </p>',
+        buttons: [
+          Noty.button('לצפייה במשימה', 'button', function (e) {
+
+            em.popupTaskId = task.id;
+            var ComponentClass = Vue.extend(TaskFormModal)
+
+            var instance = new ComponentClass({
+              propsData: { popupTaskId: task.id }
+            })
+            instance.$mount()
+            em.$refs.container.appendChild(instance.$el)
+            //    em.firstEnter = true
+            noty.close()
+          }, {'data-status': 'ok'}),
+        ]
+      }).show();
+    },
+    showEmailPopup(ev, unseenLeads) {
 
       let em = this;
       Noty.setMaxVisible(10);
