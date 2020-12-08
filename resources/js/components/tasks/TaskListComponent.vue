@@ -28,6 +28,12 @@
             ref="tasksTable"
             class="center-text-table"
             name="tasksTable">
+          <div slot="id" slot-scope="props">
+            <input type="checkbox" class="form-control" v-model="tasksIds" :value="props.row.id" :id="props.row.id">
+          </div>
+          <template slot="name" slot-scope="props">
+            {{props.row.name}}
+          </template>
           <template slot="customer" slot-scope="props">
             <div class="has-text-centered">
               {{ props.row.customer ? props.row.customer.name : '' }}
@@ -40,9 +46,12 @@
 
             </div>
           </template>
-          <template slot="details" slot-scope="props" class="test">
+          <template slot="details" slot-scope="props">
+
+
             <textarea
                 rows="3"
+                cols="150"
                 name="details"
                 :id="'details-textarea-'+ props.row.id"
                 class="textarea details-textarea"
@@ -96,17 +105,11 @@
           </template>
 
           <template slot="actions" slot-scope="props">
-            <div class="buttons has-addons is-centered">
+            <div class="has-addons is-centered">
               <p class="control tooltip">
-                <router-link :to="'/tasks/' + props.row.id" class="button is-primary is-small">
+                <router-link  style="font-size: 0.78em"  :to="'/tasks/' + props.row.id" class="button is-primary is-small">
                   <i class="fas fa-file-alt"/>
                   <span class="tooltip-text">פרטי משימה</span>
-                </router-link>
-              </p>
-              <p class="control tooltip" v-if="$store.getters.admin">
-                <router-link :to="'/tasks/edit/' + props.row.id" class="button is-warning is-small">
-                  <i class="fas fa-edit"></i>
-                  <span class="tooltip-text">עריכה</span>
                 </router-link>
               </p>
               <p class="control tooltip" v-if="$store.getters.superAdmin">
@@ -115,6 +118,12 @@
                   <span class="tooltip-text">מחיקה</span>
                 </button>
               </p>
+              <p class="control tooltip" v-if="$store.getters.admin">
+                <router-link style="font-size: 0.65rem" :to="'/tasks/edit/' + props.row.id" class="button is-warning is-small">
+                  <i class="fas fa-edit"></i>
+                  <span class="tooltip-text">עריכה</span>
+                </router-link>
+              </p>
             </div>
           </template>
         </v-server-table>
@@ -122,17 +131,32 @@
     </div>
 
     <router-view></router-view>
+    <transition
 
+        v-on:before-enter="beforeEnter"
+        v-on:enter="enter"
+        v-on:leave="leave"
+        v-bind:css="false">
+    <span v-if="tasksIds.length > 0">
+      <mass-actions-component
+          :entitiesIds="tasksIds"
+          entity="Task"
+          @clicked="massActionSubmit">
+      </mass-actions-component>
+    </span>
+    </transition>
   </div>
 </template>
 
 <script>
+
 import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import DateFormatComponent from '../helpers/DateFormatComponent'
 import 'daterangepicker/daterangepicker.css'
 import 'daterangepicker/daterangepicker.js'
-
+import MassActionsComponent from '../massActions/MassActionsComponent'
+import Velocity from "velocity-animate";
 export default {
   mixins: [mId, tBus('app/tasks')],
   props: [
@@ -144,7 +168,7 @@ export default {
   ],
   data () {
     return {
-
+      tasksIds: [],
       showTaskForm: false,
       columns: [
         'name',
@@ -186,10 +210,20 @@ export default {
         perPage: 10,
         columnsClasses: {
           id: 'w50 has-text-centered',
-          receivable: 'w125 has-text-right',
-          actions: 'w175 has-text-centered p-x-none',
-          details: 'details-td',
-          date_to_complete: 'w50 has-text-centered'
+          percentageOfProject: 'task-table-font',
+          details: 'details-td task-table-font',
+          date_to_complete: 'has-text-centered task-table-font',
+          name: 'task-table-font name-width',
+          customer: 'task-table-font',
+          project: 'task-table-font',
+          workingHours: 'task-table-font',
+          amountPerHours: 'task-table-font',
+          priority: 'task-table-font',
+          status: 'task-table-font',
+          start_date: 'task-table-font',
+          actual_time: 'task-table-font',
+          actions: 'task-table-font',
+          category: 'task-table-font'
         },
         filterable: ['name','details','customer', 'project', 'status', 'priority', 'category', 'start_date'],
         headings: {
@@ -198,21 +232,28 @@ export default {
           project: 'פרוייקט',
           details: 'תוכן',
           workingHours: 'שעות עבודה',
-          amountPerHours: 'סכום שעות העבודה',
-          percentageOfProject : 'אחוז עבודה ביחס למחיר הפרוייקט',
+          amountPerHours: 'סכום פרוייקט',
+          percentageOfProject : '% עבודה מהפרוייקט',
           priority: 'עדיפות',
           status: 'סטטוס',
           start_date: 'זמן התחלה',
-          actual_time: 'זמן בפועל לביצוע',
+          actual_time: 'זמן בפועל',
           actions: 'פעולות',
           category: 'קטגוריה'
         },
+          headingsTooltips: {
+            percentageOfProject :'אחוז עבודה ביחס למחיר הפרוייקט',
+            actual_time: 'זמן בפועל לביצוע',
+            amountPerHours: 'סכום שעות העבודה'
+          }
       },
     }
   },
 
   methods: {
-
+    massActionSubmit() {
+    this.tasksIds =[];
+    },
     editDetails (val) {
       let id = val.target.id.replace(/[^\d.]/g, '')
       this.$http(`app/tasks/details/${val.target.value}/${id}`).then()
@@ -252,12 +293,26 @@ export default {
           let btn = document.querySelector('.cancelBtn');
 
           btn.addEventListener('click', function(event) {
-            let dateFilter = document.querySelector('#VueTables__date_to_complete-filter')
-            dateFilter.innerHTML = "סינון תאריך לביצוע\n"
+            let dateFilter = document.querySelector('#VueTables__start_date-filter')
+            dateFilter.innerHTML = "סינון זמן התחלה\n"
           });
         });
       },200)
-    }
+    },
+    beforeEnter: function (el) {
+      el.style.opacity = 0
+      el.style.width = 0
+      el.style.height = 0;
+    },
+    enter: function (el, done) {
+      Velocity(el, {opacity: 1, width: "auto", height: 300}, {duration: "fast"})
+    },
+    leave: function (el, done) {
+      Velocity(el, {opacity: 0, width: 0, height: 0}, {duration: "fast"})
+    },
+    displayExtraFields() {
+      this.showExtraFields = !this.showExtraFields;
+    },
   },
 
   created () {
@@ -292,7 +347,7 @@ export default {
     },
 
   },
-  components: { DateFormatComponent},
+  components: { DateFormatComponent, MassActionsComponent},
 
 }
 </script>

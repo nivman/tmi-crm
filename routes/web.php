@@ -27,7 +27,8 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::post('invoices/email/{invoice}', 'InvoicesController@email');
     Route::post('payments/email/{payment}', 'PaymentsController@email');
     Route::post('purchases/email/{purchase}', 'PurchasesController@email');
-
+    Route::post('massActions', 'MassActionsController@action');
+    Route::get('massActions/status/{entity}', 'MassActionsController@getStatues');
     Route::get('taxes', 'TaxesController@index');
     Route::get('accounts', 'AccountsController@index');
     Route::put('users/{user}', 'UsersController@update');
