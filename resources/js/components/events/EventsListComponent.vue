@@ -183,21 +183,22 @@ export default {
   },
   methods: {
     getSelectableFilters() {
-
+      let types= ''
       let em = this
       this.$http
           .get(`app/eventsTypes/`)
           .then(res => {
-            em.options.listColumns = {
-              type: res.data.map(({name, id}) => ({text: name, id: name}))
-            }
+            em.types =res.data.map(({name, id}) => ({text: name, id: name}))
           })
           .catch(err => this.$event.fire('appError', err.response))
+
       this.$http
           .post(`app/projects/tablefilter`)
           .then(res => {
             em.options.listColumns = {
-              project: res.data.map(({text, id}) => ({text: text, id: text}))
+              project: res.data.map(({text, id}) => ({text: text, id: text})),
+              type: em.types
+
             }
 
           })
