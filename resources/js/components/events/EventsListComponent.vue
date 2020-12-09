@@ -183,7 +183,7 @@ export default {
   },
   methods: {
     getSelectableFilters() {
-      let types= ''
+      let types = ''
       let em = this
       this.$http
           .get(`app/eventsTypes/`)
@@ -195,9 +195,7 @@ export default {
                   em.options.listColumns = {
                     project: res.data.map(({text, id}) => ({text: text, id: text})),
                     type: em.types
-
                   }
-
                 })
                 .catch(err => this.$event.fire('appError', err.response))
           })

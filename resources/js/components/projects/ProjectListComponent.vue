@@ -50,6 +50,12 @@
               {{ percentageCalculation(props.row.actual_time, props.row.price) }}
             </div>
           </template>
+          <template slot="some_money_so_far" slot-scope="props">
+            <div class="has-text-centered">
+
+              {{ moneyBurnCalculation(props.row.actual_time) }}
+            </div>
+          </template>
           <template slot="actions" slot-scope="props">
             <div class="buttons has-addons is-centered">
               <p class="control tooltip">
@@ -137,7 +143,7 @@ export default {
       showProjectForm: false,
       projectId: null,
       projectName: null,
-      columns: ['name', 'customer', 'start_date','end_date', 'price', 'expenses', 'type','percentage_done' ,'actions'],
+      columns: ['name', 'customer', 'start_date','end_date', 'price', 'expenses', 'type','percentage_done','some_money_so_far' ,'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       addRoute: null,
       options: {
@@ -163,7 +169,8 @@ export default {
           price: 'מחיר',
           expenses: 'הוצאות',
           actions: 'פעולות',
-          percentage_done: 'אחוז מהעבודה עד כה'
+          percentage_done: 'אחוז מהעבודה עד כה',
+          some_money_so_far : 'כמה כסף עד עכשיו'
         },
       },
     }
@@ -196,27 +203,27 @@ export default {
     goBack() {
       //this.$emit("showCustomerList", true);
     },
-    test(customerId) {
-      return `app/customers-projects/${customerId}`
-      // let x =    this.$http.post(`app/customers-projects/${customerId}`).then(res => {console.log(res)})
-      // console.log(x)
-    },
+    //
+    // Calculate the percentage of the money that "burn" by the work hours that already put in the project
     percentageCalculation(tasksTime, price) {
       if (tasksTime) {
-
-        let sumTasksTime = tasksTime.reduce((a, b) => a + b, 0)
-        //TODO hour wage should be dynamic
-        let HourlyWage = 150;
-        let convertToHours = (sumTasksTime / 60)
-        let totalTimeAsAmount = convertToHours *  HourlyWage;
-
+        let totalTimeAsAmount = this.moneyBurnCalculation(tasksTime)
         let percentage = totalTimeAsAmount / price
-
         if (Number.isFinite(percentage)) {
           return ' % ' + (percentage * 100).toFixed(2) ;
         }
       }
-    }
+    },
+    moneyBurnCalculation(tasksTime) {
+      if (tasksTime) {
+        let sumTasksTime = tasksTime.reduce((a, b) => a + b, 0)
+        //TODO hour wage should be dynamic
+        let HourlyWage = 150;
+        let convertToHours = (sumTasksTime / 60)
+        return convertToHours *  HourlyWage;
+      }
+    },
+
   },
   created () {
     this.showTaskList = false

@@ -377,7 +377,10 @@ export default {
             }
             //add task from project from
             if (this.modal === 'projects') {
+
               this.form.project = res.data
+
+              this.getCustomersById([res.data])
               this.projectId = this.projId
             }
             //click from task list
@@ -470,8 +473,8 @@ export default {
       }
     },
     setRoute() {
-
-      let route = !this.modal ? 'app/tasks' : `app/tasks/${this.modal}/${this.cusId}`
+      let entityId = this.modal === 'customers' ? this.cusId : this.projId;
+      let route = !this.modal ? 'app/tasks' : `app/tasks/${this.modal}/${entityId}`
       if (this.$route.query.customerId) {
         route = `app/tasks/customers/${this.$route.query.customerId}`
       }

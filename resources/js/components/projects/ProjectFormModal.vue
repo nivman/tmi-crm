@@ -1,5 +1,5 @@
 <template>
-  <div class="modal is-active">
+  <div class="modal is-active ">
     <div class="modal-background"></div>
     <form action="#" autocomplete="off" @submit.prevent="validateForm()">
       <div class="modal-card animated fastest zoomIn">
@@ -7,23 +7,58 @@
           <p class="modal-card-title">
             {{ form.id ? 'עריכת פרויקט' : 'יצירת פרויקט' }}
           </p>
-          <div class="buttons is-centered">
-            <p class="control tooltip" v-if="projectId">
-              <a
-                  @click="addEvent"
-                  class="fas fa-comment-dots is-small button is-info">
-                <span class="tooltip-text bottom"> התקשרות חדשה</span>
-
-              </a>
-            </p>
-            <p class="control tooltip">
+          <div class="buttons">
+            <div v-if="projectId" class="buttons has-addons is-centered" style="direction: ltr">
+              <div class="button-child">
+                  <span class="control tooltip">
+                    <a @click="addEvent" class="is-small button is-info">
+                      <i class="fas fa-comment-dots"></i>
+                      <span class="tooltip-text bottom"> התקשרות חדשה</span>
+                    </a>
+                  </span>
+                <span class="control tooltip">
+                  <a @click="showEvents" class="button is-success is-small">
+                    <i class="far fa-comments"></i>
+                    <span class="tooltip-text bottom">רשימת התקשרויות</span>
+                  </a>
+                </span>
+              </div>
+              <div class="button-child">
+                <span class="control tooltip">
+                  <a @click="addTask" class="button is-warning	has-text-white is-small">
+                 <i class="fas fa-thumbtack"></i>
+                    <span class="tooltip-text bottom"> משימה חדשה</span>
+                  </a>
+               </span>
+                <span class="control tooltip">
+                  <a @click="showTasks" class="button is-danger has-text-white is-small">
+                   <i class="fas fa-tasks"></i>
+                    <span class="tooltip-text bottom">רשימת משימות</span>
+                  </a>
+                </span>
+              </div>
+              <div class="button-child">
+                <span class="control tooltip">
+                  <a @click="addExpense" class="button is-info	has-text-white is-small">
+                 <i class="fas fa-cart-arrow-down"></i>
+                    <span class="tooltip-text bottom">הוצאה חדשה</span>
+                  </a>
+               </span>
+                <span class="control tooltip">
+                  <a @click="showExpenses" class="button is-success has-text-white is-small">
+                   <i class="fas fa-tasks"></i>
+                    <span class="tooltip-text bottom">רשימת הוצאות</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+            <p class="control tooltip" style="bottom: 10px; margin-right: 10px;">
               <button
                   type="button"
                   class="delete"
                   @click="$router.go(-1)"
               ></button>
             </p>
-
           </div>
         </header>
         <section class="modal-card-body is-radius-bottom">
@@ -94,7 +129,6 @@
 
                 <div class="field">
                   <label class="label" for="type">סוג פרויקט</label>
-
                   <v-select
                       label="name"
                       id="type"
@@ -193,23 +227,78 @@
         aria-label="close"
         @click="$router.go(-1)"
     ></button>
-
+    <div v-if="showTaskForm">
+      <task-form-modal :projId="projectId" modal="projects"></task-form-modal>
+    </div>
+    <div class="modal is-active" v-if="showEventsList">
+      <div class="modal-background"></div>
+      <div style="margin: 10%" class="animated fastest zoomIn">
+        <header style="direction: ltr" class="modal-card-head is-radius-top">
+          <button type="button" class="delete" @click="showEvents"></button>
+        </header>
+        <section class="modal-card-body is-radius-bottom event-form-event-list">
+          <events-list-component
+              :projectName="projectName"
+              :projectId="projectId"
+              @showEvents="showEvents"
+              modal="project"></events-list-component>
+        </section>
+      </div>
+    </div>
+    <div class="modal is-active" v-if="showTasksList">
+      <div class="modal-background"></div>
+      <div style="margin: 10%" class="animated fastest zoomIn">
+        <header style="direction: ltr" class="modal-card-head is-radius-top">
+          <button type="button" class="delete" @click="showTasks"></button>
+        </header>
+        <section class="modal-card-body is-radius-bottom event-form-task-list">
+          <task-list-component
+              :projectName="projectName"
+              :projectId="projectId"
+          ></task-list-component>
+        </section>
+      </div>
+    </div>
+    <div class="modal is-active" v-if="showExpensesList">
+      <div class="modal-background"></div>
+      <div style="margin: 10%" class="animated fastest zoomIn">
+        <header style="direction: ltr" class="modal-card-head is-radius-top">
+          <button type="button" class="delete" @click="showExpenses"></button>
+        </header>
+        <section class="modal-card-body is-radius-bottom event-form-task-list">
+          <expense-list-component :projectId="projectId"></expense-list-component>
+        </section>
+      </div>
+    </div>
+    <div v-if="showExpenseForm">
+      <expense-form-component :projectId="projectId"></expense-form-component>
+    </div>
   </div>
 
 </template>
 
 <script>
-
+import EventsListComponent from "../events/EventsListComponent";
+import TaskFormModal from "../tasks/TaskFormModal";
+import TaskListComponent from "../tasks/TaskListComponent";
+import ExpenseListComponent from "../expenses/ExpenseListComponent";
+import ExpenseFormComponent from "../expenses/ExpenseFormComponent";
 export default {
-  props:['customerId', 'customerName'],
-  data () {
+  props: ['customerId', 'customerName'],
+  data() {
     return {
       customers: [],
+      showEventsList: false,
+      showTaskForm: false,
+      showTasksList: false,
+      showExpensesList: false,
+      showExpenseForm: false,
       types: [],
       loading: true,
       attributes: [],
       isSaving: false,
       projectId: null,
+      projectName: '',
       form: new this.$form({
         id: '',
         name: '',
@@ -228,11 +317,11 @@ export default {
       }
     }
   },
-  created () {
+  created() {
 
     let route = this.setRoute()
 
-    if(this.$route.params.id && !this.customerId) {
+    if (this.$route.params.id && !this.customerId) {
       this.$http
           .get(route)
           .then(res => {
@@ -245,16 +334,15 @@ export default {
             }
           })
           .catch(err => this.$event.fire('appError', err.response))
-    }
-    else {
+    } else {
 
       this.setDateTime()
       this.$http
           .get(`app/projects/create`)
           .then(res => {
-            if(this.customerId) {
+            if (this.customerId) {
 
-              this.form.customer = {'id' : this.customerId, 'name' : this.customerName};
+              this.form.customer = {'id': this.customerId, 'name': this.customerName};
             }
             this.attributes = res.data.attributes
 
@@ -269,33 +357,28 @@ export default {
   },
 
   methods: {
-
-    format_date (value) {
-
+    format_date(value) {
       if (value) {
         return moment(String(value)).format('DD/MM/YYYY hh:mm')
       }
     },
-
-    setRoute () {
+    setRoute() {
       return 'app/projects'
-
     },
-    setDateTime () {
+    setDateTime() {
       let moment = require('moment-timezone')
       moment().tz('Asia/Jerusalem').format()
       this.form.start_date = moment(new Date()).format('DD/MM/YYYY')
       this.form.end_date = moment(new Date()).add(30, 'm').format('DD/MM/YYYY')
 
     },
-    submit () {
+    submit() {
       this.isSaving = true
 
       let route = !this.modal ? '/projects' : `/${this.modal}`
-      if(this.customerId) {
+      if (this.customerId) {
         route = '/customers';
       }
-
       if (this.form.id && this.form.id !== '') {
 
         this.form
@@ -328,12 +411,12 @@ export default {
             .finally(() => (this.isSaving = false))
       }
     },
-    fetchProject (id) {
+    fetchProject(id) {
 
       this.$http
           .get(`app/projects/${id}`)
           .then(res => {
-
+            this.projectName = res.data.project.name;
             this.attributes = res.data.project.attributes
             delete res.data.project.attributes
             this.form = new this.$form(res.data.project)
@@ -347,7 +430,7 @@ export default {
           })
           .catch(err => this.$event.fire('appError', err.response))
     },
-    validateForm () {
+    validateForm() {
       this.$validator
           .validateAll()
           .then(result => {
@@ -357,28 +440,58 @@ export default {
           })
           .catch(err => this.$event.fire('appError', err))
     },
-    searchCustomers (search) {
-
+    searchCustomers(search) {
       if (search === '') {
         return
       }
       this.$http
           .get('app/customers/search?query=' + search)
           .then(res => {
-
             this.customers = res.data
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
           })
     },
-    addEvent () {
-
-      this.$modal.show('event-form-modal', { projectId: this.$route.params.id })
+    addEvent() {
+      this.$modal.show('event-form-modal', {projectId: this.$route.params.id})
     },
+    addTask() {
+      this.showTaskForm = this.showTaskForm !== true
+    },
+    addExpense() {
+      this.showExpenseForm = this.showExpenseForm !== true
+    },
+    showEvents() {
+      this.showEventsList = this.showEventsList !== true
+    },
+    showTasks() {
+      this.showTasksList = this.showTasksList !== true
+    },
+    showExpenses() {
+
+      this.showExpensesList = this.showExpensesList !== true
+    }
   },
+  components: {EventsListComponent, TaskFormModal, TaskListComponent, ExpenseListComponent, ExpenseFormComponent}
+
 
 }
 </script>
-<style>
+<style scoped>
+.button-child {
+  margin: 0px 2px 0px 2px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+}
+
+.event-form-task-list {
+  max-height: 500px;
+}
+
+.event-form-event-list {
+  max-height: 500px;
+}
 </style>

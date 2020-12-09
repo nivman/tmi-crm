@@ -78,6 +78,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::resource('tasks', 'TasksController');
 
     Route::get('projects/', 'ProjectsController@edit');
+    Route::get('expenses/projects/{projectId}', 'ProjectsController@getProjectById');
     Route::post('projects/add', 'ProjectsController@store');
     Route::get('projects/search', 'ProjectsController@search');
     Route::get('projects/tasks/{id}', 'TasksController@getProjectTasks');
@@ -133,6 +134,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::resource('incomes', 'IncomesController')->only(['destroy']);
         Route::resource('vendors', 'VendorsController')->only(['destroy']);
         Route::resource('accounts', 'AccountsController')->except(['index']);
+        Route::get('expenses/project/{projectId}', 'ExpensesController@getExpensesByProjectId');
         Route::resource('expenses', 'ExpensesController')->only(['destroy']);
         Route::resource('invoices', 'InvoicesController')->only(['destroy']);
         Route::resource('payments', 'PaymentsController')->only(['destroy']);

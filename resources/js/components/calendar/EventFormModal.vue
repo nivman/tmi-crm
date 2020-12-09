@@ -326,7 +326,7 @@ export default {
         this.getEventById(e.params.eventId);
       }
       else if (e.params.event) {
-
+        console.log(e.params.event.contact)
         this.form = new this.$form(e.params.event)
         this.form.contact = e.params.event.contact.first_name + ' ' + e.params.event.contact.last_name
         this.form.contact_id = e.params.event.contact.id
@@ -336,7 +336,8 @@ export default {
         this.form.project = project ? project.name : '';
         this.form.project_id =  project ? project.id : null;
 
-        this.form.details = this.clearContent(e.params.event.details)
+        this.form.details = this.clearContent(e.params.event.details);
+        this.getProjectsByContactId([e.params.event.contact]);
       } else {
         // task-or-event-dialog = click on slot in the calendar
         if(calendarDates.name === 'task-or-event-dialog') {

@@ -125,4 +125,11 @@ class ProjectsController extends Controller
     {
         //
     }
+
+    public function getProjectById($projectId)
+    {
+        $project = Project::find($projectId);
+        return ['id' => $project->id, 'name' => $project->name];
+
+    }
 }

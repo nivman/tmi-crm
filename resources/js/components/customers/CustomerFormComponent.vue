@@ -10,7 +10,7 @@
           </p>
           <div class="buttons">
             <div v-if="customerId" class="buttons has-addons is-centered" style="direction: ltr">
-            <div class="button-child">
+              <div class="button-child">
                 <span class="control tooltip">
                       <a @click="statusHistory" class="button is-success is-small">
                         <i class="fas fa-history"></i>
@@ -335,7 +335,7 @@
       <customers-files-list-component :customerId="customerId" @showFiles="showFiles"></customers-files-list-component>
     </div>
     <div v-if="showProjectForm">
-      <project-form-modal :customerId="customerId" :customerName="customerName" ></project-form-modal>
+      <project-form-modal :customerId="customerId" :customerName="customerName"></project-form-modal>
     </div>
     <div v-if="showTaskForm">
       <task-form-modal :cusId="customerId" modal="customers"></task-form-modal>
@@ -364,7 +364,7 @@
           <task-list-component
               :customerName="customerName"
               :customerId="customerId"
-           ></task-list-component>
+          ></task-list-component>
         </section>
       </div>
     </div>
@@ -404,6 +404,7 @@ import TaskFormModal from "../tasks/TaskFormModal";
 import TaskListComponent from "../tasks/TaskListComponent";
 import ProjectFormModal from "../projects/ProjectFormModal";
 import ProjectListComponent from "../projects/ProjectListComponent";
+
 export default {
   props: ['popupCustomerId'],
   data() {
@@ -419,8 +420,8 @@ export default {
       isSaving: false,
       showProjectForm: false,
       showTaskForm: false,
-      showTasksList:false,
-      showProjectsList:false,
+      showTasksList: false,
+      showProjectsList: false,
       showStatusHistory: false,
       showContactsList: false,
       showFilesList: false,
@@ -444,13 +445,12 @@ export default {
   },
   created() {
 
-    if(this.popupCustomerId !== undefined) {
+    if (this.popupCustomerId !== undefined) {
       this.fetchCustomer(this.popupCustomerId);
       this.customerId = this.popupCustomerId
-    }
-    else if (this.$route.params.id) {
+    } else if (this.$route.params.id) {
       this.customerId = this.$route.params.id;
-      this.fetchCustomer(this.customerId );
+      this.fetchCustomer(this.customerId);
 
     } else {
       this.$http
@@ -539,11 +539,11 @@ export default {
           .catch(err => this.$event.fire("appError", err.response));
     },
     closeModal() {
-      if (!this.popupCustomerId ) {
+      if (!this.popupCustomerId) {
         this.$router.go(-1)
-      }else{
+      } else {
         let modal = document.querySelector(".customer-form-modal")
-        modal.parentNode.removeChild( modal );
+        modal.parentNode.removeChild(modal);
 
       }
 
@@ -629,7 +629,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .switch-lead-label {
   display: inline-block;
   position: relative;
@@ -674,19 +674,23 @@ export default {
 .customer-form-event-list .wrapper {
   margin-top: 1px !important;
 }
+
 .customer-form-task-list .wrapper {
   margin-top: 1px !important;
 }
+
 .customer-form-event-list .wrapper .panel .table-body-br {
   overflow-y: scroll;
   position: relative;
   max-height: 300px;
 }
+
 .customer-form-task-list .wrapper .panel .table-body-br {
   overflow-y: hidden;
   position: relative;
 
 }
+
 .button-child {
   margin: 0px 2px 0px 2px;
   display: flex;
@@ -694,9 +698,11 @@ export default {
   justify-content: flex-start;
 
 }
+
 .customer-form-task-list {
   max-height: 500px;
 }
+
 .customer-form-event-list {
   max-height: 500px;
 }

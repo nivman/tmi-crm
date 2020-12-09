@@ -61,7 +61,7 @@ trait VueTable
     protected static function filterByColumn($data, $fields)
     {
 
-        $optionals = ['taxes', 'tasks'];
+        $optionals = ['taxes', 'tasks', 'events'];
         $filterable = [
             'id', 'code', 'name', 'reference', 'categories', 'customer', 'vendor', 'phone', 'user',
             'taxes', 'draft', 'date', 'gateway', 'price', 'cost', 'range', 'email', 'company', 'title', 'amount',

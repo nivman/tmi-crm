@@ -113,9 +113,11 @@
                 <div class="control">
                   <v-select
                       label="name"
-                      name="project"
                       id="project"
-                      v-model="project"
+                      name="project"
+                      item-value="id"
+                      item-text="name"
+                      v-model="form.project"
                       input-id="project"
                       :options="projects"
                       @input="projectChange"
@@ -192,6 +194,7 @@
 import _debounce from "lodash/debounce";
 
 export default {
+  props: ['projectId'],
   data() {
     return {
       accounts: [],
@@ -231,7 +234,7 @@ export default {
                 ) {
                   this.form.category = this.categories[0].id;
                 }
-                if (this.$route.params.id) {
+                if (this.$route.params.id && !this.projectId) {
                   this.fetchExpense(this.$route.params.id);
                 } else {
                   this.$http
@@ -252,26 +255,36 @@ export default {
         .catch(err => {
           this.$event.fire("appError", err.response);
         });
-    this.$http
-        .get("app/projects?all=1")
-        .then(res => {
 
-          this.projects = res.data.data;
+    if (!this.projectId) {
+      this.$http
+          .get("app/projects?all=1")
+          .then(res => {
 
-          if (
-              !this.$store.state.settings.ac.select &&
-              this.projects.length > 0
-          ) {
-          //  this.form.project = this.projects[0].id;
-          }
-        })
-        .catch(err => {
-          this.$event.fire("appError", err.response);
-        });
+            this.projects = res.data.data;
+          })
+          .catch(err => {
+            this.$event.fire("appError", err.response);
+          });
+    } else {
+      this.$http
+          .get(`app/expenses/projects/${this.projectId}`)
+          .then(res => {
+
+            this.form.project = res.data;
+            this.form.project_id = res.data.id
+          })
+          .catch(err => {
+            this.$event.fire("appError", err.response);
+          });
+    }
+
   },
   methods: {
     submit() {
+      let em = this;
       this.isSaving = true;
+
       if (this.form.id && this.form.id !== "") {
         this.form
             .put(`app/expenses/${this.form.id}`)
@@ -279,7 +292,7 @@ export default {
               this.$event.fire("refreshExpensesTable");
               this.notify(
                   "success",
-                  "Expense has been successfully updated."
+                  "הוצאה עודכנה"
               );
               this.$router.push("/expenses");
             })
@@ -292,9 +305,13 @@ export default {
               this.$event.fire("refreshExpensesTable");
               this.notify(
                   "success",
-                  "Expense has been successfully added."
+                  "הוצאה נוספה"
               );
-              this.$router.push("/expenses");
+              if (em.projectId) {
+                  em.$router.go(-1)
+              }else{
+                this.$router.push("/expenses");
+              }
             })
             .catch(err => this.$event.fire("appError", err.response))
             .finally(() => (this.isSaving = false));
@@ -306,7 +323,7 @@ export default {
           .then(res => {
             this.attributes = res.data.attributes;
             res.data.category = res.data.categories[0].id;
-            this.project = res.data.project ?res.data.project.name : '';
+            this.project = res.data.project ? res.data.project.name : '';
             delete res.data.attributes;
             delete res.data.categories;
             delete res.data.projects;
@@ -352,7 +369,7 @@ export default {
 };
 </script>
 <style scoped>
-.vs2__combobox{
+.vs2__combobox {
   direction: ltr;
 }
 </style>

@@ -79,6 +79,7 @@ import tBus from '../../mixins/Tbus';
 import DateFormatComponent from '../helpers/DateFormatComponent'
 export default {
     mixins: [mId, tBus('app/expenses')],
+    props:['projectId'],
     data() {
         return {
             total_amount: 0,
@@ -113,12 +114,26 @@ export default {
     },
     methods: {
         onLoaded(data) {
+
             let table = data.data.data;
             this.total_amount = Object.keys(table).reduce(function(sum, key) {
                 return sum + parseFloat(table[key].amount);
             }, 0);
         },
     },
+  computed: {
+    url: {
+      get () {
+        let route = 'app/expenses';
+        if (this.projectId) {
+          return `app/expenses/project/${this.projectId}`;
+        }
+        return route;
+      },
+
+    },
+
+  },
   components: { DateFormatComponent },
 };
 </script>
