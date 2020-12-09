@@ -3,13 +3,12 @@
       name="event-form-modal"
       height="auto"
       :scrollable="true"
-      width="300"
-      :adaptive="true"
+
       classes="is-rounded rtl-direction"
       transition="custom"
       @before-open="beforeOpen">
     <form autocomplete="off" action="#" @submit.prevent="validateForm()">
-      <div class="modal-card is-medium animated fastest zoomIn" style="width: 100%;">
+      <div class="modal-card animated fastest zoomIn" style="width: 100%;">
         <header class="modal-card-head is-radius-top">
           <p class="modal-card-title">
             {{ form.id ? 'עריכת התקשרות' : 'הוספת התקשרות' }}
@@ -336,6 +335,8 @@ export default {
         let project = e.params.event.project;
         this.form.project = project ? project.name : '';
         this.form.project_id =  project ? project.id : null;
+
+        this.form.details = this.clearContent(e.params.event.details)
       } else {
         // task-or-event-dialog = click on slot in the calendar
         if(calendarDates.name === 'task-or-event-dialog') {
@@ -439,8 +440,8 @@ export default {
             this.form.type_id = res.data.type_id;
             this.form.details = res.data.details;
 
-            this.form.start_date = moment( res.data.start_date).format("DD/MM/YYYY H:mm");
-            this.form.end_date = moment( res.data.end_date).format("DD/MM/YYYY H:mm");
+            this.form.start_date = moment( res.data.start_date).format("DD/MM/YYYY hh:mm");
+            this.form.end_date = moment( res.data.end_date).format("DD/MM/YYYY hh:mm");
 
           })
           .catch(err => {
@@ -489,6 +490,17 @@ export default {
             }
           })
           .catch(err => this.$event.fire('appError', err))
+    },
+    clearContent(details) {
+      if(details) {
+        let removeEmailAddr=  details.replace(/([^.@\s]+)(\.[^.@\s]+)*@([^.@\s]+\.)+([^.@\s]+)/, '')
+        let removeEmptyLine = removeEmailAddr.replaceAll(/\r?\n|\r/g, '')
+        let removeBiggerLessSign = removeEmptyLine.replaceAll(/<|>/g,'')
+        let breakLineOnDot = removeBiggerLessSign.replaceAll(/\./g,'\n')
+        return breakLineOnDot.replaceAll(/\[.+\n.+/gi,'')
+
+      }
+      return ''
     },
     deleteEvent() {
       this.$modal.show('dialog', {

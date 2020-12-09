@@ -82,11 +82,13 @@ class GetEmails extends Command
         /** @var Folder $folder */
         $folder = $client->getFolder('INBOX');
 
+        $messagesFromMainEmail = $folder->messages()->unseen()->from($mailMail)->get();
+        $this->outGoingEmail($messagesFromMainEmail);
+
         $messagesToMailEmail = $folder->messages()->unseen()->to($mailMail)->get();
         $this->incomingEmail($messagesToMailEmail);
 
-        $messagesFromMainEmail = $folder->messages()->unseen()->from($mailMail)->get();
-        $this->outGoingEmail($messagesFromMainEmail);
+
 
         $mailsToRemove = $folder->messages()->unseen()->get();
         foreach($mailsToRemove as $message){
@@ -98,7 +100,8 @@ class GetEmails extends Command
     {
         foreach($messages as $message){
 
-            if($message->to[0]->mail === $this->settings['IMAP_USERNAME'] && $message->subject === 'הקלטה') {
+            if($message->to[0]->mail === $this->settings['MAIN_MAIL_ADDRESS'] && $message->subject === 'הקלטה') {
+
                 $this->createRecordEmailEvent($message);
 
             }else{
@@ -114,12 +117,6 @@ class GetEmails extends Command
                         }
                     }
                 }
-//                $customer = $this->searchCustomersEmails($message, $address);
-//
-//                if ($customer)
-//                {
-//                    $this->createEmailEvent($customer, $message);
-//                }
             }
 
         }

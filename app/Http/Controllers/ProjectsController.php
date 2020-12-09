@@ -7,6 +7,7 @@ use App\Http\Requests\ProjectRequest;
 use App\Project;
 use App\ProjectTypes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProjectsController extends Controller
 {
@@ -109,6 +110,11 @@ class ProjectsController extends Controller
         return $project;
     }
 
+    public function tableFilter()
+    {
+        return DB::table('projects')->select('id', 'name as text')
+            ->get();
+    }
     /**
      * Remove the specified resource from storage.
      *

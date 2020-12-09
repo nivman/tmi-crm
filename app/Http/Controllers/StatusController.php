@@ -17,7 +17,7 @@ class StatusController extends Controller
     {
         $status = response()->json(Status::vueTable(Status::$columns));
 
-        $entityConvert = Status::convertEntityName($status->getData());
+        $entityConvert = Status::convertEntityName($status->getData(), count($status->getData()->data));
 
         return response($entityConvert);
     }

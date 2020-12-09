@@ -13,19 +13,27 @@
 
         <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
         התקשרויות
-
       </div>
 
-      <div class="panel-block table-body-br">
+      <div class="table-container">
 
-        <v-server-table name="eventsListTable" :url="url" :columns="columns" :options="options" ref="eventsListTable">
+        <v-server-table
+            name="eventsListTable"
+            :url="url"
+            :columns="columns"
+            :options="options"
+            ref="eventsListTable"
+            class="center-text-table table is-bordered is-striped is-narrow is-hoverable is-fullwidth"
+        >
           <template slot="contact" slot-scope="props">
             <div class="has-text-centered">
 
               <p class="control tooltip">
                 <router-link :to="'/customer/contact/' + props.row.contact_id">
-                  {{ props.row.contact ?
-                    props.row.contact.first_name + ' ' + (props.row.contact.last_name ? props.row.contact.last_name: '') : '' }}
+                  {{
+                    props.row.contact ?
+                        props.row.contact.first_name + ' ' + (props.row.contact.last_name ? props.row.contact.last_name : '') : ''
+                  }}
                 </router-link>
               </p>
             </div>
@@ -56,8 +64,12 @@
             </div>
           </template>
           <template slot="details" slot-scope="props">
-            <div class="has-text-centered">
-              {{ props.row.details| truncate(300, '...', props.row.details)}}
+
+            <div class="has-text-centered details-event" :data-tooltip="clearContent(props.row.details)">
+              <p class="control has-tooltip-right" >
+              {{ props.row.details| truncate(200, '...', props.row.details) }}
+<!--                <span class="tooltip-text has-tooltip-left">{{props.row.details}}</span>-->
+              </p>
             </div>
           </template>
           <template slot="actions" slot-scope="props">
@@ -100,7 +112,7 @@
 import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import EventFormModal from '../calendar/EventFormModal.vue'
-
+import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css'
 export default {
   mixins: [mId, tBus('app/events/eventsList')],
   props: [
@@ -116,13 +128,21 @@ export default {
       editEvent: false,
       loading: true,
       columns: ['title', 'contact', 'project', 'start_date', 'end_date', 'type', 'details', 'actions'],
-      filters: new this.$form({title: '', details: ''}),
+      filters: new this.$form(
+          {
+            title: '',
+            details: '',
+            type: '',
+            contact: ''
+          }),
       options: {
+        filterByColumn: true,
         perPage: 10,
+        dateColumns: ['start_date', 'end_date'],
         orderBy: {ascending: true, column: 'title'},
-        sortable: ['title', 'start_date', 'end_date', 'created_at', 'type'],
-        columnsClasses: {id: 'w50 has-text-centered', qty: 'w75', actions: 'w125 has-text-centered p-x-none'},
-        filterable: ['title', 'details'],
+        sortable: ['title', 'start_date', 'end_date', 'created_at', 'type', 'contact', 'project'],
+        listColumns: {},
+        filterable: ['title', 'details', 'type','contact', 'start_date', 'end_date', 'project'],
         headings: {
           title: 'נושא',
           contact: 'איש קשר',
@@ -134,11 +154,23 @@ export default {
           actions: 'פעולות',
 
         },
+        columnsClasses: {
+          id: 'w50 has-text-centered',
+          title: 'w175  header-table-font',
+          contact: 'w75 header-table-font',
+          project: 'w75 has-text-centered header-table-font',
+          details: 'w250 header-table-font',
+          type: 'w75 header-table-font',
+          start_date: 'w75 header-table-font',
+          end_date: 'w75 header-table-font',
+          actions: 'w75 header-table-font',
+        },
       },
     }
   },
-  created() {
 
+  created() {
+    this.setTextFilter()
     this.loading = false
     if (this.$store.getters.admin || this.$store.getters.superAdmin) {
       let filters = {title: '', details: ''}
@@ -146,10 +178,33 @@ export default {
 
       this.columns.push(actions)
       this.filters = new this.$form(filters)
+      this.getSelectableFilters();
     }
   },
   methods: {
+    getSelectableFilters() {
+
+      let em = this
+      this.$http
+          .get(`app/eventsTypes/`)
+          .then(res => {
+            em.options.listColumns = {
+              type: res.data.map(({name, id}) => ({text: name, id: name}))
+            }
+          })
+          .catch(err => this.$event.fire('appError', err.response))
+      this.$http
+          .post(`app/projects/tablefilter`)
+          .then(res => {
+            em.options.listColumns = {
+              project: res.data.map(({text, id}) => ({text: text, id: text}))
+            }
+
+          })
+          .catch(err => this.$event.fire('appError', err.response))
+    },
     format_date(value) {
+
       if (value) {
         return moment(String(value)).format('DD/MM/YYYY hh:mm')
       }
@@ -163,9 +218,9 @@ export default {
       this.$modal.show('event-form-modal', {event: event})
     },
     goBack() {
-      if(this.customerId) {
+      if (this.customerId) {
         this.$emit("showCustomerList", true);
-      }else if (this.projectId) {
+      } else if (this.projectId) {
         this.$emit("showProjectsList", true);
       }
     },
@@ -203,17 +258,48 @@ export default {
           }
         ]
       })
-    }
+    },
+    clearContent(details) {
+      if(details) {
+        let removeEmailAddr=  details.replace(/([^.@\s]+)(\.[^.@\s]+)*@([^.@\s]+\.)+([^.@\s]+)/, '')
+        let removeEmptyLine = removeEmailAddr.replaceAll(/\r?\n|\r/g, '')
+        let removeBiggerLessSign = removeEmptyLine.replaceAll(/<|>/g,'')
+        let breakLineOnDot = removeBiggerLessSign.replaceAll(/\./g,'\n')
+        return breakLineOnDot.replaceAll(/\[.+\n.+/gi,'')
+
+      }
+      return ''
+    },
+    setTextFilter(){
+      // this is here because the clear button is not changing the filter text from the previous date selected
+      // to the filter title
+      let em = this;
+      setTimeout(()=>{
+        let element = em.$el.querySelector('.VueTables__filter-placeholder');
+        element.addEventListener('click', function(event) {
+          let btn = document.querySelectorAll('.cancelBtn');
+
+          btn.forEach(function (item, idx) {
+            item.addEventListener('click', function (e) {
+              console.log(e)
+              let dateFilter = document.querySelector('#VueTables__start_date-filter')
+              dateFilter.innerHTML = "סינון זמן התחלה\n"
+              let dateFilter1 = document.querySelector('#VueTables__end_date-filter')
+              dateFilter1.innerHTML = "סינון זמן סיום\n"
+            });
+          });
+        });
+      },200)
+    },
   },
 
   computed: {
     url: {
-      get () {
+      get() {
         let route = 'app/events/eventsList';
         if (this.customerId) {
           route = `app/customers/events/${this.customerId}`;
-        }
-        else if (this.projectId) {
+        } else if (this.projectId) {
 
           route = `app/projects/events/${this.projectId}`;
         }
@@ -226,3 +312,12 @@ export default {
   components: {EventFormModal},
 }
 </script>
+<style scoped>
+tr td:nth-child(2) {
+  width: 100px;
+}
+
+.details-event{
+  font-size: 14px;
+}
+</style>

@@ -77,6 +77,30 @@ class Filters
                 'query' => $categoryName
             ];
         }
+
+        if($request->query->get('orderBy') === 'type'  || isset($query->type)) {
+
+            $filter = true;
+            $typeName = isset($query->type) ? $query->type : '';
+            $params[] = [
+                'tableToJoin' => 'events_types' ,
+                'orderBy' => "events.type_id",
+                'orderByValue' =>  'events_types.name',
+                'columnToJoin' => 'events_types.id',
+                'query' => $typeName];
+
+        }
+
+        if($request->query->get('orderBy') === 'contact' || isset($query->contact)) {
+            $filter = true;
+            $contactName = isset($query->contact) ? $query->contact : '';
+            $params[] = [
+                'tableToJoin' => 'contacts' ,
+                'orderBy' => "{$entityType}.contact_id",
+                'orderByValue' =>  'contacts.first_name',
+                'columnToJoin' => 'contacts.id',
+                'query' => $contactName];
+        }
         return ['params' => $params, 'filter' => $filter] ;
     }
 

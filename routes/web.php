@@ -30,6 +30,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::post('massActions', 'MassActionsController@action');
     Route::get('massActions/status/{entity}', 'MassActionsController@getStatues');
     Route::get('taxes', 'TaxesController@index');
+    Route::get('eventsTypes', 'EventsTypesController@getEventsTypes');
     Route::get('accounts', 'AccountsController@index');
     Route::put('users/{user}', 'UsersController@update');
     Route::get('vendors/search', 'VendorsController@search');
@@ -82,6 +83,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('projects/tasks/{id}', 'TasksController@getProjectTasks');
     Route::get('projects/events/{id}', 'EventsController@getProjectEvents');
     Route::get('customers/events/{id}', 'EventsController@getCustomersEvents');
+    Route::post('projects/tablefilter', 'ProjectsController@tableFilter');
     Route::resource('projects', 'ProjectsController');
     Route::resource('companies', 'CompaniesController')->only(['show']);
     Route::post('users/change_password', 'UsersController@changePassword');

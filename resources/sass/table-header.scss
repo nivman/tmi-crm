@@ -1,0 +1,48 @@
+.header-table-font .VueTables__type-filter-wrapper .VueTables__list-filter .select{
+  align-items: center;
+  border: 1px dotted #b5b5b5;
+  border-radius: 4px;
+  box-shadow: none;
+  font-size: 1rem;
+  height: 2.5em;
+  background-color: white;
+  line-height: 1.5;
+  padding-bottom: calc(0.5em - 1px);
+  padding-left: calc(0.75em - 1px);
+  padding-right: calc(0.75em - 1px);
+  padding-top: calc(0.5em - 1px);
+  position: relative;
+  vertical-align: top;
+}
+.header-table-font .VueTables__project-filter-wrapper .VueTables__list-filter .select{
+  align-items: center;
+  border: 1px dotted #b5b5b5;
+  border-radius: 4px;
+  box-shadow: none;
+  font-size: 1rem;
+  height: 2.5em;
+  background-color: white;
+  line-height: 1.5;
+  padding-bottom: calc(0.5em - 1px);
+  padding-left: calc(0.75em - 1px);
+  padding-right: calc(0.75em - 1px);
+  padding-top: calc(0.5em - 1px);
+  position: relative;
+  vertical-align: top;
+}
+
+.header-table-font .VueTables__type-filter-wrapper .VueTables__list-filter{
+  display: block !important;
+  flex-direction: unset;
+  justify-content: unset;
+
+}
+.header-table-font .VueTables__project-filter-wrapper .VueTables__list-filter{
+  display: block !important;
+  flex-direction: unset;
+  justify-content: unset;
+
+}
+.VueTables__date-filter{
+  display: block !important;
+}

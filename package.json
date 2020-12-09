@@ -61,6 +61,7 @@
 		"vuex": "^3.5.1"
 	},
 	"dependencies": {
+		"@creativebulma/bulma-tooltip": "^1.2.0",
 		"@fullcalendar/core": "^5.4.0",
 		"@fullcalendar/daygrid": "^5.4.0",
 		"@fullcalendar/interaction": "^5.4.0",
@@ -76,7 +77,6 @@
 		"moment-timezone": "^0.5.31",
 		"noty": "^3.2.0-beta",
 		"pusher-js": "^7.0.2",
-		"v-calendar": "^2.0.2",
 		"velocity-animate": "^2.0.6",
 		"vue-color": "^2.7.1",
 		"vue-mo-js": "^1.0.0",

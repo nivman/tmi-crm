@@ -65,7 +65,7 @@ trait VueTable
         $filterable = [
             'id', 'code', 'name', 'reference', 'categories', 'customer', 'vendor', 'phone', 'user',
             'taxes', 'draft', 'date', 'gateway', 'price', 'cost', 'range', 'email', 'company', 'title', 'amount',
-            'date_range', 'created_at', 'account', 'received', 'description', 'log_name', 'subject_id', 'subject_type'
+            'date_range', 'created_at', 'account', 'received', 'description', 'log_name', 'subject_id', 'subject_type', 'type'
         ];
         foreach ($fields as $field => $value) {
             if ($field != 'draft' && $field != 'received' && (empty($value) || !in_array($field, $filterable))) {
@@ -120,14 +120,14 @@ trait VueTable
 
                         if (count($queryFields) > 0 && $joinTables) {
                             foreach ($queryFields as $key => $queryField) {
-                                if ($key == 'date_to_complete' || $key == 'start_date') {
+                                if ( $key == 'start_date' || $key == 'end_date') {
 
                                     $start = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['start']);
 
                                     $end = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['end']);
-                                    $qu->whereBetween('date_to_complete', [$start, $end]);
+                                    $qu->whereBetween($key, [$start, $end]);
                                 }
-                                if ($data->getModel()->checkRelation($key) && $key !== 'date_to_complete' && $key !== 'start_date') {
+                                if ($data->getModel()->checkRelation($key)  && $key !== 'start_date') {
 
                                     $qu->where($joinTables . '.' . $key, 'like', "%{$queryField}%");
                                 }
@@ -175,12 +175,12 @@ trait VueTable
         foreach ($queryFields as $key => $queryField) {
 
             if ($data->getModel()->checkRelation($key)) {
-                if ($key == 'date_to_complete' || $key == 'start_date') {
+                if ($key == 'start_date' || $key == 'end_date') {
 
                     $start = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['start']);
 
                     $end = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['end']);
-                    $q->whereBetween('date_to_complete', [$start, $end]);
+                    $q->whereBetween($key, [$start, $end]);
                 }else{
                     $q->{$method}($joinTables . '.' . $key, 'LIKE', "%{$queryField}%");
                 }

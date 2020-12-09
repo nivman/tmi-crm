@@ -73,6 +73,20 @@ class EventsController extends Controller
 
     public function list(Request $request)
     {
+        $ascending = $request->request->get('ascending') == 1 ? 'DESC' : 'ASC';
+
+        $params = Filters::filters($request, 'events');
+        $orderByTaskValue = $request->query->get('orderBy');
+        $hasRelation = (new Event())->checkRelation($orderByTaskValue);
+
+        $sortByTaskAttr = [$hasRelation, $orderByTaskValue];
+
+        if ($params['filter']) {
+
+            return (new Event())->sortBy($ascending, $request, $params['params'], $sortByTaskAttr);
+        }
+        return  Event::with(['type', 'contact', 'project'])->mine()->vueTable(Event::$columns);
+
 
         if($request->date == null) {
             $ascending = $request->request->get('ascending') == 1 ? 'DESC' : 'ASC';
