@@ -202,18 +202,6 @@ export default {
                 .catch(err => this.$event.fire('appError', err.response))
           })
           .catch(err => this.$event.fire('appError', err.response))
-
-      // this.$http
-      //     .post(`app/projects/tablefilter`)
-      //     .then(res => {
-      //       em.options.listColumns = {
-      //         project: res.data.map(({text, id}) => ({text: text, id: text})),
-      //         type: em.types
-      //
-      //       }
-      //
-      //     })
-      //     .catch(err => this.$event.fire('appError', err.response))
     },
     format_date(value) {
 
