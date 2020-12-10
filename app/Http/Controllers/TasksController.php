@@ -214,6 +214,16 @@ class TasksController extends Controller
         return $event;
     }
 
+    public function unseenTask()
+    {
+        return (new Task())->unHandledTaskNotification();
+    }
+
+    public function cancelNotification(Task $task)
+    {
+        $task->update(['notification_enable' => 0]);
+
+    }
     private function filterBy($request, $entityId, $entityType)
     {
 
