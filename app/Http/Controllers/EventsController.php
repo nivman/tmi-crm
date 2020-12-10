@@ -113,7 +113,7 @@ class EventsController extends Controller
     
     public function show(Event $event)
     {
-
+        dd($event);
         $event->contact = $event->contact()->get();
         $event->type = $event->type()->get();
         return $event;
@@ -188,7 +188,7 @@ class EventsController extends Controller
 
     private function filterBy($request, $entityId, $entityType)
     {
-
+        Filters::filters($request, 'events');
         $events = Event::whereIn($entityType, $entityId)->with(['contact',  'project'])->mine()->vueTable(Event::$columns);
         return response()->json($events)->original;
     }

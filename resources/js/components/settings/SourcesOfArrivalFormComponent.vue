@@ -82,15 +82,34 @@ export default {
       return this.form.id && this.form.id !== "";
     }
   },
+  created() {
+    if (this.$route.params.id) {
+
+      this.fetchSource(this.$route.params.id)
+    }
+  },
   methods: {
+    fetchSource(id) {
+      this.$http
+          .get(`app/arrival-source/edit/${id}`)
+          .then(res => {
+            console.log(res)
+             this.form.id = res.data.id;
+             this.form.name = res.data.name;
+            // this.form.entity_name = res.data.entity_name;
+             this.form.color = res.data.color;
+          })
+          .catch(err => this.$event.fire('appError', err.response))
+    },
     updateValue(value) {
       this.form.color =value.hex8;
 
     },
     submit() {
       if (this.form.id && this.form.id !== "") {
+
         this.form
-            .post(`app/arrival-source/edit/${this.form.id}`)
+            .post(`app/arrival-source/update/${this.form.id}`)
             .then(() => {
               this.$event.fire("refreshStatuesTable");
               this.notify(

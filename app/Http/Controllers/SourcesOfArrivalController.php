@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ArrivalSources;
+use App\Http\Requests\SourcesOfArrivalRequest;
 use Illuminate\Http\Request;
 
 class SourcesOfArrivalController extends Controller
@@ -14,6 +15,7 @@ class SourcesOfArrivalController extends Controller
      */
     public function index(Request $request)
     {
+
 
       return response()->json(ArrivalSources::vueTable(ArrivalSources::$columns));
 
@@ -49,7 +51,8 @@ class SourcesOfArrivalController extends Controller
      */
     public function show(ArrivalSources $sourcesOfArrival)
     {
-        //
+
+        return response($sourcesOfArrival);
     }
 
     /**
@@ -60,7 +63,7 @@ class SourcesOfArrivalController extends Controller
      */
     public function edit(ArrivalSources $sourcesOfArrival)
     {
-        //
+        return response($sourcesOfArrival);
     }
 
     /**
@@ -70,9 +73,11 @@ class SourcesOfArrivalController extends Controller
      * @param  \App\ArrivalSources  $sourcesOfArrival
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ArrivalSources $sourcesOfArrival)
+    public function update(SourcesOfArrivalRequest $request, ArrivalSources $sourcesOfArrival)
     {
-        //
+        $v = $request->validated();
+        $sourcesOfArrival->fill($v)->save();
+        return $sourcesOfArrival;
     }
 
     /**

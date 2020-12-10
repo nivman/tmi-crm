@@ -222,7 +222,9 @@ export default {
     this.$http
         .get("app/accounts?all=1")
         .then(res => {
-          this.accounts = res.data;
+
+          this.account = res.data[0]
+          this.form.account_id = res.data[0].id
           this.$http
               .get("app/categories?all=1")
               .then(res => {

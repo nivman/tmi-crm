@@ -60,7 +60,7 @@ class TaskNotification extends Notification implements ShouldQueue
                     ->subject($this->task->name)
                     ->line($this->task->name)
                     ->line($format_date.' : זמן התחלה ')
-                    ->action('למשימה', url("http://{$serverIp}/tasks/edit/{$this->task->id}"))
+                    ->action('למשימה', url("http://{$serverIp}/tasks/edit/email/{$this->task->id}"))
                     ->line($this->task->details);
     }
 

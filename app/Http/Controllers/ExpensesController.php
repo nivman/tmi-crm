@@ -34,6 +34,7 @@ class ExpensesController extends Controller
     public function store(ExpenseRequest $request)
     {
         $v = $request->validated();
+        $v['project_id'] = $request->request->get('project_id');
         $expense = $request->user()->expenses()->create($v);
         $expense->categories()->sync($v['category']);
         return $expense;
@@ -42,8 +43,14 @@ class ExpensesController extends Controller
     public function update(ExpenseRequest $request, Expense $expense)
     {
         $v = $request->validated();
+        $v['project_id'] = $request->request->get('project_id');
         $expense->update($v);
         $expense->categories()->sync($v['category']);
         return $expense;
+    }
+
+    public function getExpensesByProjectId($projectId)
+    {
+      return  response()->json(Expense::where(['project_id' => $projectId])->mine()->vueTable(Expense::$columns));
     }
 }

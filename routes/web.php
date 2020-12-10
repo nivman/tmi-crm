@@ -148,6 +148,8 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::resource('settings', 'SettingsController')->only(['index', 'store']);
         Route::resource('custom_fields', 'CustomFieldsController')->only(['destroy']);
         Route::resource('statuses', 'StatusController')->only(['index']);
+        Route::get('arrival-source/edit/{sourcesOfArrival}', 'SourcesOfArrivalController@edit');
+        Route::post('arrival-source/update/{sourcesOfArrival}', 'SourcesOfArrivalController@update');
         Route::post('arrival-source/create', 'SourcesOfArrivalController@create');
         Route::resource('arrival-source', 'SourcesOfArrivalController');
         Route::post('statuses/create', 'StatusController@store');

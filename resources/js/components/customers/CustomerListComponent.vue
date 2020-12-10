@@ -54,15 +54,9 @@
                 <p class="control tooltip">
                   <router-link :to="'/customers/' + props.row.id" class="button is-primary is-small">
                     <i class="fas fa-file-alt"/>
-                    <span class="tooltip-text">View</span>
+                    <span class="tooltip-text">פרטי לקוח</span>
                   </router-link>
                 </p>
-                <!--                          <p class="control tooltip" v-if="$store.getters.admin">-->
-                <!--                            <router-link :to="'/customers/tasks/' + props.row.id" class="button is-info is-small">-->
-                <!--                              <i class="fas fa-list"></i>-->
-                <!--                              <span class="tooltip-text">רשימת משימות</span>-->
-                <!--                            </router-link>-->
-                <!--                          </p>-->
                 <p class="control tooltip">
                   <a
                       @click="showTasks(props.row.id, props.row.name)"
@@ -71,12 +65,6 @@
 
                   </a>
                 </p>
-                <!--                            <p class="control tooltip" v-if="$store.getters.admin">-->
-                <!--                                <router-link :to="'/customers/transactions/' + props.row.id" class="button is-info is-small">-->
-                <!--                                    <i class="fas fa-list"></i>-->
-                <!--                                    <span class="tooltip-text">List Transactions</span>-->
-                <!--                                </router-link>-->
-                <!--                            </p>-->
                 <p class="control tooltip" v-if="$store.getters.admin">
                   <router-link :to="'/payments/add?payer=customer&payer_id=' +
                            props.row.id + '&amount=' +  parseFloat(props.row.journal.balance.amount / 100)"

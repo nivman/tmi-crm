@@ -190,6 +190,12 @@ const router = new VueRouter({
                     meta: { title: "Edit Task", admin: true, modal: true }
                 },
                 {
+                    path: "edit/email/:id",
+                    name: "notification-task",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskFormModal.vue"),
+                    meta: { title: "Edit Task", admin: true, modal: true }
+                },
+                {
                     path: ":id",
                     component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskViewComponent.vue"),
                     meta: { title: "View Task", admin: false, modal: true }

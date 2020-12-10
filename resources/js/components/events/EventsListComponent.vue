@@ -15,7 +15,7 @@
         התקשרויות
       </div>
 
-      <div class="table-container">
+      <div>
 
         <v-server-table
             name="eventsListTable"
@@ -42,7 +42,7 @@
             <div class="has-text-centered">
 
               <p class="control tooltip">
-                <router-link :to="'/projects/' + props.row.project_id">
+                <router-link :to="'/projects/edit/' + props.row.project_id">
                   {{ props.row.project ? props.row.project.name : '' }}
                 </router-link>
               </p>
@@ -73,7 +73,7 @@
             </div>
           </template>
           <template slot="actions" slot-scope="props">
-            <div class="buttons has-addons is-centered">
+            <div class="buttons has-addons events-button" style="direction: ltr">
               <p class="control tooltip">
                 <a @click="showEvent(props.row)"
                    class="button is-link is-small ">
@@ -87,6 +87,17 @@
                   <span class="tooltip-text">מחיקה</span>
                 </button>
               </p>
+              <p class="control tooltip">
+<!--                <router-link style="font-size: 0.65rem" :to="{ path: '/tasks/edit/event', params: { projId: 5 }}" class="button is-warning is-small">-->
+<!--                  <i class="fas fa-edit"></i>-->
+<!--                  <span class="tooltip-text">עריכה</span>-->
+<!--&lt;!&ndash;                  <router-link :to="{ path: '/tasks/edit/', params: { projId: 5 }}">Home</router-link>&ndash;&gt;-->
+<!--                </router-link>-->
+                  <a @click="addTask(props.row.contact)" class="button is-warning	has-text-white is-small">
+                   <i class="fas fa-thumbtack"></i>
+                    <span class="tooltip-text"> משימה חדשה</span>
+                  </a>
+               </p>
             </div>
           </template>
         </v-server-table>
@@ -105,6 +116,8 @@
           :eventId="eventId"
       ></event-form-modal>
     </div>
+
+
   </div>
 </template>
 
@@ -113,6 +126,7 @@ import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import EventFormModal from '../calendar/EventFormModal.vue'
 import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css'
+import TaskFormModal from "../tasks/TaskFormModal";
 export default {
   mixins: [mId, tBus('app/events/eventsList')],
   props: [
@@ -120,11 +134,12 @@ export default {
     'customerId',
     'customerName',
     'projectId',
-    'projectName'
+    'projectName','params'
   ],
   data() {
     return {
       eventId: '',
+      showTaskForm: false,
       editEvent: false,
       loading: true,
       columns: ['title', 'contact', 'project', 'start_date', 'end_date', 'type', 'details', 'actions'],
@@ -214,6 +229,12 @@ export default {
     showEvent(event) {
 
       this.$modal.show('event-form-modal', {event: event})
+    },
+    addTask(contact) {
+      console.log(contact.customer_id)
+      this.$root.$router.push({path : '/tasks/add/', query: {'cusId': contact.customer_id}})
+      this.showTaskForm = true
+
     },
     goBack() {
       if (this.customerId) {
@@ -307,7 +328,7 @@ export default {
     },
 
   },
-  components: {EventFormModal},
+  components: {EventFormModal, TaskFormModal},
 }
 </script>
 <style scoped>
@@ -326,5 +347,12 @@ tr td:nth-child(2) {
 
 .details-event{
   font-size: 14px;
+}
+
+.events-button {
+  align-items: center;
+  display: flex;
+  flex-wrap: unset;
+  justify-content: center;
 }
 </style>

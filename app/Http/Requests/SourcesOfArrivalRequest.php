@@ -7,7 +7,7 @@ use App\Status;
 use Illuminate\Support\Arr;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StatusRequest extends FormRequest
+class SourcesOfArrivalRequest extends FormRequest
 {
     public $attributes;
 
@@ -22,7 +22,6 @@ class StatusRequest extends FormRequest
         return [
 
             'name' => 'required|max:55',
-            'entity_name' => 'required|max:55',
             'color' => 'max:55',
         ];
 
