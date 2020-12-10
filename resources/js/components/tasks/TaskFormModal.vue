@@ -99,18 +99,6 @@
             </div>
           </div>
           <div class="columns">
-            <!--            <div class="column">-->
-            <!--              <div class="field">-->
-            <!--                <label class="label" for="date_to_complete">תאריך לביצוע</label>-->
-            <!--                <flat-pickr-->
-            <!--                    class="input"-->
-            <!--                    id="date_to_complete"-->
-            <!--                    name="date_to_complete"-->
-            <!--                    :config="config_to_complete"-->
-            <!--                    v-model="form.date_to_complete">-->
-            <!--                </flat-pickr>-->
-            <!--              </div>-->
-            <!--            </div>-->
             <div class="column">
               <div class="field">
                 <label class="label" for="categories">קטגוריה</label>
@@ -322,14 +310,15 @@ export default {
         customer: '',
         name: 'משימה',
         details: '',
-        notification_time: '',
+        notification_time: null,
         start_date: null,
         end_date: null,
         status: '',
         priority: '',
         estimated_time: '',
         actual_time: '',
-        category: ''
+        category: '',
+        notification_enable : 0
       }),
       config: {
         altInput: true,
@@ -407,7 +396,9 @@ export default {
                     this.attributes = res.data.attributes
                     this.optionsStatuses = res.data.statuses
                     this.categories = res.data.categories
-                    // this.loading = false
+                    if (this.$route.query.cusId) {
+                      this.getCustomersById([{'customer_id': this.$route.query.cusId}])
+                    }
                   })
                   .catch(err =>
                       this.$event.fire('appError', err.response)
@@ -498,6 +489,9 @@ export default {
         route = '/calendar';
       }
 
+      if(this.form.notification_time){
+        this.form.notification_enable = 1;
+      }
       if (this.form.id && this.form.id !== '') {
 
         this.form
@@ -531,7 +525,7 @@ export default {
       }
     },
     fetchTask(id) {
-
+    let em = this
       this.$http
           .get(`app/tasks/${id}`)
           .then(res => {
@@ -555,6 +549,7 @@ export default {
           })
           .catch(err => this.$event.fire('appError', err.response))
     },
+
     validateForm() {
       this.$validator
           .validateAll()
@@ -628,11 +623,12 @@ export default {
           })
     },
     closeModal() {
-      if (!this.popupTaskId ) {
+
+      if (!this.popupTaskId && this.$route.name !== 'notification-task') {
         this.$router.go(-1)
-      }else{
+      } else {
         let modal = document.querySelector(".task-form-modal")
-        modal.parentNode.removeChild( modal );
+        modal.parentNode.removeChild(modal);
 
       }
 

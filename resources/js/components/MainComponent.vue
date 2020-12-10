@@ -224,13 +224,23 @@ export default {
 
       this.$http
           .get(`app/customers/leads/unseen`)
-          .then((e) => {
-            let unseenLeads = e.data;
+          .then((res) => {
+            let unseenLeads = res.data;
             unseenLeads.forEach((lead)=>{
                 this.showEmailPopup(lead,unseenLeads)
             })
             this.getUnseenLeads();
             this.taskNotification();
+          })
+          .catch(err => this.$event.fire("appError", err.response))
+
+      this.$http
+          .get(`app/tasks/unseen`)
+          .then((res) => {
+
+            res.data.forEach((e)=>{
+              this.showTaskPopup(e, [])
+            })
           })
           .catch(err => this.$event.fire("appError", err.response))
       this.firstEnter = false
@@ -248,16 +258,9 @@ export default {
             '<p style="font-size: 14px;font-weight: bold"> כותרת: '+task.name+' </p>',
         buttons: [
           Noty.button('לצפייה במשימה', 'button', function (e) {
+            em.zeroTaskNotification(task.id)
+            em.$root.$router.push({path : `/tasks/edit/${task.id}`})
 
-            em.popupTaskId = task.id;
-            var ComponentClass = Vue.extend(TaskFormModal)
-
-            var instance = new ComponentClass({
-              propsData: { popupTaskId: task.id }
-            })
-            instance.$mount()
-            em.$refs.container.appendChild(instance.$el)
-            //    em.firstEnter = true
             noty.close()
           }, {'data-status': 'ok'}),
         ]
@@ -287,14 +290,18 @@ export default {
             })
             instance.$mount()
             em.$refs.container.appendChild(instance.$el)
-        //    em.firstEnter = true
             noty.close()
           }, {id: 'button1', 'data-status': 'ok'}),
         ]
       }).show();
+    },
+    zeroTaskNotification(taskId) {
+      this.$http
+          .get(`app/tasks/cancel-notification/${taskId}`)
+          .then(res => {
 
-
-
+          })
+          .catch(err => this.$event.fire('appError', err.response));
     },
     login() {
       this.$modal.hide('dialog');

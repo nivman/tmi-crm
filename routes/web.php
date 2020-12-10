@@ -37,6 +37,8 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::put('vendor/{vendor}', 'VendorsController@update');
     Route::get('customers/search', 'CustomersController@search');
     Route::get('customers/leads/unseen', 'CustomersController@unseenLeads');
+    Route::get('tasks/unseen', 'TasksController@unseenTask');
+    Route::get('tasks/cancel-notification/{task}', 'TasksController@cancelNotification');
     Route::post('customers-projects/{ids}', 'ProjectsController@getProjectsFormCustomersByIds');
     Route::get('customers/projects/{id}', 'ProjectsController@getCustomerProjectsList');
     Route::post('customers-contacts/{ids}', 'ContactsController@getContactsCustomerById');

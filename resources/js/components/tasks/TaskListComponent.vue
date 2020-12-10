@@ -315,7 +315,8 @@ export default {
   },
 
   created () {
-      this.setTextFilter()
+    this.setTextFilter()
+
     if(this.customerId != undefined) {
 
        this.addRoute = `/tasks/add?customerId=${this.customerId}`;
