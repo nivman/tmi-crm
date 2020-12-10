@@ -381,6 +381,7 @@ export default {
             } else {
               //click from calendar slot
               if (calendarDates) {
+
                 this.form.start_date = moment(this.$route.query.startDate.split(" ")[0]).format('DD/MM/YYYY HH:mm');
                 this.form.end_date = moment(this.$route.query.endDate.split(" ")[0]).format('DD/MM/YYYY HH:mm');
               } else {
@@ -460,7 +461,7 @@ export default {
     format_date(value) {
 
       if (value) {
-        return moment(String(value)).format('DD/MM/YYYY hh:mm')
+        return moment(String(value)).format('DD/MM/YYYY HH:mm')
       }
     },
     setRoute() {
@@ -529,7 +530,7 @@ export default {
       this.$http
           .get(`app/tasks/${id}`)
           .then(res => {
-
+          console.log(res.data.task)
             this.attributes = res.data.task.attributes
             delete res.data.task.attributes
             this.form = new this.$form(res.data.task)

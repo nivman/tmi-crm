@@ -5,7 +5,7 @@
             <div class="modal-card animated fastest zoomIn">
                 <header class="modal-card-head is-radius-top">
                     <p class="modal-card-title">
-                        {{ form.id ? "Edit Income" : "Add New Income" }}
+                        {{ form.id ? "עריהת הכנסה" : "הכנסה חדשה" }}
                     </p>
                     <button
                         type="button"
@@ -25,7 +25,7 @@
                     <div class="columns">
                         <div class="column is-half">
                             <div class="field">
-                                <label class="label" for="title">Title</label>
+                                <label class="label" for="title">כותרת</label>
                                 <input
                                     id="title"
                                     type="text"
@@ -79,7 +79,7 @@
                         <div class="column is-half">
                             <div class="field">
                                 <label class="label" for="category"
-                                    >Category</label
+                                    >קטגוריה</label
                                 >
                                 <div class="control">
                                     <div
@@ -119,12 +119,13 @@
                             </div>
                             <div class="field">
                                 <label class="label" for="account"
-                                    >Account</label
+                                    >חשבון</label
                                 >
                                 <div class="control">
                                     <v-select
                                         label="name"
                                         name="account"
+                                        id="account"
                                         v-model="account"
                                         input-id="account"
                                         :options="accounts"
@@ -147,9 +148,7 @@
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label" for="details"
-                                    >Details</label
-                                >
+                                <label class="label" for="details">פרטים</label>
                                 <textarea
                                     rows="2"
                                     id="details"
@@ -167,7 +166,7 @@
                         </div>
                     </div>
                     <div v-if="attributes">
-                        <h5 class="cf">Custom Fields</h5>
+                        <h5 class="cf">שדות דינמיים</h5>
                         <div class="columns is-multiline">
                             <div
                                 class="column is-half"

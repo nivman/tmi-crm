@@ -6,15 +6,16 @@
                     <i class="fas fa-cog" />
                 </button>
                 <router-link to="/incomes/add" class="button is-link is-small is-pulled-right">
-                    <i class="fas fa-plus m-r-sm" /> Add Income
+                    <i class="fas fa-plus m-l-sm" /> הוספת הכנסה
                 </router-link>
-                Incomes
+                הכנסות
                 <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
             </div>
             <div class="panel-block table-body-br">
                 <v-server-table name="incomesTable" :url="url" :columns="columns" :options="options" ref="incomesTable" @loaded="onLoaded">
                     <template slot="created_at" slot-scope="props">
-                        {{ props.row.created_at | formatDate(dateformat + ' HH:mm') }}
+                      <date-format-component :dateTime="props.row.created_at"></date-format-component>
+
                     </template>
                     <template slot="category" slot-scope="props">
                         {{ props.row.categories[0].name }}
@@ -47,9 +48,7 @@
                             </p>
                         </div>
                     </template>
-                    <template slot="afterBody">
-                        <table-filters-component :filters="filters" :amount="total_amount"></table-filters-component>
-                    </template>
+
                 </v-server-table>
             </div>
         </div>
@@ -66,6 +65,7 @@
 <script>
 import mId from '../../mixins/Mid';
 import tBus from '../../mixins/Tbus';
+import DateFormatComponent from "../helpers/DateFormatComponent";
 export default {
     mixins: [mId, tBus('app/incomes')],
     data() {
@@ -74,20 +74,29 @@ export default {
             filters: new this.$form({
                 created_at: '',
                 title: '',
-                reference: '',
+
                 categories: { name: '' },
-                account: { name: '' },
+                details: '',
                 amount: '',
                 range: 1,
                 date_range: '',
             }),
-            columns: ['created_at', 'title', 'reference', 'category', 'account', 'amount', 'actions'],
+            columns: ['created_at', 'title', 'details', 'category', 'amount', 'actions'],
             options: {
                 perPage: 10,
                 orderBy: { ascending: false, column: 'created_at' },
-                sortable: ['id', 'created_at', 'title', 'reference', 'amount'],
+                sortable: ['id', 'created_at', 'title', 'amount'],
                 columnsClasses: { id: 'w50 has-text-centered', actions: 'w125 has-text-centered p-x-none', amount: 'w125' },
-                filterable: ['id', 'created_at', 'title', 'reference', 'categories.name', 'account.name', 'amount'],
+                filterable: ['id', 'created_at', 'title',  'categories.name', 'account.name', 'amount'],
+              headings: {
+                created_at: 'תאריך יצירה',
+                title: 'כותרת',
+                details: 'פרטים',
+                category: 'קטגוריה',
+                project: 'פרוייקט',
+                amount: 'סכום',
+                actions: 'פעולות',
+              },
             },
         };
     },
@@ -99,5 +108,6 @@ export default {
             }, 0);
         },
     },
+  components: {DateFormatComponent}
 };
 </script>
