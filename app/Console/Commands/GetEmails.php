@@ -83,6 +83,7 @@ class GetEmails extends Command
         $folder = $client->getFolder('INBOX');
 
         $messagesFromMainEmail = $folder->messages()->unseen()->from($mailMail)->get();
+
         $this->outGoingEmail($messagesFromMainEmail);
 
         $messagesToMailEmail = $folder->messages()->unseen()->to($mailMail)->get();
@@ -98,30 +99,28 @@ class GetEmails extends Command
 
     private function outGoingEmail($messages)
     {
+
         foreach($messages as $message){
 
-            if($message->to[0]->mail === $this->settings['MAIN_MAIL_ADDRESS'] && $message->subject === 'הקלטה') {
+             if (count($message->to) > 0) {
+                 if($message->to[0]->mail === $this->settings['MAIN_MAIL_ADDRESS'] && $message->subject === 'הקלטה') {
 
-                $this->createRecordEmailEvent($message);
-
-            }else{
-                $addresses = $message->to;
-                foreach ($addresses as $key => $address) {
-
-                    if($address->mail) {
-                        $customer = $this->searchCustomersEmails($message, $address->mail);
-
-                        if ($customer)
-                        {
-                            $this->createEmailEvent($customer, $message);
-                        }
-                    }
-                }
-            }
-
+                     $this->createRecordEmailEvent($message);
+                 }else{
+                     $this->runOverAddresses($message, $message->to[0]->mail);
+                 }
+             }else {
+                 $toAddresses = explode(",", $message->toaddress);
+                 foreach ($toAddresses as $address ) {
+                     $customer = $this->runOverAddresses($message, trim($address));
+                     if ($customer)
+                     {
+                         break;
+                     }
+                 }
+             }
         }
     }
-
     private function incomingEmail($messages)
     {
         foreach($messages as $message){
@@ -253,5 +252,20 @@ class GetEmails extends Command
     {
         $fileData = ['name'=> $createFile, 'customer_id' => $this::MAIN_SYSTEM_CUSTOMER, 'event_id' => $event->id];
         File::create($fileData);
+    }
+
+    /**
+     * @param $message
+     * @param $address
+     * @return false|mixed
+     */
+    private function runOverAddresses($message, $address)
+    {
+        $customer = $this->searchCustomersEmails($message, $address);
+
+        if ($customer) {
+            $this->createEmailEvent($customer, $message);
+        }
+        return $customer;
     }
 }

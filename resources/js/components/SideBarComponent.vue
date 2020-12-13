@@ -281,13 +281,19 @@
                                 </router-link>
                             </li>
                             <li>
-                                <router-link to="/settings/email_templates"
-                                             @click.native="hideMenu">הגדרות לאמיילים</router-link>
+                                <router-link to="/settings/email_templates" @click.native="hideMenu">
+                                  הגדרות תבניות לאמיילים
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link to="/settings/email_settings" @click.native="hideMenu">
+                                  הגדרות לאמיילים
+                                </router-link>
                             </li>
                         </span>
                     </template>
                         </side-bar-menu-component>
-              <side-bar-menu-component :expand="subIsActive(['/settings', '/taxes', '/categories'])">
+                <side-bar-menu-component :expand="subIsActive(['/settings', '/taxes', '/categories'])">
                     <span class="icon is-small m-l-sm">
                         <i class="fas fa-fw fa-cogs"></i>
                     </span>
@@ -306,13 +312,14 @@
                             <router-link to="/settings/statuses" @click.native="hideMenu">רשימת סטטוסים</router-link>
                         </li>
                        <li>
-                            <router-link to="/settings/arrival-source"
-                                         @click.native="hideMenu">רשימת מקורות הגעה</router-link>
+                            <router-link to="/settings/arrival-source" @click.native="hideMenu">
+                              רשימת מקורות הגעה
+                            </router-link>
                         </li>
                        <li>
                             <router-link to="/settings/fields" @click.native="hideMenu"></router-link>
                         </li>
-         </template>
+                      </template>
                 </side-bar-menu-component>
             </span>
         <li v-if="$store.getters.admin">

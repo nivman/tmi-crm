@@ -13,7 +13,7 @@ class CreateEmailSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('email_settings_', function (Blueprint $table) {
+        Schema::create('email_settings', function (Blueprint $table) {
             $table->id();
             $table->string('attribute');
             $table->string('value');
