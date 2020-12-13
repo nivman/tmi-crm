@@ -3,12 +3,8 @@
     <div class="row">
       <div class="col-md-12">
         <div class="panel panel-default">
-          <div class="panel-heading">Invoice Settings</div>
-          <div class="panel-block">
-            <p class="block">
-              Please update the settings by modifying them below
-            </p>
-          </div>
+          <div class="panel-heading">הגדרת חשבוניות</div>
+
           <form autocomplete="off" action="#" @submit.prevent="validateForm()" class="is-fullwidth">
             <div class="panel-body">
               <loading v-if="loading"></loading>
@@ -17,7 +13,7 @@
                   <div class="columns is-multiline">
                     <div class="column is-half">
                       <div class="field">
-                        <label class="label" for="name">Company Name</label>
+                        <label class="label" for="name">שם החברה</label>
                         <div class="control">
                           <input
                             id="name"
@@ -38,7 +34,7 @@
                     </div>
                     <div class="column is-half">
                       <div class="field">
-                        <label class="label" for="number">Company Number</label>
+                        <label class="label" for="number">מספר חברה</label>
                         <div class="control">
                           <input
                             type="text"
@@ -55,7 +51,7 @@
                     </div>
                     <div class="column is-half">
                       <div class="field">
-                        <label class="label" for="phone">Phone Number</label>
+                        <label class="label" for="phone">מספר טלפון</label>
                         <div class="control">
                           <input
                             id="phone"
@@ -76,7 +72,7 @@
                     </div>
                     <div class="column is-half">
                       <div class="field">
-                        <label class="label" for="email">Email Address</label>
+                        <label class="label" for="email">כתבות מייל</label>
                         <div class="control">
                           <input
                             id="email"
@@ -97,7 +93,7 @@
                     </div>
                     <div class="column is-12">
                       <div class="field">
-                        <label class="label" for="address">Address</label>
+                        <label class="label" for="address">כתובת</label>
                         <div class="control">
                           <input
                             type="text"
@@ -115,146 +111,10 @@
                           {{ errors.first('address') }}
                         </div>
                       </div>
-                      <div class="columns">
-                        <div class="column is-half">
-                          <div class="field">
-                            <label class="label" for="country">Country</label>
-                            <div class="control">
-                              <v-select
-                                name="country"
-                                v-model="country"
-                                input-id="country"
-                                max-height="200px"
-                                :filterable="false"
-                                :searchable="false"
-                                :options="countries"
-                                v-validate="'required'"
-                                @input="countryChange"
-                                :style="{
-                                  width: '100%',
-                                }"
-                                placeholder="Select Country..."
-                                :class="{
-                                  select: true,
-                                  'is-danger': errors.has('country'),
-                                }"
-                              >
-                                <template slot="no-options">
-                                  Please type to search...
-                                </template>
-                              </v-select>
-                            </div>
-                            <div class="help is-danger">
-                              {{ errors.first('country') }}
-                            </div>
-                          </div>
-                        </div>
-                        <div class="column is-half">
-                          <div class="field">
-                            <label class="label" for="state">State</label>
-                            <div class="control">
-                              <v-select
-                                name="state"
-                                v-model="state"
-                                input-id="state"
-                                :options="states"
-                                max-height="200px"
-                                :filterable="false"
-                                :searchable="false"
-                                v-validate="'required'"
-                                @input="stateChange"
-                                :style="{
-                                  width: '100%',
-                                }"
-                                placeholder="Select State..."
-                                :class="{
-                                  select: true,
-                                  'is-danger': errors.has('state'),
-                                }"
-                              >
-                                <template slot="no-options">
-                                  Please type to search...
-                                </template>
-                              </v-select>
-                            </div>
-                            <div class="help is-danger">
-                              {{ errors.first('state') }}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <h4 class="m-t-lg">
-                        <strong>Extra Fields for Company details</strong>
-                      </h4>
-                      <div class="field">
-                        <label class="label" for="email">Field 1</label>
-                        <div class="control">
-                          <div class="columns">
-                            <div class="column is-half">
-                              <input type="text" class="input" id="cf1_label" placeholder="Lebel" v-model="extra.cf1_label" />
-                            </div>
-                            <div class="column is-half">
-                              <input type="text" class="input" id="cf1_value" placeholder="Value" v-model="extra.cf1_value" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="field">
-                        <label class="label" for="email">Field 2</label>
-                        <div class="control">
-                          <div class="columns">
-                            <div class="column is-half">
-                              <input type="text" class="input" id="cf2_label" placeholder="Lebel" v-model="extra.cf2_label" />
-                            </div>
-                            <div class="column is-half">
-                              <input type="text" class="input" id="cf2_value" placeholder="Value" v-model="extra.cf2_value" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="field">
-                        <label class="label" for="email">Field 3</label>
-                        <div class="control">
-                          <div class="columns">
-                            <div class="column is-half">
-                              <input type="text" class="input" id="cf3_label" placeholder="Lebel" v-model="extra.cf3_label" />
-                            </div>
-                            <div class="column is-half">
-                              <input type="text" class="input" id="cf3_value" placeholder="Value" v-model="extra.cf3_value" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="field">
-                        <label class="label" for="email">Field 4</label>
-                        <div class="control">
-                          <div class="columns">
-                            <div class="column is-half">
-                              <input type="text" class="input" id="cf4_label" placeholder="Lebel" v-model="extra.cf4_label" />
-                            </div>
-                            <div class="column is-half">
-                              <input type="text" class="input" id="cf4_value" placeholder="Value" v-model="extra.cf4_value" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="field">
-                        <label class="label" for="email">Field 5</label>
-                        <div class="control">
-                          <div class="columns">
-                            <div class="column is-half">
-                              <input type="text" class="input" id="cf5_label" placeholder="Lebel" v-model="extra.cf5_label" />
-                            </div>
-                            <div class="column is-half">
-                              <input type="text" class="input" id="cf5_value" placeholder="Value" v-model="extra.cf5_value" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                     <div class="column is-12">
                       <div class="field">
-                        <label class="label" for="footer">Invoice Footer</label>
+                        <label class="label" for="footer">טקסט בתחתית החשבונית</label>
                         <div class="control">
                           <textarea rows="3" id="footer" name="footer" class="textarea" v-model="form.footer"></textarea>
                         </div>
@@ -267,7 +127,7 @@
                 </div>
                 <div class="column is-half">
                   <div class="field">
-                    <label class="label" for="email">Logo</label>
+                    <label class="label" for="email">לוגו</label>
                     <div class="control">
                       <div class="file has-name is-fullwidth">
                         <label class="file-label">
@@ -286,7 +146,7 @@
                     </div>
                   </div>
                   <div class="field p-t-md">
-                    <label class="label" for="template">Template</label>
+                    <label class="label" for="template">טמפלט</label>
                     <div class="control">
                       <div class="select is-fullwidth">
                         <select
@@ -297,9 +157,9 @@
                             'is-danger': errors.has('template'),
                           }"
                         >
-                          <option value="minimal">Minimal</option>
-                          <option value="simple">Simple</option>
-                          <option value="modern">Modern</option>
+                          <option value="minimal">מצומצם</option>
+                          <option value="simple">פשוט</option>
+                          <option value="modern">מודרני</option>
                         </select>
                       </div>
                     </div>
@@ -350,7 +210,7 @@
               </div>
               <div class="field">
                 <button type="submit" class="button is-link" :disabled="errors.any()" :class="{ 'is-loading': isSaving }">
-                  Submit
+                  אישור
                 </button>
               </div>
             </div>
@@ -366,16 +226,10 @@ export default {
   data() {
     return {
       extra: {},
-      states: [],
-      state: null,
-      country: null,
-      countries: [],
       loading: true,
       isSaving: false,
       form: new this.$form({
         template: 'simple',
-        country: '',
-        state: '',
         show_tax: true,
         show_image: true,
         show_discount: false,
@@ -383,18 +237,13 @@ export default {
     };
   },
   created() {
-    this.$http
-      .get('app/countries')
-      .then(countries => {
-        this.countries = countries.data;
         this.$http
           .get('app/companies/1')
           .then(res => {
             this.fetchCompany(res);
           })
           .catch(err => this.$event.fire('appError', err.response));
-      })
-      .catch(err => this.$event.fire('appError', err.response));
+
   },
   methods: {
     fetchCompany(res) {
@@ -406,8 +255,6 @@ export default {
       res.data.show_image = res.data.show_image ? 1 : 0;
       res.data.show_discount = res.data.show_discount ? 1 : 0;
       this.form = new this.$form(res.data);
-      this.getStates(res.data.country, res.data.state);
-      this.country = this.countries.find(country => country.value == res.data.country);
       this.loading = false;
       this.isSaving = false;
     },
@@ -427,44 +274,17 @@ export default {
               .put('app/companies/1', this.form.logo)
               .then(res => {
                 this.fetchCompany(res);
-                this.notify('success', 'Invoice settings has been successfully updated.');
+                this.notify('success', 'הגדרות חשבונית עודכנו');
               })
               .catch(err => {
                 this.isSaving = false;
                 this.$event.fire('appError', err.response);
               });
           } else {
-            this.notify('error', 'All the fields are required except Company Name & Extra Fields. Please fill the form and try again.');
+            this.notify('error', 'כל השדות הם שדות חובה למעט שם החברה');
           }
         })
         .catch(err => this.$event.fire('appError', err));
-    },
-    countryChange(selected) {
-      if (selected) {
-        this.country = selected;
-        this.getStates(selected.value);
-        this.form.country = selected.value;
-      } else {
-        this.states = [];
-        this.state = null;
-        this.form.country = '';
-        this.country = selected;
-      }
-    },
-    getStates(country, selectedSate) {
-      this.$http
-        .get('app/states', { params: { country: country } })
-        .then(res => {
-          this.states = res.data;
-          if (selectedSate) {
-            this.state = this.states.find(state => state.value == selectedSate);
-          }
-        })
-        .catch(err => this.$event.fire('appError', err.response));
-    },
-    stateChange(selected) {
-      this.state = selected;
-      this.form.state = selected ? selected.value : '';
     },
   },
 };
