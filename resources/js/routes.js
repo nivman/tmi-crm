@@ -515,6 +515,11 @@ const router = new VueRouter({
                     meta: { title: "System Settings", admin: false, super: true }
                 },
                 {
+                    path: "email",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/settings/EmailSettingsComponent.vue"),
+                    meta: { title: "System Settings", admin: false, super: true }
+                },
+                {
                     path: "email_templates",
                     component: () => import(/* webpackChunkName: "components" */ "./components/settings/EmailTemplatesComponent.vue"),
                     meta: { title: "Email Templates", admin: false, super: true }

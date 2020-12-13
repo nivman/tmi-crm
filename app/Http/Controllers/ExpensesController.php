@@ -34,7 +34,9 @@ class ExpensesController extends Controller
     public function store(ExpenseRequest $request)
     {
         $v = $request->validated();
+
         $v['project_id'] = $request->request->get('project_id');
+        $v['vendor_id'] = $request->request->get('vendor') ? $request->request->get('vendor')['id'] : null;
         $expense = $request->user()->expenses()->create($v);
         $expense->categories()->sync($v['category']);
         return $expense;
@@ -44,6 +46,7 @@ class ExpensesController extends Controller
     {
         $v = $request->validated();
         $v['project_id'] = $request->request->get('project_id');
+        $v['vendor_id'] = $request->request->get('vendor') ? $request->request->get('vendor')['id'] : null;
         $expense->update($v);
         $expense->categories()->sync($v['category']);
         return $expense;

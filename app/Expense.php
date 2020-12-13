@@ -14,11 +14,11 @@ class Expense extends ModelForm
 {
     use AttributableModel, LogActivity, Restrictable, VueTable;
 
-    public static $columns = ['id', 'created_at', 'title', 'reference', 'amount', 'categories.name', 'account.name', 'projects.name'];
+    public static $columns = ['id', 'created_at', 'title', 'reference', 'amount', 'categories.name', 'account.name', 'projects.name', 'vendor.name'];
 
-    protected $fillable = ['id', 'title', 'amount', 'reference', 'details', 'account_id', 'user_id', 'project_id'];
+    protected $fillable = ['id', 'title', 'amount', 'reference', 'details', 'account_id', 'user_id', 'project_id', 'vendor_id'];
     protected $hidden   = ['updated_at'];
-    protected $with     = ['account', 'categories', 'project'];
+    protected $with     = ['account', 'categories', 'project', 'vendor'];
 
     protected static function boot()
     {
@@ -33,6 +33,12 @@ class Expense extends ModelForm
         static::deleting(function ($expense) {
             $expense->categories()->detach();
         });
+    }
+
+    public function vendor()
+    {
+
+        return $this->belongsTo(Vendor::class);
     }
 
     public function account()
