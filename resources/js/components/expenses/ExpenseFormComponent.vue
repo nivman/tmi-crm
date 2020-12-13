@@ -136,6 +136,32 @@
             </div>
             <div class="column">
               <div class="field">
+                <label class="label" for="vendor">ספקים</label>
+                <div class="control">
+                  <v-select
+                      label="name"
+                      id="vendor"
+                      name="vendor"
+                      item-value="id"
+                      item-text="name"
+                      v-model="form.vendor"
+                      input-id="vendor"
+                      :options="vendors"
+                      class="expenses-dropdown"
+                      :style="{ width: '100%' }"
+                      placeholder="בחירת ספקים">
+                    <template slot="no-options">
+                      :-( לא מצאתי ספק
+                    </template>
+                  </v-select>
+                </div>
+                <div class="help is-danger">
+                  {{ errors.first("project") }}
+                </div>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
                 <label class="label" for="details">פרטים</label>
                 <textarea
                     rows="2"
@@ -199,6 +225,7 @@ export default {
     return {
       accounts: [],
       projects: [],
+      vendors: [],
       account: null,
       project: null,
       loading: true,
@@ -214,7 +241,8 @@ export default {
         category: "",
         account_id: "",
         details: "",
-        project_id: ""
+        project_id: "",
+        vendor: ""
       })
     };
   },
@@ -236,6 +264,22 @@ export default {
                 ) {
                   this.form.category = this.categories[0].id;
                 }
+                this.$http
+                    .get(`app/vendors`)
+                    .then(res => {
+                      console.log(res.data.data)
+                      let vendors = [];
+                       res.data.data.filter(function (el) {
+                         vendors.push( {'id' : el.id, 'name' : el.name})
+                      },vendors);
+
+                      this.vendors = vendors
+
+                    })
+                    .catch(err =>
+                        this.$event.fire("appError", err.response)
+                    )
+
                 if (this.$route.params.id && !this.projectId) {
                   this.fetchExpense(this.$route.params.id);
                 } else {
@@ -330,9 +374,7 @@ export default {
             delete res.data.categories;
             delete res.data.projects;
             this.form = new this.$form(res.data);
-            this.account = this.accounts.find(
-                account => account.id == res.data.account_id
-            );
+            this.account = res.data.account
             this.loading = false;
           })
           .catch(err => {

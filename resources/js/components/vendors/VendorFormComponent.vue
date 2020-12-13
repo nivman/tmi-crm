@@ -192,10 +192,8 @@ export default {
         };
     },
     created() {
-        this.$http
-            .get("app/countries")
-            .then(countries => {
-                this.countries = countries.data;
+      console.log(this.projectId)
+
                 if (this.$route.params.id) {
                     this.fetchVendor(this.$route.params.id);
                 } else {
@@ -208,12 +206,9 @@ export default {
                         .catch(err =>
                             this.$event.fire("appError", err.response)
                         );
-                    if (this.country) {
-                        this.countryChange(this.country);
-                    }
+
                 }
-            })
-            .catch(err => this.$event.fire("appError", err.response));
+
     },
     methods: {
         submit() {
@@ -253,10 +248,7 @@ export default {
                     this.attributes = res.data.attributes;
                     delete res.data.attributes;
                     this.form = new this.$form(res.data);
-                    this.getStates(res.data.country, res.data.state);
-                    this.country = this.countries.find(
-                        country => country.value == res.data.country
-                    );
+
                     this.loading = false;
                 })
                 .catch(err => {
@@ -273,43 +265,7 @@ export default {
                 })
                 .catch(err => this.$event.fire("appError", err));
         },
-        countryChange(selected) {
-            if (selected) {
-                this.$http
-                    .get("app/states", { params: { country: selected.value } })
-                    .then(res => {
-                        this.state = null;
-                        this.states = res.data;
-                        this.loading = false;
-                    })
-                    .catch(err => this.$event.fire("appError", err.response));
-                this.country = selected;
-                this.form.country = selected.value;
-            } else {
-                this.states = [];
-                this.state = null;
-                this.form.country = "";
-                this.country = selected;
-            }
-        },
-        getStates(country, selectedSate) {
-            this.$http
-                .get("app/states", { params: { country: country } })
-                .then(res => {
-                    this.states = res.data;
-                    if (selectedSate) {
-                        this.state = this.states.find(
-                            state => state.value == selectedSate
-                        );
-                        this.stateChange(this.state);
-                    }
-                })
-                .catch(err => this.$event.fire("appError", err.response));
-        },
-        stateChange(selected) {
-            this.state = selected;
-            this.form.state = selected ? selected.value : "";
-        }
+
     }
 };
 </script>

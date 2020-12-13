@@ -29,6 +29,9 @@
                   <template slot="project" slot-scope="props">
                     {{ props.row.project ? props.row.project.name : '' }}
                   </template>
+                  <template slot="vendor" slot-scope="props">
+                    {{ props.row.vendor ? props.row.vendor.name : '' }}
+                  </template>
                     <template slot="account" slot-scope="props">
                         {{ props.row.account.name }}
                     </template>
@@ -93,7 +96,7 @@ export default {
                 range: 1,
                 date_range: '',
             }),
-            columns: ['created_at', 'title',  'project', 'details', 'category', 'account', 'amount', 'actions'],
+            columns: ['created_at', 'title',  'project', 'vendor','details', 'category', 'account', 'amount', 'actions'],
             options: {
                 perPage: 10,
                 orderBy: { ascending: false, column: 'created_at' },
@@ -106,6 +109,7 @@ export default {
                 details: 'פרטים',
                 category: 'קטגוריה',
                 project: 'פרוייקט',
+                vendor: 'ספק',
                 amount: 'סכום',
                 actions: 'פעולות',
               },
