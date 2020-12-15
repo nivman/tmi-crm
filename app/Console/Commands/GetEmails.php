@@ -280,26 +280,26 @@ class GetEmails extends Command
     {
         $body = strip_tags($message->getTextBody());
         $msg = preg_replace('/\[[^\]]*]/', '', $body);
-        $startMail = Carbon::parse($message->date->toArray()['formatted']);
-        $endData = Carbon::parse($message->date->toArray()['formatted']);
+        $startDate = Carbon::parse($message->date->toArray()['formatted']);
+        $endDate = Carbon::parse($message->date->toArray()['formatted']);
 
-            $startMail->addDay();
-            $startMail->setHours(8);
-            $startMail->setMinutes(0);
-            $endData->addDay();
-            $endData->setHours(8);
-            $endData->addMinutes(30);
+            $startDate->addDay();
+            $startDate->setHours(8);
+            $startDate->setMinutes(0);
+            $endDate->addDay();
+            $endDate->setHours(8);
+            $endDate->addMinutes(30);
 
         $emailData = [
             'name' => strip_tags($message->getSubject()),
             'details' => $msg,
-            'start_date' => $startMail,
-            'end_date' => $endData,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
             'status_id' => 10,  // make it dynamic // ( לא בוצע )
             'notification_enable' => 1,
-            'notification_time' => $startMail
+            'notification_time' => $startDate
         ];
-        dd($emailData);
+
        $task = Task::create($emailData);
 
         $target = (new AnonymousNotifiable)
