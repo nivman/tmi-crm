@@ -39,7 +39,9 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('customers/leads/unseen', 'CustomersController@unseenLeads');
     Route::get('tasks/unseen', 'TasksController@unseenTask');
     Route::get('tasks/cancel-notification/{task}', 'TasksController@cancelNotification');
-    Route::post('email/settings/', 'mail\EmailController@store');
+    Route::post('email/settings/store', 'mail\EmailController@store');
+    Route::post('email/settings/update/{emailSettings}', 'mail\EmailController@update');
+    Route::post('email/settings', 'mail\EmailController@index');
     Route::post('customers-projects/{ids}', 'ProjectsController@getProjectsFormCustomersByIds');
     Route::get('customers/projects/{id}', 'ProjectsController@getCustomerProjectsList');
     Route::post('customers-contacts/{ids}', 'ContactsController@getContactsCustomerById');

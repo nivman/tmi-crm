@@ -10,10 +10,36 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmailSettings extends Model
 {
-    use LogActivity, VueTable;
 
-    public static $columns = ['id', 'attribute', 'value'];
+    public $timestamps = false;
+    public static $columns = [
+        'main_mail_address',
+        'mail_from_name',
+        'imap_user_name',
+        'mail_host',
+        'mail_port',
+        'mail_user_name',
+        'mail_password',
+        'mail_encryption',
+        'mail_driver',
+        'imap_port'
+    ];
 
-    protected $fillable = ['attribute', 'value'];
+    protected $fillable = [
+        'main_mail_address',
+        'mail_from_name',
+        'imap_user_name',
+        'mail_host',
+        'mail_port',
+        'mail_user_name',
+        'mail_password',
+        'mail_encryption',
+        'mail_driver',
+        'imap_port',
+        'lead_title',
+        'event_title',
+        'task_title',
+        'imap_port'
+        ];
 
 }

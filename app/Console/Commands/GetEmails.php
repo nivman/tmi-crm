@@ -4,14 +4,20 @@ namespace App\Console\Commands;
 
 use App\Contact;
 use App\Customer;
+use App\EmailSettings;
 use App\Event;
 use App\Events\EmailEvent;
 use App\File;
+use App\Notifications\TaskNotification;
+use App\Task;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Thomasjohnkane\Snooze\ScheduledNotification;
 use Webklex\PHPIMAP\Client;
 use Webklex\PHPIMAP\ClientManager;
 
@@ -19,12 +25,26 @@ use Webklex\PHPIMAP\Folder;
 use Webklex\PHPIMAP\Message;
 use Webklex\PHPIMAP\Support\FolderCollection;
 use Webklex\PHPIMAP\Support\MessageCollection;
-
+//$client = $cm->make([
+//    'host'           => $this->settings['IMAP_HOST'],
+//    'port'           => $this->settings['IMAP_PORT'],
+//    'encryption'     => $this->settings['IMAP_ENCRYPTION'],
+//    'validate_cert'  => false,
+//    'protocol'       => 'imap',
+//    'decoder' => false,
+//    'username'       => $this->settings['IMAP_USERNAME'],
+//    'password'       => $this->settings['IMAP_PASSWORD'],
+//
+//]);
 class GetEmails extends Command
 {
     const MAIL_TYPE = 3;
     const MAIN_SYSTEM_CUSTOMER = 36;
     private $settings = null;
+    private $eventTitle = [];
+    private $leadTitle = [];
+    private $taskTitle = [];
+    private $mailMail = '';
     /**
      * The name and signature of the console command.
      *
@@ -57,39 +77,41 @@ class GetEmails extends Command
     public function handle()
     {
         $this->settings = json_decode(Storage::disk('local')->get('settings.json'), true);
-
-        $mailMail = $this->settings['MAIN_MAIL_ADDRESS'];
+        $emailSettings = EmailSettings::all()->toArray();
+        if (count($emailSettings) === 0) {
+            return false;
+        }
+        $this->mailMail = $emailSettings[0]['main_mail_address'];
+        $this->eventTitle = json_decode($emailSettings[0]['event_title']);
+        $this->leadTitle = json_decode($emailSettings[0]['lead_title']);
+        $this->taskTitle = json_decode($emailSettings[0]['task_title']);
 
         $cm = new Clientmanager();
 
         // $settings['IMAP_HOST'] = 'imap.googlemail.com'
         // $settings['MAIL_ENCRYPTION'] = ssl
         // $settings['IMAP_PORT'] = 993
-
         /** @var Client $message */
         $client = $cm->make([
-            'host'           => $this->settings['IMAP_HOST'],
-            'port'           => $this->settings['IMAP_PORT'],
-            'encryption'     => $this->settings['IMAP_ENCRYPTION'],
+            'host'           => $emailSettings[0]['mail_host'],
+            'port'           => $emailSettings[0]['imap_port'],
+            'encryption'     => $emailSettings[0]['mail_encryption'],
             'validate_cert'  => false,
             'protocol'       => 'imap',
-            'decoder' => false,
-            'username'       => $this->settings['IMAP_USERNAME'],
-            'password'       => $this->settings['IMAP_PASSWORD'],
+            'decoder'        => false,
+            'username'       => $emailSettings[0]['imap_user_name'],
+            'password'       => Crypt::decrypt($emailSettings[0]['mail_password']),
 
         ]);
         $client->connect();
         /** @var Folder $folder */
         $folder = $client->getFolder('INBOX');
 
-        $messagesFromMainEmail = $folder->messages()->unseen()->from($mailMail)->get();
-
+        $messagesFromMainEmail = $folder->messages()->unseen()->leaveUnread()->from($this->mailMail)->get();
         $this->outGoingEmail($messagesFromMainEmail);
 
-        $messagesToMailEmail = $folder->messages()->unseen()->to($mailMail)->get();
+        $messagesToMailEmail = $folder->messages()->unseen()->leaveUnread()->to($this->mailMail)->get();
         $this->incomingEmail($messagesToMailEmail);
-
-
 
         $mailsToRemove = $folder->messages()->unseen()->get();
         foreach($mailsToRemove as $message){
@@ -99,15 +121,22 @@ class GetEmails extends Command
 
     private function outGoingEmail($messages)
     {
-
         foreach($messages as $message){
 
              if (count($message->to) > 0) {
-                 if($message->to[0]->mail === $this->settings['MAIN_MAIL_ADDRESS'] && $message->subject === 'הקלטה') {
+
+                 if($message->to[0]->mail === $this->mailMail && in_array($message->subject,  $this->eventTitle)) {
 
                      $this->createRecordEmailEvent($message);
-                 }else{
-                     $this->runOverAddresses($message, $message->to[0]->mail);
+                 }
+                 elseif ($message->to[0]->mail === $this->mailMail && in_array($message->subject,  $this->taskTitle)) {
+                     $this->createTask($message);
+
+                 }
+                 else{
+                    if ($message->to[0]->mail !== $this->mailMail) {
+                        $this->runOverAddresses($message, $message->to[0]->mail);
+                    }
                  }
              }else {
                  $toAddresses = explode(",", $message->toaddress);
@@ -121,14 +150,15 @@ class GetEmails extends Command
              }
         }
     }
+
     private function incomingEmail($messages)
     {
         foreach($messages as $message){
 
-            if($message->subject == 'TMI Productions "פניה דרך האתר"') {
+            if(in_array($message->subject,  $this->leadTitle)) {
 
                 $this->createLead($message);
-            }else{
+            } else {
 
                 $addresses = $message->from;
                 foreach ($addresses as $key => $address) {
@@ -145,6 +175,7 @@ class GetEmails extends Command
             }
         }
     }
+
     private function createLead($message) {
         /** @var  Message $message */
          $email = [];
@@ -155,8 +186,8 @@ class GetEmails extends Command
 
         $v = [
             'name' => 'ליד חדש מהאתר',
-            'email' => count($email) > 0 ?$email[1] : '',
-            'phone' => count($phone) > 0 ?$phone[1] : '',
+            'email' => count($email) > 0 ? $email[1] : '',
+            'phone' => count($phone) > 0 ? $phone[1] : '',
             'user_id' => 1,
             'is_lead' => 1,
             'opening_balance' => -1
@@ -174,7 +205,6 @@ class GetEmails extends Command
 
     private function searchCustomersEmails($message, $address, $createFile = false)
     {
-
         $customer = DB::table('customers', 'cu')
             ->leftJoin('contacts', 'cu.id', '=', 'contacts.customer_id')
             ->select(
@@ -200,7 +230,6 @@ class GetEmails extends Command
             }
             return $contacts[0];
         }
-
         return false;
     }
 
@@ -224,7 +253,6 @@ class GetEmails extends Command
         }
     }
 
-
     /** @var  Message $message */
     private function createRecordEmailEvent($message)
     {
@@ -246,6 +274,42 @@ class GetEmails extends Command
             $customer = $this->searchCustomersEmails($message, $this->settings['MAIN_MAIL_ADDRESS'], $attachment->getName());
             $this->createEmailEvent($customer, $message, $attachment->getName());
         },);
+    }
+    /** @var  Message $message */
+    private function createTask($message)
+    {
+        $body = strip_tags($message->getTextBody());
+        $msg = preg_replace('/\[[^\]]*]/', '', $body);
+        $startMail = Carbon::parse($message->date->toArray()['formatted']);
+        $endData = Carbon::parse($message->date->toArray()['formatted']);
+
+            $startMail->addDay();
+            $startMail->setHours(8);
+            $startMail->setMinutes(0);
+            $endData->addDay();
+            $endData->setHours(8);
+            $endData->addMinutes(30);
+
+        $emailData = [
+            'name' => strip_tags($message->getSubject()),
+            'details' => $msg,
+            'start_date' => $startMail,
+            'end_date' => $endData,
+            'status_id' => 10,  // make it dynamic // ( לא בוצע )
+            'notification_enable' => 1,
+            'notification_time' => $startMail
+        ];
+        dd($emailData);
+       $task = Task::create($emailData);
+
+        $target = (new AnonymousNotifiable)
+            ->route('mail', $this->mailMail);
+
+        ScheduledNotification::create(
+            $target,
+            new TaskNotification($task),
+            Carbon::parse($task->notification_time)
+        );
     }
 
     private function saveFileInDb($message, $event, $createFile)
