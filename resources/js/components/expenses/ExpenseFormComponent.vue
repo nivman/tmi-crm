@@ -267,7 +267,7 @@ export default {
                 this.$http
                     .get(`app/vendors`)
                     .then(res => {
-                      console.log(res.data.data)
+
                       let vendors = [];
                        res.data.data.filter(function (el) {
                          vendors.push( {'id' : el.id, 'name' : el.name})

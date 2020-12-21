@@ -297,7 +297,8 @@ class GetEmails extends Command
             'end_date' => $endDate,
             'status_id' => 10,  // make it dynamic // ( לא בוצע )
             'notification_enable' => 1,
-            'notification_time' => $startDate
+            'notification_time' => $startDate,
+            'customer_id' => 36 // default customer make it dynamic one day
         ];
 
        $task = Task::create($emailData);

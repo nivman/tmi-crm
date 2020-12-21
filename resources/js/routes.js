@@ -368,6 +368,28 @@ const router = new VueRouter({
             ]
         },
         {
+            path: "/notes",
+            component: () => import( /* webpackChunkName: "components" */ "./components/notes/NotesListComponent.vue"),
+            meta: { title: "Note", admin: false },
+            children: [
+                {
+                    path: "add",
+                    component: () => import(/* webpackChunkName: "components" */ "./components/notes/NotesFormComponent.vue"),
+                    meta: { title: "הוספת פתק", admin: true, modal: true }
+                },
+                {
+                    path: "edit/:id",
+                    component: () =>
+                        import(/* webpackChunkName: "components" */ "./components/notes/NotesFormComponent.vue"),
+                    meta: {
+                        title: "עריכת  פתק",
+                        admin: true,
+                        modal: true
+                    }
+                }
+            ]
+        },
+        {
             path: "/expenses",
             component: () => import(/* webpackChunkName: "components" */ "./components/expenses/ExpenseListComponent.vue"),
             meta: { title: "Expenses", admin: false },
@@ -587,6 +609,38 @@ const router = new VueRouter({
                                 import(/* webpackChunkName: "components" */ "./components/settings/SourcesOfArrivalFormComponent.vue"),
                             meta: {
                                 title: "עריכת מקור הגעה",
+                                admin: true,
+                                modal: true
+                            }
+                        }
+                    ]
+                },
+                {
+                    path: "notes-categories",
+                    component: () => import("./components/settings/NotesCategoriesListComponent.vue"),
+                    meta: { title: "notesCategories", admin: false, super: true }
+                },
+                {
+                    path: "notes-categories",
+                    component: () => import("./components/settings/NotesCategoriesFormComponent.vue"),
+                    meta: { title: "notesCategories", admin: true },
+                    children: [
+                        {
+                            path: "add",
+                            component: () =>
+                                import(/* webpackChunkName: "components" */ "./components/settings/NotesCategoriesFormComponent.vue"),
+                            meta: {
+                                title: "הוספת תגיות לפתקים",
+                                admin: true,
+                                modal: true
+                            }
+                        },
+                        {
+                            path: "edit/:id",
+                            component: () =>
+                                import(/* webpackChunkName: "components" */ "./components/settings/NotesCategoriesFormComponent.vue"),
+                            meta: {
+                                title: "עריכת תגיות לפתקים",
                                 admin: true,
                                 modal: true
                             }

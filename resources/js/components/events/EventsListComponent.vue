@@ -212,9 +212,9 @@ export default {
                     type: em.types
                   }
                 })
-                .catch(err => this.$event.fire('appError', err.response))
+                .catch(err => this.$event.fire('appError1', err.response))
           })
-          .catch(err => this.$event.fire('appError', err.response))
+          .catch(err => this.$event.fire('appError2', err.response))
     },
     format_date(value) {
 
@@ -266,7 +266,7 @@ export default {
                     this.$modal.hide('dialog')
                   })
                   .catch(err => {
-                    this.$event.fire('appError', err.response)
+                    this.$event.fire('appError3', err.response)
                   })
             }
           },

@@ -22,3 +22,7 @@ export const stock = state => {
 export const notifications = state => {
     return state.notifications.payment_due > 0 || state.notifications.payment_review > 0;
 };
+export const note = state => {
+
+    return state.note
+};

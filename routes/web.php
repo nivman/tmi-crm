@@ -30,6 +30,10 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::post('massActions', 'MassActionsController@action');
     Route::get('massActions/status/{entity}', 'MassActionsController@getStatues');
     Route::get('taxes', 'TaxesController@index');
+    Route::post('notes-categories/update/{notesCategories}', 'NotesCategoriesController@update');
+    Route::get('notes-categories/{notesCategories}', 'NotesCategoriesController@edit');
+    Route::get('notes-categories', 'NotesCategoriesController@index');
+    Route::post('notes-categories/create', 'NotesCategoriesController@store');
     Route::get('eventsTypes', 'EventsTypesController@getEventsTypes');
     Route::get('accounts', 'AccountsController@index');
     Route::put('users/{user}', 'UsersController@update');
@@ -95,6 +99,16 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::post('users/change_password', 'UsersController@changePassword');
     Route::resource('incomes', 'IncomesController')->except(['update', 'destroy']);
     Route::resource('vendors', 'VendorsController')->except(['update', 'destroy']);
+    Route::post('notes/store', 'NotesController@store');
+    Route::delete('notes/{notes}', 'NotesController@destroy');
+    Route::post('notes/create', 'NotesController@create');
+    Route::post('notes/edit/{notes}', 'NotesController@edit');
+    Route::post('notes/categories', 'NotesController@getCategories');
+    Route::post('notes/edit-title', 'NotesController@changeTitle');
+    Route::post('notes/color', 'NotesController@changeColor');
+    Route::post('notes/edit-subject', 'NotesController@changeSubject');
+    Route::delete('notes/edit-subject/{note}', 'NotesController@destroy');
+    Route::resource('notes', 'NotesController');
     Route::resource('products', 'ProductsController')->except(['update', 'destroy']);
     Route::resource('expenses', 'ExpensesController')->except(['update', 'destroy']);
     Route::resource('invoices', 'InvoicesController')->except(['update', 'destroy']);

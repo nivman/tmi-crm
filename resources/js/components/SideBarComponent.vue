@@ -148,6 +148,21 @@
             </li>
           </template>
         </side-bar-menu-component>
+        <side-bar-menu-component :expand="subIsActive(['/notes'])">
+                <span class="icon is-small m-l-sm">
+                 <i class="far fa-sticky-note"></i>
+                </span>
+          פתקים
+          <template slot="submenu">
+            <li>
+              <router-link to="/notes" exact @click.native="hideMenu">רשימת פתקים</router-link>
+            </li>
+            <li>
+            <li>
+              <router-link to="/notes/add" @click.native="hideMenu">יצירת פתק</router-link>
+            </li>
+          </template>
+        </side-bar-menu-component>
         <side-bar-menu-component :expand="subIsActive(['/vendors'])">
                 <span class="icon is-small m-l-sm">
                     <i class="fas fa-fw fa-user-friends"></i>
@@ -312,12 +327,11 @@
                             <router-link to="/settings/statuses" @click.native="hideMenu">רשימת סטטוסים</router-link>
                         </li>
                        <li>
-                            <router-link to="/settings/arrival-source" @click.native="hideMenu">
-                              רשימת מקורות הגעה
+                            <router-link to="/settings/arrival-source" @click.native="hideMenu">                            רשימת מקורות הגעה
                             </router-link>
                         </li>
                        <li>
-                            <router-link to="/settings/fields" @click.native="hideMenu"></router-link>
+                            <router-link to="/settings/notes-categories" @click.native="hideMenu">רשימת תגיות לפתקים </router-link>
                         </li>
                       </template>
                 </side-bar-menu-component>

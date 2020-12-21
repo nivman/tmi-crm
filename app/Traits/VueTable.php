@@ -25,9 +25,11 @@ trait VueTable
 
         $limit = $request->request->filter('limit') == '' ? 10 : (int)$request->request->filter('limit');
         $page = (int)$request->request->filter('page');
+
         if ((isset($query) && $query) || (isset($filters) && $filters)) {
             if ($byColumn == 1) {
                 $filters_query = json_decode($filters);
+
                 static::filterByColumn($data, $filters_query);
             } else {
                 static::filter($data, $query, $fields, $joinTables);
@@ -109,7 +111,6 @@ trait VueTable
         $queryFields = json_decode($query, true);
         $data->where(function ($q) use ($query, $fields, $joinTables, $data, $queryFields) {
 
-
             foreach ($fields as $index => $field) {
                 $relation = explode('.', $field);
 
@@ -138,15 +139,16 @@ trait VueTable
                     });
                 } else {
                     $queryFields = json_decode($query, true);
-                    $method = (!$queryFields && $index) ? 'orWhere' : 'where';
+                    $hasQueryFields = (!$queryFields || is_int($queryFields)) ? null : $queryFields;
+                    $method = (!$hasQueryFields && $index) ? 'orWhere' : 'where';
 
-                    if ($queryFields  && $joinTables) {
+                    if ($hasQueryFields  && $joinTables) {
 
-                        self::runOverFields($queryFields, $data, $method, $q, $joinTables);
+                        self::runOverFields($hasQueryFields, $data, $method, $q, $joinTables);
                     }
                     else {
-                        if ($queryFields) {
-                             self::runOverFields($queryFields, $data, $method, $q, $joinTables);
+                        if ($hasQueryFields) {
+                             self::runOverFields($hasQueryFields, $data, $method, $q, $joinTables);
                         } else {
 
                             $q->{$method}($field, 'LIKE', "%{$query}%");

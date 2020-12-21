@@ -326,7 +326,7 @@ export default {
         this.getEventById(e.params.eventId);
       }
       else if (e.params.event) {
-        console.log(e.params.event.contact)
+
         this.form = new this.$form(e.params.event)
         this.form.contact = e.params.event.contact.first_name + ' ' + e.params.event.contact.last_name
         this.form.contact_id = e.params.event.contact.id

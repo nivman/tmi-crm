@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 // import * as actions from './actions'
 import * as getters from "./getters";
-import { UPDATE_SETTINGS, UPDATE_USER, TOGGLE_SIDEBAR, TOGGLE_LOADING, SET_STOCK, UPDATE_NOTIFICATION } from "./mutation-types";
+import { UPDATE_SETTINGS, UPDATE_USER, TOGGLE_SIDEBAR, TOGGLE_LOADING, SET_STOCK, UPDATE_NOTIFICATION, UPDATE_NOTES } from "./mutation-types";
 
 Vue.use(Vuex);
 
@@ -15,7 +15,8 @@ function builder(data) {
             sideBar: false,
             user: data.user,
             settings: data.settings,
-            notifications: data.notifications
+            notifications: data.notifications,
+            note: false
         },
         // actions,
         getters,
@@ -41,6 +42,10 @@ function builder(data) {
             [UPDATE_NOTIFICATION](state, notification) {
                 let notifications = { ...state.notifications, ...notification };
                 state.notifications = notifications;
+            },
+            [UPDATE_NOTES](state, note) {
+
+                state.note = note
             }
         }
     });

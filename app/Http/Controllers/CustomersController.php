@@ -58,8 +58,9 @@ class CustomersController extends Controller
 
     public function index(Request $request)
     {
+
         $leadRequest = strpos($request->getPathInfo(), 'lead') ? 1 : 0;
-        $customers = Customer::with(['journal', 'status'])->where('is_lead', '=', $leadRequest)->vueTable(Customer::$columns);
+        $customers = Customer::with(['journal', 'status'])->where('is_lead', '=', $leadRequest)->mine()->vueTable(Customer::$columns);
         $attributes = (new Customer)->getCustomFields($customers);
 
         foreach ($customers['data'] as $key => $customer) {

@@ -15,7 +15,7 @@
           <i class="fas fa-plus m-l-sm"/> הוספת משימה
         </router-link>
         משימות
-        <span v-if="customerId || projectId"> עבור : <strong>{{customerName || projectName}}</strong> </span>
+        <span v-if="customerId || projectId"> עבור : <strong>{{ customerName || projectName }}</strong> </span>
 
       </div>
 
@@ -32,7 +32,7 @@
             <input type="checkbox" class="form-control" v-model="tasksIds" :value="props.row.id" :id="props.row.id">
           </div>
           <template slot="name" slot-scope="props">
-            {{props.row.name}}
+            {{ props.row.name }}
           </template>
           <template slot="customer" slot-scope="props">
             <div class="has-text-centered">
@@ -47,28 +47,26 @@
             </div>
           </template>
           <template slot="details" slot-scope="props">
-
-
-            <textarea
-                rows="3"
-                cols="150"
-                name="details"
-                :id="'details-textarea-'+ props.row.id"
-                class="textarea details-textarea"
-                @keyup="editDetails"
-                v-model="props.row.details">
-                </textarea>
+                 <textarea
+                     rows="3"
+                     cols="150"
+                     name="details"
+                     :id="'details-textarea-'+ props.row.id"
+                     class="textarea details-textarea"
+                     @keyup="editDetails"
+                     v-model="props.row.details">
+                  </textarea>
           </template>
           <template slot="category" slot-scope="props">
             {{ props.row.category ? props.row.category.name : '' }}
           </template>
           <template slot="workingHours" slot-scope="props">
-            {{ props.row.actual_time ?  parseFloat(props.row.actual_time / 60).toFixed(2)  : '' }}
+            {{ props.row.actual_time ? parseFloat(props.row.actual_time / 60).toFixed(2) : '' }}
           </template>
 
           <template slot="amountPerHours" slot-scope="props">
-<!--            //TODO hour wage should be dynamic-->
-            {{ props.row.actual_time ?  parseFloat(props.row.actual_time / 60 * 150).toFixed(2) : '' }}
+            <!--            //TODO hour wage should be dynamic-->
+            {{ props.row.actual_time ? parseFloat(props.row.actual_time / 60 * 150).toFixed(2) : '' }}
           </template>
           <template slot="start_date" slot-scope="props">
 
@@ -91,15 +89,15 @@
             <div>
               <ul style="font-size: 12px">
                 <li class="has-text-centered" v-if="props.row.actual_time">
-                <strong>  מחיר פרוייקט</strong>
+                  <strong> מחיר פרוייקט</strong>
                 </li>
-                <li class="has-text-centered" >
+                <li class="has-text-centered">
 
                   <strong>{{ props.row.actual_time ? props.row.projectPrice : '' }} </strong>
                 </li>
               </ul>
               <div class="has-text-centered">
-                {{ props.row.actual_time ? calculatePercentage( props.row.actual_time, props.row.projectPrice) : '' }}
+                {{ props.row.actual_time ? calculatePercentage(props.row.actual_time, props.row.projectPrice) : '' }}
               </div>
             </div>
           </template>
@@ -107,7 +105,8 @@
           <template slot="actions" slot-scope="props">
             <div class="has-addons is-centered">
               <p class="control tooltip">
-                <router-link  style="font-size: 0.78em"  :to="'/tasks/' + props.row.id" class="button is-primary is-small">
+                <router-link style="font-size: 0.78em" :to="'/tasks/' + props.row.id"
+                             class="button is-primary is-small">
                   <i class="fas fa-file-alt"/>
                   <span class="tooltip-text">פרטי משימה</span>
                 </router-link>
@@ -119,7 +118,8 @@
                 </button>
               </p>
               <p class="control tooltip" v-if="$store.getters.admin">
-                <router-link style="font-size: 0.65rem" :to="'/tasks/edit/' + props.row.id" class="button is-warning is-small">
+                <router-link style="font-size: 0.65rem" :to="'/tasks/edit/' + props.row.id"
+                             class="button is-warning is-small">
                   <i class="fas fa-edit"></i>
                   <span class="tooltip-text">עריכה</span>
                 </router-link>
@@ -157,6 +157,7 @@ import 'daterangepicker/daterangepicker.css'
 import 'daterangepicker/daterangepicker.js'
 import MassActionsComponent from '../massActions/MassActionsComponent'
 import Velocity from "velocity-animate";
+
 export default {
   mixins: [mId, tBus('app/tasks')],
   props: [
@@ -166,7 +167,7 @@ export default {
     'projectId',
     'projectName'
   ],
-  data () {
+  data() {
     return {
       tasksIds: [],
       showTaskForm: false,
@@ -186,25 +187,26 @@ export default {
         'actions'],
       filters: new this.$form({
         name: 'שם',
-        customer: { name: 'לקוח' },
+        customer: {name: 'לקוח'},
         project: 'פרוייקט',
         category: 'קטגוריה',
         date_to_complete: 'תאריך לביצוע',
         start_date: 'זמן התחלה',
         range: {
-            startDate: '',
-            endDate: ''
-          },
-        date_range: ''}),
-        addRoute: null,
-        options: {
-        filterByColumn:true,
+          startDate: '',
+          endDate: ''
+        },
+        date_range: ''
+      }),
+      addRoute: null,
+      options: {
+        filterByColumn: true,
         dateColumns: ['start_date'],
         datepickerOptions: {
           opens: 'right'
         },
-        orderBy: { ascending: false, column: 'start_date' },
-        sortable: ['id', 'name','priority','customer','start_date', 'project', 'status', 'category'],
+        orderBy: {ascending: false, column: 'start_date'},
+        sortable: ['id', 'name', 'priority', 'customer', 'start_date', 'project', 'status', 'category'],
         editableColumns: ['details'],
         perPage: 10,
         columnsClasses: {
@@ -224,7 +226,7 @@ export default {
           actions: 'header-table-font',
           category: 'header-table-font'
         },
-        filterable: ['name','details','customer', 'project', 'status', 'priority', 'category', 'start_date'],
+        filterable: ['name', 'details', 'customer', 'project', 'status', 'priority', 'category', 'start_date'],
         headings: {
           name: 'נושא',
           customer: 'לקוח',
@@ -232,7 +234,7 @@ export default {
           details: 'תוכן',
           workingHours: 'שעות עבודה',
           amountPerHours: 'סכום פרוייקט',
-          percentageOfProject : '% עבודה מהפרוייקט',
+          percentageOfProject: '% עבודה מהפרוייקט',
           priority: 'עדיפות',
           status: 'סטטוס',
           start_date: 'זמן התחלה',
@@ -240,28 +242,28 @@ export default {
           actions: 'פעולות',
           category: 'קטגוריה'
         },
-          headingsTooltips: {
-            percentageOfProject :'אחוז עבודה ביחס למחיר הפרוייקט',
-            actual_time: 'זמן בפועל לביצוע',
-            amountPerHours: 'סכום שעות העבודה'
-          }
+        headingsTooltips: {
+          percentageOfProject: 'אחוז עבודה ביחס למחיר הפרוייקט',
+          actual_time: 'זמן בפועל לביצוע',
+          amountPerHours: 'סכום שעות העבודה'
+        }
       },
     }
   },
 
   methods: {
     massActionSubmit() {
-    this.tasksIds =[];
+      this.tasksIds = [];
     },
-    editDetails (val) {
+    editDetails(val) {
       let id = val.target.id.replace(/[^\d.]/g, '')
       this.$http(`app/tasks/details/${val.target.value}/${id}`).then()
 
     },
     goBack() {
-      if(this.customerId) {
+      if (this.customerId) {
         this.$emit("showCustomerList", true);
-      }else if (this.projectId) {
+      } else if (this.projectId) {
         this.$emit("showProjectsList", true);
       }
     },
@@ -278,25 +280,25 @@ export default {
 
         if (Number.isFinite(percentage)) {
 
-          return ' % ' + totalTimeAsAmount.toFixed(2) ;
+          return ' % ' + totalTimeAsAmount.toFixed(2);
         }
       }
     },
-    setTextFilter(){
+    setTextFilter() {
       // this is here because the clear button is not changing the filter text from the previous date selected
       // to the filter title
       let em = this;
-      setTimeout(()=>{
+      setTimeout(() => {
         let element = em.$el.querySelector('.VueTables__filter-placeholder');
-        element.addEventListener('click', function(event) {
+        element.addEventListener('click', function (event) {
           let btn = document.querySelector('.cancelBtn');
 
-          btn.addEventListener('click', function(event) {
+          btn.addEventListener('click', function (event) {
             let dateFilter = document.querySelector('#VueTables__start_date-filter')
             dateFilter.innerHTML = "סינון זמן התחלה\n"
           });
         });
-      },200)
+      }, 200)
     },
     beforeEnter: function (el) {
       el.style.opacity = 0
@@ -314,31 +316,29 @@ export default {
     },
   },
 
-  created () {
+  created() {
     this.setTextFilter()
 
-    if(this.customerId != undefined) {
+    if (this.customerId != undefined) {
 
-       this.addRoute = `/tasks/add?customerId=${this.customerId}`;
-     }
-     else if (this.projectId != undefined) {
+      this.addRoute = `/tasks/add?customerId=${this.customerId}`;
+    } else if (this.projectId != undefined) {
 
-       this.addRoute = `/tasks/add?projectId=${this.projectId}`;
-     }else {
+      this.addRoute = `/tasks/add?projectId=${this.projectId}`;
+    } else {
 
-       this.addRoute = '/tasks/add';
-     }
+      this.addRoute = '/tasks/add';
+    }
 
   },
   computed: {
     url: {
-      get () {
+      get() {
 
         let route = 'app/tasks';
         if (this.customerId) {
           route = `app/customers/tasks/${this.customerId}`;
-        }
-        else if (this.projectId) {
+        } else if (this.projectId) {
           route = `app/projects/tasks/${this.projectId}`;
         }
         return route;
@@ -347,7 +347,7 @@ export default {
     },
 
   },
-  components: { DateFormatComponent, MassActionsComponent},
+  components: {DateFormatComponent, MassActionsComponent},
 
 }
 </script>
@@ -367,22 +367,27 @@ table td .details-textarea {
   padding: 0px !important;
 }
 
-.back-title{
+.back-title {
   padding: 5px;
 }
-.svg-display{
+
+.svg-display {
   height: 30px !important;
 }
-.dates-range{
+
+.dates-range {
   display: inline;
 }
-.date-range-position{
+
+.date-range-position {
   display: block !important;
 }
-.vc-popover-content-wrapper{
+
+.vc-popover-content-wrapper {
   direction: ltr;
 }
-.flatpickr-input{
+
+.flatpickr-input {
   font-size: 12px !important;
 }
 
