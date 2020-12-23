@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Expense;
 use App\Http\Requests\ExpenseRequest;
-
+ 
+use Illuminate\Http\Request;
 class ExpensesController extends Controller
 {
     public function create()
@@ -19,9 +20,9 @@ class ExpensesController extends Controller
         return response(['success' => true], 204);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Expense::mine()->vueTable(Expense::$columns));
+        return response()->json(Expense::vueTable(Expense::$columns));
     }
 
     public function show(Expense $expense)

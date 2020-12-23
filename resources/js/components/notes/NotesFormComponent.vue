@@ -47,14 +47,16 @@
               </div>
               <div class="column">
                 <div class="field">
-                  <label class="label" for="categories">קטגוריה</label>
+                  <label class="label" for="category_note">קטגוריה</label>
                   <v-select
                       label="name"
-                      id="categories"
-                      name="categories"
+                      id="category_note"
+                      name="category_note"
                       class="rtl-direction"
                       item-value="id"
                       item-text="name"
+                      return-object
+                      single-line
                       :options="categories_notes"
                       v-model="form.category_note">
                     <template v-slot:option="categories_notes">
@@ -102,7 +104,7 @@ export default {
         id: "",
         title: "",
         subject: "",
-        category_note: ''
+        category_note: ""
       })
     };
   },
@@ -118,11 +120,11 @@ export default {
                       return category;
                 }
             })
-            this.form = res.data.notes
+            this.form.id = res.data.notes.id
+            this.form.title = res.data.notes.title
+            this.form.subject = res.data.notes.subject
+            this.form.category_note = category_note
             this.categories_notes = res.data.notesCategories
-            this.form.category_note = {'id' : res.data.notes.note_category_id, 'name': category_note[0].name, 'background' : category_note[0].color}
-
-
           })
           .catch(err => this.$event.fire("appError", err.response))
     }else{
@@ -138,20 +140,39 @@ export default {
   methods: {
     submit() {
       this.isSaving = true;
-      this.form
-          .post("app/notes/store")
-          .then((res) => {
-            this.$router.push('/notes')
-            this.$store.commit('UPDATE_NOTES', {'note': res.data});
 
-            this.notify(
-                "success",
-                " פתק נוסף בהצלחה"
-            );
+      if(this.form.id) {
+        this.form
+            .post(`app/notes/update/${this.form.id}`)
+            .then((res) => {
+              this.$router.push({path: '/notes', params: { state :'update'}})
+              this.$store.commit('UPDATE_NOTES', {'note': res.data});
 
-          })
-          .catch(err => this.$event.fire("appError", err.response))
-          .finally(() => (this.isSaving = false));
+              this.notify(
+                  "success",
+                  " פתק נוסף בהצלחה"
+              );
+
+            })
+            .catch(err => this.$event.fire("appError", err.response))
+            .finally(() => (this.isSaving = false));
+      }else {
+        this.form
+            .post("app/notes/store")
+            .then((res) => {
+              this.$router.push('/notes')
+              this.$store.commit('UPDATE_NOTES', {'note': res.data});
+
+              this.notify(
+                  "success",
+                  " פתק נוסף בהצלחה"
+              );
+
+            })
+            .catch(err => this.$event.fire("appError", err.response))
+            .finally(() => (this.isSaving = false));
+      }
+
     },
     validateForm() {
       this.$validator

@@ -28,7 +28,7 @@ class ContactsController extends Controller
 
     public function index()
     {
-
+        return Contact::with(['customer'])->mine()->vueTable(Contact::$columns);
     }
 
     public function search(Request $request)

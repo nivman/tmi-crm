@@ -14,7 +14,7 @@ class Expense extends ModelForm
 {
     use AttributableModel, LogActivity, Restrictable, VueTable;
 
-    public static $columns = ['id', 'created_at', 'title', 'reference', 'amount', 'categories.name', 'account.name', 'projects.name', 'vendor.name'];
+    public static $columns = ['id', 'created_at', 'title', 'reference', 'amount', 'vendor.name','categories.name', 'account.name', 'project.name'];
 
     protected $fillable = ['id', 'title', 'amount', 'reference', 'details', 'account_id', 'user_id', 'project_id', 'vendor_id'];
     protected $hidden   = ['updated_at'];

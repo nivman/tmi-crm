@@ -12,13 +12,17 @@ use Illuminate\Support\Facades\DB;
 
 class Contact extends Model
 {
-    use AccountingJournal, AttributableModel, LogActivity, Restrictable, VueTable;
+    use AttributableModel, LogActivity, Restrictable, VueTable;
 
-    public static $columns = ['id', 'first_name', 'last_name', 'email', 'phone'];
+    public static $columns = ['id', 'first_name', 'last_name', 'email', 'phone', 'customer'];
 
     protected $fillable = ['first_name', 'last_name', 'email', 'phone', 'customer_id'];
     protected $hidden   = ['created_at', 'updated_at'];
 
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 
     public function createNewContact($customer, $id)
     {

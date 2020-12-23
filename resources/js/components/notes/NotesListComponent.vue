@@ -2,17 +2,17 @@
 
   <div class="wrapper" ref="notesTable">
     <div v-if="$store.state.note">
-      {{ updateNotes($store.state.note) }}
+      {{ updateNotesList($store.state.note) }}
     </div>
 
     <div class="panel panel-default">
       <div class="panel-heading panel-heading-notes">
-       <div class="inner-panel-heading">
-         פתקים
-         <router-link to="/notes/add" class="button is-link is-small is-pulled-right">
-           <i class="fas fa-plus m-l-sm" /> הוספת פתק
-         </router-link>
-       </div>
+        <div class="inner-panel-heading">
+          פתקים
+          <router-link to="/notes/add" class="button is-link is-small is-pulled-right">
+            <i class="fas fa-plus m-l-sm"/> הוספת פתק
+          </router-link>
+        </div>
 
         <div class="columns">
           <input class="input column" ref="myBtn" id="search" v-model="searchTerm" type="text">
@@ -62,7 +62,7 @@
                 </div>
                 <a class="card-header-icon" aria-label="more options">
                   <span class="icon">
-                <p class="control tooltip" >
+                <p class="control tooltip">
                   <router-link :to="'/notes/edit/' + note.id" class="is-medium">
                     <i style="color: rgba(10, 10, 10, 0.2)" class="far fa-square m-l-sm"></i>
                     <span class="tooltip-text">עריכה</span>
@@ -135,7 +135,7 @@
         </transition-group>
       </div>
       <div v-infinite-scroll="infiniteHandler" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-       זהו. זה מה שיש
+        זהו. זה מה שיש
       </div>
 
     </div>
@@ -154,12 +154,13 @@ import NotesFormComponent from "./NotesFormComponent";
 import infiniteScroll from 'vue-infinite-scroll'
 import Multiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
+
 export default {
   props: ['params'],
   mixins: [tBus('app/notes')],
   data() {
     return {
-      counter:0,
+      counter: 0,
       showEditTitle: null,
       showEditSubject: null,
       showCategoriesSubject: null,
@@ -197,10 +198,10 @@ export default {
       }, 500)
 
     },
-    'searchNotesCategories': function() {
-     let categoryIds = []
-     this.searchNotesCategories.filter( function(index, name){
-       categoryIds.push(index.id)
+    'searchNotesCategories': function () {
+      let categoryIds = []
+      this.searchNotesCategories.filter(function (index, name) {
+        categoryIds.push(index.id)
       });
 
       this.categoryIds = categoryIds;
@@ -214,7 +215,7 @@ export default {
       }, 1500)
     },
     'note_category': function (note) {
-      console.log(this.noteId)
+
       if (!note) {
         this.updateColor(-1, this.noteId)
         return
@@ -234,13 +235,49 @@ export default {
     }
   },
   methods: {
-    updateNotes() {
-      this.note = this.$store.getters.note
+    updateNotesList() {
+
+      let em = this
+      let hasNote = this.notes.some(function (note) {
+        return note.id == em.$store.getters.note.note.id
+      })
+
+      if (hasNote === false) {
+        this.note = this.$store.getters.note
+      } else {
+        this.updateNote(this.$store.getters.note)
+      }
+
+    },
+    updateNote(updateNote) {
+
+      let em = this;
+
+      this.notes.some(function (note) {
+
+        if (note.id == updateNote.note.id) {
+
+          let index = em.notes.indexOf(note)
+          em.notes[index].title = updateNote.note.title
+          em.notes[index].subject = updateNote.note.subject
+          let hasCategory = em.notesCategories.some(function (category) {
+
+            if (category.id == updateNote.note.note_category_id) {
+              em.notes[index].note_category = category
+              return true;
+            }
+          })
+          if (!hasCategory) {
+            em.notes[index].note_category = ''
+          }
+
+        }
+      })
     },
     changeTitle(noteId) {
       this.showEditTitle = noteId;
     },
-     changeSubject(noteId) {
+    changeSubject(noteId) {
       this.showEditSubject = noteId;
     },
     changeNotesCategories(noteId) {
@@ -256,7 +293,7 @@ export default {
       this.busy = true
       this.$http.get(`/app/notes?page=${this.page}&query=${this.searchTerm}&categoryId=${this.categoryIds}`)
           .then(response => {
-            console.log(response)
+
             if (response.data.data.length > 0) {
 
               return response.data;
@@ -273,7 +310,7 @@ export default {
       });
 
     },
-    deleteNote(notes,id) {
+    deleteNote(notes, id) {
       let em = this;
 
       this.$modal.show('dialog', {
@@ -380,9 +417,11 @@ export default {
 .active {
   display: none;
 }
-.noMargin{
+
+.noMargin {
   margin-right: 0px;
 }
+
 .footer-note {
   width: 100% !important;
   padding: 0px !important;
@@ -410,22 +449,27 @@ export default {
 .column-footer-note > div {
   height: 99% !important;
 }
+
 .multiselect-column {
   padding: 0px;
   text-align: right;
 }
+
 .multiselect__option {
   text-align: right;
 }
+
 .option__desc {
   border-radius: 5px;
   padding: 10px;
   position: relative;
 }
+
 .inner-panel-heading {
   height: 50px;
 }
-.panel-heading-notes{
+
+.panel-heading-notes {
   margin-left: 1%;
 }
 </style>

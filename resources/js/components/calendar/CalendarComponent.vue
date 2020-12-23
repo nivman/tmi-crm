@@ -16,7 +16,7 @@
             <span class="control tooltip">
                <a @click="addEvent" class="button is-link is-small is-pulled-left">
                      <i class="fas fa-comment-dots"></i>
-                     <span class="tooltip-text bottom">התקשרותחדשה</span>
+                     <span class="tooltip-text bottom">התקשרות חדשה</span>
                </a>
             </span>
             <span class="control tooltip">
@@ -97,10 +97,12 @@ export default {
     }
   },
   created() {
-    console.log(this.$event)
-    this.$event.listen("refreshEvents", () => {
 
-      this.fetchEvents(moment(this.showDate).format("YYYY-MM-DD"));
+    this.$event.listen("refreshEvents", () => {
+      let activeRange = this.$refs.calendar.getApi().currentData.dateProfile.activeRange;
+      let startDate = moment(activeRange.start).format("YYYY-MM-DD");
+      let endDate =moment(activeRange.end).format("YYYY-MM-DD")
+      this.fetchEvents(startDate, endDate);
     });
 
   },
@@ -134,6 +136,7 @@ export default {
       this.$http
           .get(`app/events?start=${start}&end=${end}&fetchData=${this.fetchData}`)
           .then(res => {
+            console.log(res)
             let calendarView = this.$refs.calendar.$vnode.componentInstance.$options.calendar.currentData.currentViewType;
             let taskAndEvents = [...res.data.tasks, ...res.data.events];
             this.calendarOptions.events = taskAndEvents.map(event => {
@@ -148,7 +151,9 @@ export default {
               event.backgroundColor = event.type ? event.type.color : statusColor;
 
               event.textColor = 'black';
-
+              let eventCustomerName =  event.customer ? ' (' + event.customer.name + ')' : ''
+              let eventTitle = event.name ? event.name : event.title;
+              event.title = eventTitle +  eventCustomerName  ;
               return event;
             });
           })
@@ -165,6 +170,7 @@ export default {
         this.$router.push({path: `/calendar-tasks/edit/${clickInfo.event._def.publicId}`})
       } else {
         this.eventId = clickInfo.event._def.publicId
+
         this.$modal.show("event-form-modal", {eventId: clickInfo.event._def.publicId});
       }
     },

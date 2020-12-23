@@ -82,6 +82,9 @@
               <router-link to="/customers/add" @click.native="hideMenu">הוספת לקוח חדש</router-link>
             </li>
             <li>
+              <router-link to="/contacts" @click.native="hideMenu">רשימת אנשי קשר</router-link>
+            </li>
+            <li>
               <router-link to="/contacts/add" @click.native="hideMenu">הוספת איש קשר חדש</router-link>
             </li>
           </template>

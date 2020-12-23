@@ -45,7 +45,10 @@
               </div>
             </template>
 
+            <template slot="created_at" slot-scope="props">
+              <date-format-component :date="props.row.created_at"></date-format-component>
 
+            </template>
             <template slot="actions" slot-scope="props">
               <div class="buttons has-addons is-centered">
                 <p class="control tooltip">
@@ -69,6 +72,9 @@
                   </button>
                 </p>
               </div>
+            </template>
+            <template slot="afterBody">
+              <table-filters-component :filters="filters"></table-filters-component>
             </template>
           </v-server-table>
         </div>
@@ -97,7 +103,7 @@
 import mId from '../../mixins/Mid'
 import tBus from '../../mixins/Tbus'
 import TaskListComponent from '../tasks/TaskListComponent'
-
+import DateFormatComponent from '../helpers/DateFormatComponent'
 
 export default {
   mixins: [mId, tBus('app/customers/leads')],
@@ -110,24 +116,25 @@ export default {
       showTaskList: false,
       customColumn: [],
 
-      columns: ['name', 'company', 'email', 'phone', 'status', 'actions'],
-      filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
+      columns: ['name', 'company', 'email', 'phone', 'status', 'created_at', 'actions'],
+      filters: new this.$form({ name: '', company: '', email: '', phone: '', status: '',  created_at: '', range: 1 }),
       options: {
         orderBy: { ascending: true, column: 'name' },
-        sortable: ['id', 'name', 'company', 'email', 'phone'],
+        sortable: ['id', 'name', 'company', 'email', 'phone', 'created_at', 'range' ],
         perPage: 10,
         columnsClasses: {
           id: 'w50 has-text-centered',
           receivable: 'w125 has-text-right',
           actions: 'w175 has-text-centered p-x-none',
         },
-        filterable: ['id', 'name', 'company', 'email', 'phone'],
+        filterable: ['id', 'name', 'company', 'email', 'phone', 'created_at', 'range' ],
         headings: {
           name: 'שם',
           company: 'חברה',
           email: 'אימייל',
           phone: 'טלפון',
           status: 'סטטוס',
+          created_at: 'נוצר בתאריך',
           actions: 'פעולות',
 
         },
@@ -148,8 +155,6 @@ export default {
       }
     },
     onLoaded (data) {
-
-      let table = data.data.data
       let attributesNames = data.data.attributesNames
       attributesNames = Object.keys(attributesNames).map((k) => attributesNames[k])
       this.slots = attributesNames
@@ -181,7 +186,7 @@ export default {
     this.showTaskList = false
   },
   components: {
-    TaskListComponent
+    TaskListComponent, DateFormatComponent
   }
 }
 </script>

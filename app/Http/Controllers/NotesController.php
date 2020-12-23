@@ -87,16 +87,19 @@ class NotesController extends Controller
         return  ['notes' => $notes, 'notesCategories' => $notesCategories];
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Notes  $notes
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Notes $notes)
+    public function update(NotesRequest $request, Notes $notes)
     {
-        //
+        $v = $request->validated();
+        $categoryId = $request->request->get('category_note');
+
+        if ($categoryId) {
+            $v['note_category_id'] = isset($categoryId[0]) ? $categoryId[0]['id'] : $categoryId['id'];
+        }else {
+            $v['note_category_id'] = null;
+        }
+
+        $notes->update($v);
+        return $notes;
     }
 
     public function destroy($id)

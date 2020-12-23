@@ -414,20 +414,20 @@ export default {
     'form.start_date': function () {
       let parsed = moment(this.form.start_date, 'DD/MM/YYYY H:m');
       if (!this.loading) {
-        this.form.end_date = moment(parsed._d).add(30, 'm').format('DD/MM/YYYY H:mm')
+        this.form.end_date = moment(parsed._d).add(30, 'm').format('DD/MM/YYYY H:mm');
       }
       this.loading = false
     },
     'form.end_date': function () {
 
       if (!this.form.start_date) {
-        const fp = flatpickr('#end_date', this.config)
+        const fp = flatpickr('#end_date', this.config);
 
         setTimeout(function () {
           fp.clear()
         }, 100)
 
-        this.$event.fire('missingData', 'יש להכניס זמן התחלה')
+        this.$event.fire('missingData', 'יש להכניס זמן התחלה');
 
       }
     },
@@ -435,57 +435,58 @@ export default {
       if (!this.form.end_date) {
 
         setTimeout(function () {
-          this.form.notification_time = ''
+          this.form.notification_time = '';
         }, 100)
-        this.$event.fire('missingData', 'יש להכניס זמן התחלה וסיום')
+        this.$event.fire('missingData', 'יש להכניס זמן התחלה וסיום');
 
       }
     },
     'form.project': function () {
-      this.projectSelected = !this.projectSelected
+      this.projectSelected = !this.projectSelected;
       if (this.projects.length > 0) {
-        this.getCustomersById(this.projects)
+        this.addProjectNameToTaskName();
+        this.getCustomersById(this.projects);
       }
     },
     'form.customer': function () {
-
-      this.customerSelected = !this.customerSelected
+      this.customerSelected = !this.customerSelected;
       if (this.form.customer) {
-        this.getProjectsByCustomerId([this.form.customer])
+        this.getProjectsByCustomerId([this.form.customer]);
       } else {
-        this.customerSelected = false
+        this.customerSelected = false;
       }
     }
+
   },
   methods: {
     format_date(value) {
 
       if (value) {
-        return moment(String(value)).format('DD/MM/YYYY HH:mm')
+        return moment(String(value)).format('DD/MM/YYYY HH:mm');
       }
     },
     setRoute() {
       let entityId = this.modal === 'customers' ? this.cusId : this.projId;
-      let route = !this.modal ? 'app/tasks' : `app/tasks/${this.modal}/${entityId}`
+      let route = !this.modal ? 'app/tasks' : `app/tasks/${this.modal}/${entityId}`;
       if (this.$route.query.customerId) {
-        route = `app/tasks/customers/${this.$route.query.customerId}`
+        route = `app/tasks/customers/${this.$route.query.customerId}`;
       }
       if (this.$route.query.projectId) {
-        route = `app/tasks/projects/${this.$route.query.projectId}`
+        route = `app/tasks/projects/${this.$route.query.projectId}`;
       }
-      return route
+      return route;
     },
     setDateTime() {
-      let moment = require('moment-timezone')
-      moment().tz('Asia/Jerusalem').format()
-      this.form.start_date = moment(new Date()).format('DD/MM/YYYY H:mm')
-      this.form.end_date = moment(new Date()).add(30, 'm').format('DD/MM/YYYY H:mm')
-      this.form.date_to_complete = moment(new Date()).format('DD/MM/YYYY')
+      let moment = require('moment-timezone');
+      moment().tz('Asia/Jerusalem').format();
+      this.form.start_date = moment(new Date()).format('DD/MM/YYYY H:mm');
+      this.form.end_date = moment(new Date()).add(30, 'm').format('DD/MM/YYYY H:mm');
+      this.form.date_to_complete = moment(new Date()).format('DD/MM/YYYY');
     },
     submit() {
 
       this.isSaving = true
-      let route = !this.modal ? '/tasks' : `/${this.modal}`
+      let route = !this.modal ? '/tasks' : `/${this.modal}`;
       if (this.$route.name === 'calendar-task') {
         route = '/calendar';
       }
@@ -498,13 +499,13 @@ export default {
         this.form
             .put(`app/tasks/${this.form.id}`)
             .then(() => {
-              this.$event.fire('refreshTasksTable')
+              this.$event.fire('refreshTasksTable');
               this.notify(
                   'success',
                   'משימה עוכנה'
               )
 
-              this.$router.push(route)
+              this.$router.push(route);
             })
             .catch(err => this.$event.fire('appError', err.response))
             .finally(() => (this.isSaving = false))
@@ -513,39 +514,39 @@ export default {
         this.form
             .post('app/tasks/add')
             .then(() => {
-              this.$event.fire('refreshTasksTable')
+              this.$event.fire('refreshTasksTable');
               this.notify(
                   'success',
                   'משימה נוצרה'
               )
 
-              this.$router.push(route)
+              this.$router.push(route);
             })
             .catch(err => this.$event.fire('appError', err.response))
             .finally(() => (this.isSaving = false))
       }
     },
     fetchTask(id) {
-    let em = this
+
       this.$http
           .get(`app/tasks/${id}`)
           .then(res => {
-          console.log(res.data.task)
-            this.attributes = res.data.task.attributes
-            delete res.data.task.attributes
-            this.form = new this.$form(res.data.task)
-            let taskStatus = res.data.task.status
-            this.optionsStatuses = res.data.statuses
-            this.priorities = res.data.priorities
-            this.categories = res.data.categories
-            this.form.category = res.data.task.category[0]
-            this.form.priority = res.data.task.priority[0]
-            this.form.project = res.data.task.project[0]
-            this.form.status = taskStatus.length > 0 ? taskStatus[0] : ''
 
-            this.form.start_date = this.format_date(res.data.task.start_date)
-            this.form.end_date = this.format_date(res.data.task.end_date)
-            this.form.notification_time = this.format_date(res.data.task.notification_time)
+            this.attributes = res.data.task.attributes;
+            delete res.data.task.attributes;
+            this.form = new this.$form(res.data.task);
+            let taskStatus = res.data.task.status;
+            this.optionsStatuses = res.data.statuses;
+            this.priorities = res.data.priorities;
+            this.categories = res.data.categories;
+            this.form.category = res.data.task.category[0];
+            this.form.priority = res.data.task.priority[0];
+            this.form.project = res.data.task.project[0];
+            this.form.status = taskStatus.length > 0 ? taskStatus[0] : '';
+
+            this.form.start_date = this.format_date(res.data.task.start_date);
+            this.form.end_date = this.format_date(res.data.task.end_date);
+            this.form.notification_time = this.format_date(res.data.task.notification_time);
 
           })
           .catch(err => this.$event.fire('appError', err.response))
@@ -556,25 +557,26 @@ export default {
           .validateAll()
           .then(result => {
             if (result) {
-              this.submit()
+              this.submit();
             }
           })
           .catch(err => this.$event.fire('appError', err))
     },
     addEvent() {
-      this.$modal.show('event-form-modal', {customerId: this.$route.params.id})
+      console.log(this.form.customer)
+      this.$modal.show('event-form-modal', {customerId: this.form.customer.id});
     },
     searchCustomers(search) {
 
       if (search === '') {
-        return
+        return;
       }
       this.$http
           .get('app/customers/search?query=' + search)
           .then(res => {
-            this.customers = res.data
+            this.customers = res.data;
             if (this.customers.length > 0) {
-              this.getProjectsByCustomerId(this.customers)
+              this.getProjectsByCustomerId(this.customers);
             }
           })
           .catch(err => {
@@ -584,13 +586,13 @@ export default {
     searchProjects(search) {
 
       if (search === '' || this.customerSelected) {
-        return
+        return;
       }
       this.$http
           .get('app/projects/search?query=' + search)
           .then(res => {
 
-            this.projects = res.data
+            this.projects = res.data;
 
           })
           .catch(err => {
@@ -598,11 +600,11 @@ export default {
           })
     },
     getCustomersById(projects) {
-      let customer_id = projects.map(a => a.customer_id)
+      let customer_id = projects.map(a => a.customer_id);
       this.$http
           .post('app/project-customers/' + customer_id)
           .then(res => {
-            this.form.customer = res.data[0]
+            this.form.customer = res.data[0];
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
@@ -616,7 +618,7 @@ export default {
           .then(res => {
             this.projects = []
             if (res.data.length > 0) {
-              this.projects = res.data
+              this.projects = res.data;
             }
           })
           .catch(err => {
@@ -626,14 +628,21 @@ export default {
     closeModal() {
 
       if (!this.popupTaskId && this.$route.name !== 'notification-task') {
-        this.$router.go(-1)
+        this.$router.go(-1);
       } else {
-        let modal = document.querySelector(".task-form-modal")
+        let modal = document.querySelector(".task-form-modal");
         modal.parentNode.removeChild(modal);
 
       }
 
     },
+    addProjectNameToTaskName() {
+      let checkTaskName = this.form.name.match(/משימה/g);
+      if(checkTaskName) {
+        this.form.name = ' ( ' + this.form.project.name + ' ) '
+      }
+
+    }
   },
   components: {EventFormModal},
 }

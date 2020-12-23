@@ -217,6 +217,7 @@ export default {
         enableTime: true,
         altFormat: "d/m/Y H:i",
         dateFormat: "d/m/Y H:i",
+        time_24hr: true
       },
       loading: false,
       isSaving: false,
@@ -318,7 +319,7 @@ export default {
       moment().tz("Asia/Jerusalem").format();
 
       this.form.start_date = moment(new Date()).format("DD/MM/YYYY H:m");
-
+      this.form.end_date = moment(new Date()).add(30, 'm').format('DD/MM/YYYY H:mm')
       this.create();
 
       if(e.params.eventId){
@@ -456,8 +457,9 @@ export default {
         this.form
             .put(`app/events/${this.form.id}`)
             .then(() => {
-              this.$refs
-              this.$event.fire('refreshEventsListTable')
+
+              this.$forceUpdate();
+           //   this.$event.fire('refreshEventsListTable')
               this.notify(
                   'success',
                   'עודכן בהצלחה'

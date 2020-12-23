@@ -289,8 +289,8 @@ const router = new VueRouter({
         },
         {
             path: "/contacts",
-            component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerListComponent.vue"),
-            meta: { title: "Customers", admin: false },
+            component: () => import(/* webpackChunkName: "components" */ "./components/customers/ContactsListComponent.vue"),
+            meta: { title: "Contacts", admin: false },
             children: [
                 {
                     path: "add",
@@ -302,12 +302,12 @@ const router = new VueRouter({
                     path: "edit/:id",
                     name: 'contact',
                     component: () => import(/* webpackChunkName: "components" */ "./components/customers/ContactFormComponent.vue"),
-                    meta: { title: "Edit Customer", admin: true, modal: true }
+                    meta: { title: "Edit Contacts", admin: true, modal: true }
                 },
                 {
                     path: ":id",
-                    component: () => import(/* webpackChunkName: "components" */ "./components/customers/CustomerViewComponent.vue"),
-                    meta: { title: "View Customer", admin: false, modal: true }
+                    component: () => import(/* webpackChunkName: "components" */ "./components/customers/ContactFormComponent.vue"),
+                    meta: { title: "View Contact", admin: false, modal: true }
                 }
             ]
         },

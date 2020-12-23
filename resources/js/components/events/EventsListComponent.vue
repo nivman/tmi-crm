@@ -88,11 +88,6 @@
                 </button>
               </p>
               <p class="control tooltip">
-<!--                <router-link style="font-size: 0.65rem" :to="{ path: '/tasks/edit/event', params: { projId: 5 }}" class="button is-warning is-small">-->
-<!--                  <i class="fas fa-edit"></i>-->
-<!--                  <span class="tooltip-text">עריכה</span>-->
-<!--&lt;!&ndash;                  <router-link :to="{ path: '/tasks/edit/', params: { projId: 5 }}">Home</router-link>&ndash;&gt;-->
-<!--                </router-link>-->
                   <a @click="addTask(props.row.contact)" class="button is-warning	has-text-white is-small">
                    <i class="fas fa-thumbtack"></i>
                     <span class="tooltip-text"> משימה חדשה</span>
@@ -154,7 +149,7 @@ export default {
         filterByColumn: true,
         perPage: 10,
         dateColumns: ['start_date', 'end_date'],
-        orderBy: {ascending: true, column: 'title'},
+        orderBy: {ascending: false, column: 'start_date'},
         sortable: ['title', 'start_date', 'end_date', 'created_at', 'type', 'contact', 'project'],
         listColumns: {},
         filterable: ['title', 'details', 'type','contact', 'start_date', 'end_date', 'project'],
@@ -231,7 +226,7 @@ export default {
       this.$modal.show('event-form-modal', {event: event})
     },
     addTask(contact) {
-      console.log(contact.customer_id)
+
       this.$root.$router.push({path : '/tasks/add/', query: {'cusId': contact.customer_id}})
       this.showTaskForm = true
 

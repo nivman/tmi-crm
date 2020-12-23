@@ -67,9 +67,10 @@ function tBus(url) {
                 }
             },
             search: _debounce(function() {
-                if (!this.filters.date_range || this.filters.date_range.length > 21) {
-                    this.refreshTable(true);
-                }
+                this.refreshTable(true);
+                // if (!this.filters.date_range || this.filters.date_range.length > 21) {
+                //     this.refreshTable(true);
+                // }
             }, 500),
             deleteRecord(id) {
                 this.$modal.show("dialog", {

@@ -66,8 +66,9 @@ trait VueTable
         $optionals = ['taxes', 'tasks', 'events'];
         $filterable = [
             'id', 'code', 'name', 'reference', 'categories', 'customer', 'vendor', 'phone', 'user',
-            'taxes', 'draft', 'date', 'gateway', 'price', 'cost', 'range', 'email', 'company', 'title', 'amount',
-            'date_range', 'created_at', 'account', 'received', 'description', 'log_name', 'subject_id', 'subject_type', 'type'
+            'taxes', 'draft', 'date', 'gateway', 'price', 'cost', 'range', 'email', 'company', 'title',
+            'amount', 'date_range', 'created_at', 'account', 'received', 'description', 'log_name',
+            'subject_id', 'subject_type', 'type', 'first_name', 'last_name', 'email', 'phone'
         ];
         foreach ($fields as $field => $value) {
             if ($field != 'draft' && $field != 'received' && (empty($value) || !in_array($field, $filterable))) {
@@ -83,9 +84,13 @@ trait VueTable
             } elseif (!empty($value) && $field == 'date_range' || $field == 'range') {
                 if ($field == 'date_range' && !empty($value)) {
                     $range = explode(' to ', $value);
-                    $end = Carbon::createFromFormat('Y-m-d', $range[1])->endOfDay();
-                    $start = Carbon::createFromFormat('Y-m-d', $range[0])->startOfDay();
-                    $data->whereBetween($fields->range == 'date' ? 'date' : 'created_at', [$start, $end]);
+                    if (count($range) == 2) {
+                        $end = Carbon::createFromFormat('d/m/y', $range[1])->endOfDay();
+                        $start = Carbon::createFromFormat('d/m/y', $range[0])->startOfDay();
+
+                        $data->whereBetween($fields->range == 'date' ? 'date' : 'created_at', [$start, $end]);
+                    }
+
                 }
             } elseif (!empty($value) && is_object($value)) {
                 $method = in_array($field, $optionals) || (isset($value->optional) && !empty($value->optional)) ? 'orWhereHas' : 'whereHas';
@@ -109,17 +114,22 @@ trait VueTable
     protected static function filter($data, $query, $fields, $joinTables = false)
     {
         $queryFields = json_decode($query, true);
+
         $data->where(function ($q) use ($query, $fields, $joinTables, $data, $queryFields) {
 
             foreach ($fields as $index => $field) {
+
                 $relation = explode('.', $field);
 
                 if (isset($relation[0]) && isset($relation[1])) {
 
                     $method = $index ? 'orWhereHas' : 'whereHas';
                     $q->{$method}($relation[0], function ($qu) use ($relation, $query, $data, $joinTables, $queryFields) {
-
-                        if (count($queryFields) > 0 && $joinTables) {
+                        if(!$queryFields){
+                            $tableName = $relation[0] === 'categories' ? $relation[0] : $relation[0] . 's.';
+                           $qu->where($tableName . '.' . $relation[1], 'like', "%{$query}%");
+                        }
+                        elseif (count($queryFields) > 0 && $joinTables) {
                             foreach ($queryFields as $key => $queryField) {
                                 if ( $key == 'start_date' || $key == 'end_date') {
 
@@ -133,7 +143,10 @@ trait VueTable
                                     $qu->where($joinTables . '.' . $key, 'like', "%{$queryField}%");
                                 }
                             }
-                        } else {
+                        }
+
+                        else {
+
                             $qu->where($relation[1], 'like', "%{$query}%");
                         }
                     });

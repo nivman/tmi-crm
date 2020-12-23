@@ -103,6 +103,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::delete('notes/{notes}', 'NotesController@destroy');
     Route::post('notes/create', 'NotesController@create');
     Route::post('notes/edit/{notes}', 'NotesController@edit');
+    Route::post('notes/update/{notes}', 'NotesController@update');
     Route::post('notes/categories', 'NotesController@getCategories');
     Route::post('notes/edit-title', 'NotesController@changeTitle');
     Route::post('notes/color', 'NotesController@changeColor');

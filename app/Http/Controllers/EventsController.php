@@ -61,7 +61,7 @@ class EventsController extends Controller
         $fetchData = $request->fetchData;
 
         $events = $fetchData === '0' ? [] : Event::whereBetween('start_date',[$start,$end])->with('type')->get();
-        $tasks = $fetchData === '1' ? new Collection() : Task::whereBetween('start_date',[$start,$end])->with('status')->get();
+        $tasks = $fetchData === '1' ? new Collection() : Task::whereBetween('start_date',[$start,$end])->with('status', 'customer')->get();
 
         $taskTitles = array_map(function($task) {
             $task['title'] = $task['name'];
@@ -113,7 +113,7 @@ class EventsController extends Controller
     
     public function show(Event $event)
     {
-        dd($event);
+
         $event->contact = $event->contact()->get();
         $event->type = $event->type()->get();
         return $event;
