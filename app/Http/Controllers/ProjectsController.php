@@ -25,6 +25,11 @@ class ProjectsController extends Controller
 
     }
 
+    public function list()
+    {
+        return Project::all();
+    }
+
     public function search(Request $request)
     {
         $v = $request->validate(['query' => 'required|string']);

@@ -46,7 +46,7 @@ export default {
     },
     methods: {
         init() {
-          let em =this;
+
             this.chart = new Chart(this.$el, {
                 type: this.type,
                 data: this.data,
@@ -54,11 +54,12 @@ export default {
                     tooltips: false,
                     plugins: {
                         datalabels: {
-                            anchor: 'end',
-                            align: 'top',
+                            anchor: 'center',
+                            textAlign: 'center',
+                            align: 'center',
                             borderRadius: 3,
                             padding: 2,
-                            color: 'white',
+                            color: 'black',
                             font: {
                                 style: 'bold',
                             },

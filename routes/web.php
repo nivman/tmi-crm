@@ -20,6 +20,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     // Route::get('transactions', 'TransactionsController@index');settings
 
     Route::get('dashboard/vendor', 'DashboardController@vendor');
+    Route::get('dashboard/projects/{projectsIds}', 'DashboardController@projects');
     Route::get('charts/pie_chart', 'DashboardController@pieChart');
     Route::get('charts/bar_chart', 'DashboardController@barChart');
     Route::get('charts/line_chart', 'DashboardController@lineChart');
@@ -85,7 +86,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::post('file/customers', 'CustomersController@saveCustomerFile');
     Route::post('tasks/add', 'TasksController@store');
     Route::resource('tasks', 'TasksController');
-
+    Route::get('projects/list', 'ProjectsController@list');
     Route::get('projects/', 'ProjectsController@edit');
     Route::get('expenses/projects/{projectId}', 'ProjectsController@getProjectById');
     Route::post('projects/add', 'ProjectsController@store');

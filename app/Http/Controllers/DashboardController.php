@@ -6,34 +6,63 @@ use App\Income;
 use App\Expense;
 use App\Invoice;
 use App\Payment;
+use App\Project;
 use App\Purchase;
+use App\Category;
+use App\Task;
 use Carbon\Carbon;
 use App\Charts\BarChart;
 use App\Charts\PieChart;
 use App\Charts\LineChart;
 use Illuminate\Http\Request;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
+use function React\Promise\all;
 
 class DashboardController extends Controller
 {
     public function barChart(Request $request)
     {
-        $year = $request->year ?: date('Y');
-        $date = Carbon::create($year);
 
-        $invoices  = chartData('App\Invoice', 'Y-m', 'm', 'toDays', $year);
-        $purchases = chartData('App\Purchase', 'Y-m', 'm', 'toDays', $year);
-        Carbon::setLocale('he');
-        for ($i = 1; $i <= 12; $i++) {
-            $labels[] = Carbon::create($year, ($i < 10 ? '0' . $i : $i))->translatedFormat('M y');
+        $projectsIds = [];
+
+        if (isset($request->projects)) {
+            $projectsIds = $this->getProjectsIds($request);
         }
 
+        $projectsData = count($projectsIds) === 0 ? $this->projectsByDate() : $this->projectsByIds($projectsIds);
+
+
+        $categories = array_map(function ($category) {
+
+            return [$category->category_id => $category->name];
+        }, $projectsData);
+
+        $categoriesKeyValue = [];
+
+        $categories = new RecursiveIteratorIterator(new RecursiveArrayIterator($categories));
+
+        foreach ($categories as $key => $value) {
+            $categoriesKeyValue[$key] = $value;
+        }
+
+        list($groupProjectsData, $categoriesNames) = $this->groupProjectsData($projectsData);
+
+        $groupProjectsData = $this->createFullProjectTimeData($categoriesNames, $groupProjectsData);
+        if(count($groupProjectsData) > 1) {
+            foreach ($groupProjectsData as $key => $item) {
+                usort($groupProjectsData[$key], fn($a, $b) => strcmp($a->category_id, $b->category_id));
+            }
+        }
+
+        $formatProjectsData = $this->formatProjectsData($groupProjectsData);
+
+        $setLabels = $this->setLabels($groupProjectsData, $categoriesKeyValue, $categoriesNames, $formatProjectsData);
+
         $config = [
-            'title'    => $date->translatedFormat('Y'),
-            'datasets' => [
-                'Invoices'  => $invoices,
-                'Purchases' => $purchases,
-            ],
-            'labels'  => $labels,
+            'title' => "שעות עבודה לפי קטגוריות פר פרוייקט",
+            'datasets' => $formatProjectsData,
+            'labels' => $setLabels,
             'options' => ['responsive' => false, 'maintainAspectRatio' => false, 'legend' => ['display' => true, 'position' => 'bottom']],
         ];
         $chart = new BarChart($config);
@@ -58,11 +87,11 @@ class DashboardController extends Controller
     public function lineChart(Request $request)
     {
 
-        $year  = $request->year ?: date('Y');
+        $year = $request->year ?: date('Y');
         $month = $request->month ?: date('m');
-        $date  = Carbon::create($year, $month);
+        $date = Carbon::create($year, $month);
 
-        $invoices  = chartData('App\Invoice', 'Y-m-d', 'd', 'toDays', $year, $month);
+        $invoices = chartData('App\Invoice', 'Y-m-d', 'd', 'toDays', $year, $month);
         $purchases = chartData('App\Purchase', 'Y-m-d', 'd', 'toDays', $year, $month);
         Carbon::setLocale('he');
         for ($i = 1; $i <= $date->endOfMonth()->day; $i++) {
@@ -73,11 +102,11 @@ class DashboardController extends Controller
         $config = [
             'title' => $date->translatedFormat('F Y'),
             'datasets' => [
-                'Invoices'  => $invoices,
+                'Invoices' => $invoices,
                 'Purchases' => $purchases,
 
             ],
-            'labels'  => $labels,
+            'labels' => $labels,
             'options' => ['responsive' => false, 'maintainAspectRatio' => false, 'legend' => ['display' => true, 'position' => 'top']],
         ];
         $chart = new LineChart($config);
@@ -87,19 +116,19 @@ class DashboardController extends Controller
 
     public function pieChart(Request $request)
     {
-        $year  = $request->year ?: date('Y');
+        $year = $request->year ?: date('Y');
         $month = $request->month ?: date('m');
-        $date  = Carbon::create($year, $month);
+        $date = Carbon::create($year, $month);
         Carbon::setLocale('he');
         $config = [
-            'title'    => $date->translatedFormat('F Y'),
+            'title' => $date->translatedFormat('F Y'),
             'datasets' => [
                 Invoice::mine()->monthly($year, $month)->count(),
                 Purchase::mine()->monthly($year, $month)->count(),
                 Income::mine()->monthly($year, $month)->count(),
                 Expense::mine()->monthly($year, $month)->count(),
             ],
-            'labels'  => ['Invoices', 'Purchases', 'Incomes', 'Expenses'],
+            'labels' => ['Invoices', 'Purchases', 'Incomes', 'Expenses'],
             'options' => ['responsive' => false, 'maintainAspectRatio' => true, 'legend' => ['display' => true, 'position' => 'top']],
         ];
         $chart = new PieChart($config);
@@ -119,5 +148,140 @@ class DashboardController extends Controller
             ->selectRaw('sum(grand_total) as total_amount, sum(total_tax_amount) as total_tax_amount')->get()
             ->makeHidden(['taxes', 'vendor'])->first();
         return ['purchase' => $purchase, 'payment' => ['received' => $received_payment, 'due' => $due_payment]];
+    }
+
+    public function projectsByIds($projectsIds)
+    {
+        return(new Task)->getTasksByProjectsId($projectsIds);
+    }
+
+    private function projectsByDate()
+    {
+        return(new Task)->getTasksByProjectsStartDate();
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    private function getProjectsIds(Request $request): array
+    {
+        return array_map(function ($project) {
+            $proj = json_decode($project, true);
+            return $proj['id'];
+
+        }, $request->projects);
+    }
+
+    /**
+     * @param array $projectsData
+     * @return array[]
+     */
+    private function groupProjectsData(array $projectsData): array
+    {
+        $groupProjectsData = [];
+        $categoriesNames = [];
+
+        foreach ($projectsData as $value) {
+
+            $categoriesNames[$value->category_id] = $value->name;
+            $groupProjects = $value->project_id;
+
+            if (!isset($groupProjectsData[$groupProjects])) {
+                $groupProjectsData[$groupProjects] = [];
+            }
+
+            $groupProjectsData[$groupProjects][] = $value;
+        }
+        ksort($categoriesNames);
+        return array($groupProjectsData, $categoriesNames );
+    }
+
+    /**
+     * @param array $categoriesNames
+     * @param array $groupProjectsData
+     * @return array
+     */
+    private function createFullProjectTimeData(array $categoriesNames, array $groupProjectsData): array
+    {
+
+        foreach (array_keys($categoriesNames) as $categoryId) {
+            foreach ($groupProjectsData as $project) {
+                foreach ($project as $category) {
+                    $key = array_search($project, $groupProjectsData);
+                    if (!in_array($categoryId, array_column($project, 'category_id'))) {
+
+                        $projectData = json_encode([
+                            'category_id' => $categoryId,
+                            'project_id' => $category->project_id,
+                            'actual_time' => '0',
+                            'project_name' => $category->project_name,
+                            'name' => $category->name
+                        ]);
+                        $groupProjectsData[$key][] = json_decode($projectData);
+
+                        usort($groupProjectsData[$key], fn($a, $b) => strcmp($a->category_id, $b->category_id));
+                        break;
+                    }
+
+                }
+            }
+        }
+
+        return $groupProjectsData;
+    }
+
+    /**
+     * @param array $groupProjectsData
+     * @return array
+     */
+    private function formatProjectsData(array $groupProjectsData): array
+    {
+        $formatProjectsData = [];
+        foreach ($groupProjectsData as $projectData) {
+            foreach ($projectData as $timeData) {
+
+                $actualTime = !$timeData->actual_time ? 0 : $timeData->actual_time;
+
+                $formatProjectsData[$timeData->project_name][] = number_format((float)$actualTime / 60, 2, '.', '');;
+            }
+
+        }
+
+        return $formatProjectsData;
+    }
+
+    /**
+     * @param array $groupProjectsData
+     * @param array $categoriesKeyValue
+     * @param array $categoriesNames
+     * @param array $formatProjectsData
+     * @return array[]
+     */
+    private function setLabels(array $groupProjectsData, array $categoriesKeyValue, array $categoriesNames, array $formatProjectsData): array
+    {
+        if (count($groupProjectsData) > 1) {
+            ksort($categoriesKeyValue);
+        } else {
+            $categoriesKeyValue = array_values($categoriesKeyValue);
+        }
+        $hasNullOnManyProjects = in_array(null, $categoriesNames);
+        $hasNullOnSingleProjects = in_array(null, $categoriesKeyValue);
+
+        if ($hasNullOnManyProjects) {
+
+            $index = array_search(null, $categoriesNames);
+            unset($categoriesNames[$index]);
+            $categoriesNames[0] = 'ללא קטגוריה';
+
+        }
+        if ($hasNullOnSingleProjects) {
+
+            $index = array_search(null, $categoriesKeyValue);
+            $categoriesKeyValue[$index] = 'ללא קטגוריה';
+
+        }
+
+        return count($formatProjectsData) > 1 ? $categoriesNames : $categoriesKeyValue;
     }
 }

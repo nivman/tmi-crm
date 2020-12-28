@@ -94,12 +94,7 @@ class Task extends ModelForm
 
         $query = Task::query();
         $result = null;
-//dd($sortByTaskAttr);
-//        if($sortByTaskAttr[0]) {
-//            $request->query->set('orderBy', $sortByTaskAttr[1]);
-//        }else{
-//            $request->query->set('orderBy', $params[0]['orderByValue']);
-//        }
+
         $request->query->set('orderBy', $params[0]['orderByValue']);
 
         foreach ($params as $key => $param) {
@@ -157,6 +152,36 @@ class Task extends ModelForm
         return Task::hydrate($tasks);
     }
 
+    public function getTasksByProjectsId($projectsId)
+    {
+
+        return  DB::table('tasks', 't')
+            ->whereIn('t.project_id', $projectsId)
+            ->leftJoin('categories as c', 't.category_id', '=', 'c.id')
+            ->leftJoin('projects as p', 't.project_id', '=', 'p.id')
+            ->groupBy('t.category_id')
+            ->groupBy('t.project_id')
+            ->get([ 't.project_id', 'p.name as project_name','c.name', 't.category_id',  DB::raw('SUM(actual_time) AS actual_time')])->toArray();
+    }
+
+    public function getTasksByProjectsStartDate()
+    {
+
+        $projectsId =  DB::table('projects', 'p')->select('id')
+            ->orderBy('p.start_date', 'desc')
+            ->limit(3)->get()->toArray();
+
+        return $this->getTasksByProjectsId(array_column($projectsId, 'id'));
+
+    }
+
+    public function sumProjectActualTime($projectsId)
+    {
+        return DB::table('tasks')
+            ->whereIn('project_id', $projectsId)
+            ->groupBy('project_id')
+            ->get(['project_id',  DB::raw('SUM(actual_time) AS actual_time')]);
+    }
     public function setNotification($taskCreated)
     {
         if (!$taskCreated->notification_time) {

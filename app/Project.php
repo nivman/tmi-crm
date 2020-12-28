@@ -63,6 +63,13 @@ class Project extends ModelForm
             ->get();
     }
 
+    public function getProjectByIds($projectId)
+    {
+        return DB::table('projects')->select('id', 'name')
+            ->whereIn('id', $projectId)
+            ->get();
+    }
+
     public function getPercentageDone($projects)
     {
         $projectsIds = array_column($projects["data"], 'id');

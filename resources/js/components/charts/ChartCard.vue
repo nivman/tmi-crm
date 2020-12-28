@@ -5,20 +5,39 @@
                 <button type="button" class="button is-primary is-small is-pulled-right m-l-sm" @click="download()">
                     <i class="fas fa-download"></i>
                 </button>
-                <div class="select is-small is-pulled-right m-l-sm">
+                <div class="select is-small is-pulled-right m-l-sm" v-if="!params.showProjectsList">
                     <select @change="$emit('yearChanged', $event.target.value)">
                         <option v-for="year in years" :value="year" :key="year" :selected="params.year == year"> {{
                             year
                           }}</option>
                     </select>
                 </div>
-                <div class="select is-small is-pulled-right" v-if="params.month">
+                <div class="select is-small is-pulled-right" v-if="params.month && !params.showProjectsList" >
                     <select @change="$emit('monthChanged', $event.target.value)">
                         <option v-for="month in months" :value="month" :key="month" :selected="params.month == month"> {{
                             month
                           }}</option>
                     </select>
                 </div>
+
+             <div class="is-small is-pulled-right"  v-if="params.showProjectsList">
+                            <multiselect
+                                selectLabel=""
+                                deselectLabel=""
+                                class="multiselect-column rtl-direction"
+                                v-model="project"
+                                @input="$emit('projectChanged', $event)"
+                                :options="projects"
+                                :multiple="true"
+                                :option-height="104"
+                                :searchable="true"
+                                :allow-empty="true"
+                                :close-on-select="true"
+                                placeholder="בחירת פרוייקטים"
+                                label="name"
+                                track-by="name">
+              </multiselect>
+               </div>
             </span>
       {{ config.title }}
     </div>
@@ -26,6 +45,7 @@
       <loading v-if="loading"></loading>
       <div class="columns">
         <div class="column has-text-centered">
+
           <chart
               ref="chart"
               :data="config.data"
@@ -44,20 +64,32 @@
 import Chart from './Chart.vue'
 import _times from 'lodash/times'
 import { saveAs } from 'file-saver'
-
+import Multiselect from 'vue-multiselect'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 export default {
-  components: { Chart },
+  components: { Chart, Multiselect },
   props: {
     width: { default: '100%' },
     height: { default: '400px' },
     params: { type: Object, default: null },
     source: { type: String, required: true },
+
   },
   data () {
     return {
       loading: false,
       config: null,
+      project:'',
+      projects: []
     }
+  },
+  created() {
+    this.$http.get('app/projects/list')
+        .then((res)=>{
+
+          this.projects = res.data
+
+        })
   },
   computed: {
     months () {
@@ -97,6 +129,13 @@ export default {
         this.$http
             .get(this.source, { params: this.params })
             .then(({ data }) => {
+             let labelsType = Object.prototype.toString.call(data.data.labels)
+
+              if (labelsType === '[object Object]') {
+                data.data.labels = Object.keys(data.data.labels).map((key) => data.data.labels[key]);
+              }
+      console.log(data.data.labels)
+   //           this.project = [{"id" :5, 'name': "kkk"}]
               this.translateTerm(data)
               this.config = data
               this.loading = false

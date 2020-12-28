@@ -1,6 +1,7 @@
 <?php
 
 // App Config
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -79,5 +80,17 @@ if (!function_exists('chartData')) {
         ksort($result);
 
         return collect($result)->$to()->flatten();
+    }
+}
+
+if (!function_exists('chartProjectData')) {
+    function chartProjectData($model, $df, $d, $to, $year = null, $month = null)
+    {
+        /** @var Collection $data */
+        $data = $model::mine()
+            ->where('created_at', 'like', ($year && $month ? "%{$year}-{$month}%" : "%{$year}%"))
+            ->get();
+
+        return $data->toArray();
     }
 }

@@ -15,6 +15,7 @@ class BarChart extends Chart
 
     protected function response()
     {
+
         return [
             'data' => [
                 'labels' => $this->labels,
