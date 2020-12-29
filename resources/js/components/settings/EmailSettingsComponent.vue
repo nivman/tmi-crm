@@ -328,7 +328,8 @@ export default {
             this.form.mail_port = res.data[0].mail_port;
             this.form.mail_user_name = res.data[0].mail_user_name;
             this.form.mail_encryption = res.data[0].mail_encryption;
-            this.form.mail_driver = res.data[0].mail_driver;
+
+            this.form.mail_driver = JSON.parse(res.data[0].mail_driver).value;
             this.form.imap_port = res.data[0].imap_port;
             if (res.data[0].task_title) {
               JSON.parse(res.data[0].task_title).forEach((task) => {

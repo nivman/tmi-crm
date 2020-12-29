@@ -126,4 +126,34 @@ class Project extends ModelForm
             ->distinct()
             ->get();
     }
+
+    public function sumTasksTimeByCustomersId($customerIds)
+    {
+        $ids = explode(',', $customerIds);
+
+        $customersSumTime = DB::table('projects as p')->select('cu.id as cu_id', DB::raw('SUM(price) AS price'))
+            ->leftJoin('customers as cu', 'cu.id', '=', 'p.customer_id')
+            ->groupBy('p.customer_id')
+            ->whereIn('p.customer_id', $ids)
+            ->get()->toArray();
+
+        $customerTasksTime = (new Task())->sumTasksTimeByCustomersId( array_column($customersSumTime,'cu_id'));
+
+        foreach ($customersSumTime as   $customerSumTime) {
+            foreach ($customerTasksTime as   $customerTaskTime) {
+                if($customerSumTime->cu_id == $customerTaskTime->customer_id) {
+                    $key = array_search($customerTaskTime, $customerTasksTime);
+                    $customerTasksTime[$key]->price = $customerSumTime->price;
+                    $customerPrice = $customerSumTime->price ? $customerSumTime->price : 0;
+                    $customerTasksTime[$key]->percentage  = $customerPrice ?$customerTaskTime->total_money / $customerPrice * 100 : null;
+               }
+
+            }
+        }
+
+        $customerTasksTime = json_decode(json_encode($customerTasksTime), true);
+        $customerTasksTime =array_column($customerTasksTime, null, 'customer_id');
+        return $customerTasksTime;
+
+    }
 }

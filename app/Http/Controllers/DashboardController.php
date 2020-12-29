@@ -63,7 +63,10 @@ class DashboardController extends Controller
             'title' => "שעות עבודה לפי קטגוריות פר פרוייקט",
             'datasets' => $formatProjectsData,
             'labels' => $setLabels,
-            'options' => ['responsive' => false, 'maintainAspectRatio' => false, 'legend' => ['display' => true, 'position' => 'bottom']],
+            'options' => [
+                'responsive' => false,
+                'maintainAspectRatio' => false,
+                'legend' => ['display' => true, 'position' => 'bottom', 'lineAt' => 15]],
         ];
         $chart = new BarChart($config);
 
@@ -152,7 +155,7 @@ class DashboardController extends Controller
 
     public function projectsByIds($projectsIds)
     {
-        return(new Task)->getTasksByProjectsId($projectsIds);
+        return(new Task)->sumTasksTimeByProjectsId($projectsIds);
     }
 
     private function projectsByDate()

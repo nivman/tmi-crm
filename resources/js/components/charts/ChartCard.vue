@@ -20,11 +20,11 @@
                     </select>
                 </div>
 
-             <div class="is-small is-pulled-right"  v-if="params.showProjectsList">
+             <div class="is-pulled-right projects-dropdown-wrapper"  v-if="params.showProjectsList">
                             <multiselect
                                 selectLabel=""
                                 deselectLabel=""
-                                class="multiselect-column rtl-direction"
+                                class="multiselect-column rtl-direction projects-dropdown"
                                 v-model="project"
                                 @input="$emit('projectChanged', $event)"
                                 :options="projects"
@@ -46,6 +46,11 @@
       <div class="columns">
         <div class="column has-text-centered">
 
+          <div class="menu-bar-chart" v-if="config.type ==='bar'">
+          <div>אחוז שעות העבודה לקטגוריה מתוך כלל השעות בפרוייקט : %</div>
+          <div>סה"כ שעות לפרוייקט : סה"כ </div>
+          <div>שעות עבודה לקטגוריה : שעות</div>
+          </div>
           <chart
               ref="chart"
               :data="config.data"
@@ -131,11 +136,12 @@ export default {
             .then(({ data }) => {
              let labelsType = Object.prototype.toString.call(data.data.labels)
 
-              if (labelsType === '[object Object]') {
+             // if (labelsType === '[object Object]') {
                 data.data.labels = Object.keys(data.data.labels).map((key) => data.data.labels[key]);
-              }
-      console.log(data.data.labels)
-   //           this.project = [{"id" :5, 'name': "kkk"}]
+            //  }
+
+
+
               this.translateTerm(data)
               this.config = data
               this.loading = false
@@ -208,5 +214,23 @@ export default {
 
 .inline-block {
   display: inline-block !important;
+}
+.multiselect__content-wrapper{
+  width: 150%;
+  text-align: right;
+}
+.projects-dropdown-wrapper{
+  position: relative;
+  left:3%;
+}
+.projects-dropdown{
+
+  text-align: right;
+  bottom: 5px;
+}
+.menu-bar-chart{
+  text-align: right;
+  font-size: 12px;
+  font-weight: bold;
 }
 </style>

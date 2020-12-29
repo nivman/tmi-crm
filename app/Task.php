@@ -152,7 +152,7 @@ class Task extends ModelForm
         return Task::hydrate($tasks);
     }
 
-    public function getTasksByProjectsId($projectsId)
+    public function sumTasksTimeByProjectsId($projectsId)
     {
 
         return  DB::table('tasks', 't')
@@ -164,6 +164,24 @@ class Task extends ModelForm
             ->get([ 't.project_id', 'p.name as project_name','c.name', 't.category_id',  DB::raw('SUM(actual_time) AS actual_time')])->toArray();
     }
 
+    public function sumTasksTimeByCustomersId($customersId)
+    {
+
+        return  DB::table('tasks', 't')
+            ->whereIn('t.customer_id', $customersId)
+            ->leftJoin('customers as cu', 't.customer_id', '=', 'cu.id')
+
+            ->groupBy('t.customer_id')
+            ->get([
+                't.customer_id',
+                'cu.name as customer_name',
+                DB::raw('SUM(actual_time) AS actual_time_min'),
+                DB::raw(' (SUM(actual_time) / 60) as total_hours'),
+                DB::raw(' ((SUM(actual_time) / 60) * 150) as total_money'),
+                ])->toArray();
+    }
+
+
     public function getTasksByProjectsStartDate()
     {
 
@@ -171,7 +189,7 @@ class Task extends ModelForm
             ->orderBy('p.start_date', 'desc')
             ->limit(3)->get()->toArray();
 
-        return $this->getTasksByProjectsId(array_column($projectsId, 'id'));
+        return $this->sumTasksTimeByProjectsId(array_column($projectsId, 'id'));
 
     }
 

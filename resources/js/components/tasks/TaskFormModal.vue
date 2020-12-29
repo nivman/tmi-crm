@@ -265,6 +265,15 @@
                 הוספה
               </button>
             </div>
+            <div class="column" v-if="form.id">
+              <button
+                  type="button"
+                  @click="deleteEvent(form.id)"
+                  class="button is-danger is-fullwidth"
+                  :disabled="!form.id">
+                מחיקה
+              </button>
+            </div>
           </div>
 
         </section>
@@ -642,6 +651,35 @@ export default {
         this.form.name = ' ( ' + this.form.project.name + ' ) '
       }
 
+    },
+    deleteEvent(task) {
+
+      let em = this;
+      this.$modal.show("dialog", {
+        title: "למחוק " + name + "!",
+        text: "הפעולה תמחק את הרשומה ללא אפשרות שיחזור.",
+        buttons: [
+          {
+            title: "כן למחוק",
+            class: "button is-danger is-radiusless is-radius-bottom-left",
+            handler: () => {
+              this.$http
+                  .delete(`app/tasks/delete/${task}`)
+                  .then(res => {
+                    em.closeModal();
+                    em.notify("success", name + " נמחק.");
+                    em.$modal.hide("dialog");
+                    em.$event.fire("refreshTasksTable");
+
+                  })
+                  .catch(err => {
+                    this.$event.fire("appError", err.response);
+                  });
+            }
+          },
+          { title: "ביטול", class: "button is-warning is-radiusless is-radius-bottom-right" }
+        ]
+      });
     }
   },
   components: {EventFormModal},

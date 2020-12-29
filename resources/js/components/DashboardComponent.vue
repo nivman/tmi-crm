@@ -15,30 +15,18 @@
             </div>
         </div>
         <div class="columns">
+
             <div class="column">
-<!--              <multiselect-->
-<!--                  selectLabel=""-->
-<!--                  deselectLabel=""-->
-<!--                  class="column multiselect-column rtl-direction"-->
-<!--                  v-model="project"-->
-<!--                  :options="projects"-->
-<!--                  :multiple="true"-->
-<!--                  :option-height="104"-->
-<!--                  :searchable="true"-->
-<!--                  :allow-empty="true"-->
-<!--                  :close-on-select="true"-->
-<!--                  placeholder="בחירת פרוייקטים"-->
-<!--                  label="name"-->
-<!--                  track-by="name">-->
-<!--              </multiselect>-->
+
                 <chart-card
                    :source="bar"
                     width="100%"
                     :params="barParams"
-                    @yearChanged="lineParamsYearChanged"
-                    @monthChanged="lineParamsMonthChanged"
+                    class="bar-chart"
                     @projectChanged = "barProjectChanged"
-                />
+
+                >
+                </chart-card>
             </div>
         </div>
     </div>
@@ -82,14 +70,6 @@ export default {
         },
         pieParamsYearChanged(year) {
             this.pieParams.year = year;
-        },
-        barParamsYearChanged(year) {
-
-            this.barParams.year = year;
-        },
-         barParamsMonthChanged(month) {
-
-        this.barParams.month = month;
         },
       barProjectChanged(projects) {
 

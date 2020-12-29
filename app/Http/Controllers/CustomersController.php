@@ -62,6 +62,7 @@ class CustomersController extends Controller
         $leadRequest = strpos($request->getPathInfo(), 'lead') ? 1 : 0;
         $customers = Customer::with(['journal', 'status'])->where('is_lead', '=', $leadRequest)->mine()->vueTable(Customer::$columns);
         $attributes = (new Customer)->getCustomFields($customers);
+        $customersProfit = (new Customer)->getProfits($customers);
 
         foreach ($customers['data'] as $key => $customer) {
 
@@ -72,6 +73,16 @@ class CustomersController extends Controller
                     $customer['custom'][$item['attributeName']] = $item['content'];
                     $customers['data'][$key] = $customer;
                 }
+            }
+            if(isset($customersProfit[$customer['id']])) {
+                $customer['moneyAndHours'] = [
+                    'total_hours' => $customersProfit[$customer['id']]['total_hours'],
+                    'total_money' =>$customersProfit[$customer['id']]['total_money'],
+                    'price' =>$customersProfit[$customer['id']]['price'],
+                    'percentage' =>$customersProfit[$customer['id']]['percentage'],
+                ];
+                $customers['data'][$key] = $customer;
+
             }
         }
 

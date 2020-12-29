@@ -135,4 +135,13 @@ class Customer extends ModelForm
             ->where(['cu.is_lead'=> 1, 'opening_balance' => -1])
             ->get()->toArray();
     }
+
+    public function getProfits($customers)
+    {
+
+        $customersIds = array_column($customers['data'],'id');
+        $customersIds = implode(',', $customersIds);
+        return  (new Project())->sumTasksTimeByCustomersId($customersIds);
+
+    }
 }

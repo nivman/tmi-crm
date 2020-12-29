@@ -46,8 +46,22 @@
           </template>
           <template slot="percentage_done" slot-scope="props">
             <div class="has-text-centered">
+              <p class="percentageP" :class="{
+                            moreThen100 : percentageCalculation(props.row.actual_time, props.row.price) > 100,
+                            moreThen85 : percentageCalculation(props.row.actual_time, props.row.price) > 85,
+                            lessThen85 : percentageCalculation(props.row.actual_time, props.row.price) < 85} ">
+                {{ percentageCalculation(props.row.actual_time, props.row.price) }}%
+                <span class="percentageRow" v-if="percentageCalculation(props.row.actual_time, props.row.price) > 100">
+                              <i class="far fa-frown percentageRowIcon"></i>
+                            </span>
+                <span class="percentageRow" v-else-if="percentageCalculation(props.row.actual_time, props.row.price) > 85">
+                             <i class="far fa-meh percentageRowIcon"></i>
+                            </span>
+                <span class="percentageRow" v-else>
+                             <i class="far fa-smile percentageRowIcon"></i>
+                            </span>
+              </p>
 
-              {{ percentageCalculation(props.row.actual_time, props.row.price) }}
             </div>
           </template>
           <template slot="some_money_so_far" slot-scope="props">
@@ -210,7 +224,7 @@ export default {
         let totalTimeAsAmount = this.moneyBurnCalculation(tasksTime)
         let percentage = totalTimeAsAmount / price
         if (Number.isFinite(percentage)) {
-          return ' % ' + (percentage * 100).toFixed(2) ;
+          return  (percentage * 100).toFixed(1) ;
         }
       }
     },
@@ -261,5 +275,37 @@ table td .details-textarea {
 
 .back-title{
   padding: 5px;
+}
+.moreThen85 {
+  background: orange;
+}
+.moreThen100 {
+  background: red;
+}
+.lessThen85{
+  background: green;
+}
+.percentageRowIcon{
+  padding-right: 6px;
+  text-align: center;
+  line-height: 2.1;
+  color: white;
+
+}
+.percentageRow{
+  float: right;
+  text-align: center;
+  line-height: 2;
+  color: white;
+  font-size: 19px;
+}
+.percentageP{
+  display: table;
+  height: 35px;
+  width: 100%;
+  text-align: center;
+  line-height: 2.6;
+  font-weight: bold;
+  color: white;
 }
 </style>

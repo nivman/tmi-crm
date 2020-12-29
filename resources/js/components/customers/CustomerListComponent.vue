@@ -33,22 +33,55 @@
                 {{ props.row.journal ? props.row.journal.balance.amount : 0 | formatJournalBalance }}
               </div>
             </template>
+            <template slot="payments" slot-scope="props">
+
+              <div class="has-text-right" >
+                    <table style="width: 100%;">
+                      <thead>
+                      <tr  style="font-size: 12px;">
+                        <th>סה"כ לתשלום</th>
+                        <th>סה"כ כסף בשעות עבודה</th>
+                        <th>אחוז הכסף לשעות עבודה</th>
+                        <th>סה"כ שעות עבודה</th>
+                      </tr>
+                      </thead>
+                        <tbody v-if="props.row.moneyAndHours">
+
+                        <tr  style="font-size: 14px;    text-align: center;">
+                        <td>{{props.row.moneyAndHours.price}}</td>
+                        <td>{{ props.row.moneyAndHours.total_money ? parseFloat(props.row.moneyAndHours.total_money).toFixed(1) : '' }}</td>
+                        <td style="padding: 0px !important;">
+
+                          <p class="percentageP" :class="{
+                            moreThen100 : props.row.moneyAndHours.percentage > 100,
+                            moreThen85 : props.row.moneyAndHours.percentage > 85,
+                            lessThen85 : props.row.moneyAndHours.percentage < 85} ">
+                            {{ props.row.moneyAndHours.percentage ? parseFloat(props.row.moneyAndHours.percentage).toFixed(1) : '' }}%
+                            <span class="percentageRow" v-if="props.row.moneyAndHours.percentage > 100">
+                              <i class="far fa-frown percentageRowIcon"></i>
+                            </span>
+                            <span class="percentageRow" v-else-if="props.row.moneyAndHours.percentage > 85">
+                             <i class="far fa-meh percentageRowIcon"></i>
+                            </span>
+                            <span class="percentageRow" v-else>
+                             <i class="far fa-smile percentageRowIcon"></i>
+                            </span>
+                          </p>
+                        </td>
+                        <td>{{ props.row.moneyAndHours.total_hours ? parseFloat(props.row.moneyAndHours.total_hours).toFixed(2) : '' }}</td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+
+              </div>
+            </template>
             <template v-for="(slot,i) in customColumn" :slot=customColumn[i] slot-scope="props">
 
               {{ setCustomFieldValue(props.row.custom, i, slot) }}
 
 
             </template>
-
-
-<!--            <template :slot="customColumn" slot-scope="props">-->
-<!--            {{customColumn}}-->
-<!--              {{ props.row.status ? props.row.custom : '' }}-->
-<!--              <div class="has-text-right">-->
-<!--              </div>-->
-<!--            </template>-->
-
-
             <template slot="actions" slot-scope="props">
               <div class="buttons has-addons is-centered">
                 <p class="control tooltip">
@@ -127,7 +160,7 @@ export default {
       showTaskList: false,
       customColumn: [],
       totalAmount: 0,
-      columns: ['name', 'company', 'email', 'phone', 'status', 'actions'],
+      columns: ['name', 'company', 'email', 'phone', 'status', 'payments', 'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       options: {
         orderBy: { ascending: true, column: 'name' },
@@ -145,6 +178,7 @@ export default {
           email: 'אימייל',
           phone: 'טלפון',
           status: 'סטטוס',
+          payments: 'תשלומים',
           actions: 'פעולות',
 
         },
@@ -206,3 +240,37 @@ export default {
   }
 }
 </script>
+<style scoped>
+.moreThen85 {
+  background: orange;
+}
+.moreThen100 {
+  background: red;
+}
+.lessThen85{
+  background: green;
+}
+.percentageRowIcon{
+  padding-right: 6px;
+  text-align: center;
+  line-height: 2.1;
+  color: white;
+
+}
+.percentageRow{
+  float: right;
+  text-align: center;
+  line-height: 2;
+  color: white;
+  font-size: 19px;
+}
+.percentageP{
+  display: table;
+  height: 35px;
+  width: 100%;
+  text-align: center;
+  line-height: 2.6;
+  font-weight: bold;
+  color: white;
+}
+</style>
