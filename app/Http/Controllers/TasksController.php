@@ -12,14 +12,16 @@ use App\Status;
 use App\Task;
 use App\TaskPriority;
 
-use App\User;
+use App\TasksEventsRepeat;
+use App\TasksEventsRepeatRule;
+;
+
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Notifications\AnonymousNotifiable;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
-use Thomasjohnkane\Snooze\ScheduledNotification;
+
+use Recurr\Recurrence;
+
 
 
 /**
@@ -51,7 +53,7 @@ class TasksController extends Controller
             return (new Task())->sortBy($ascending, $request, $params['params'], $sortByTaskAttr);
         }
 
-        $tasks = Task::with(['customer', 'project', 'priority', 'status', 'category'])->mine()->vueTable(Task::$columns);
+        $tasks = Task::with(['customer', 'project', 'priority', 'status', 'category', 'taskRepeat','repeatRules'])->mine()->vueTable(Task::$columns);
 
         $tasksPercentage = (new Task())->getPercentage($tasks);
         return response()->json($tasksPercentage);
@@ -78,6 +80,7 @@ class TasksController extends Controller
      */
     public function store(TaskRequest $request)
     {
+        $TASK_REPEAT = 1;
         $v = $request->validated();
         $v['customer_id'] = $request->request->get('customer') ? $request->request->get('customer')['id'] : null;
         $v['priority_id'] = $request->request->get('priority') ? $request->request->get('priority')['id'] : null;
@@ -85,21 +88,28 @@ class TasksController extends Controller
         $v['status_id'] = $request->request->get('status') ? $request->request->get('status')['id'] : null;
         $v['project_id'] = $request->request->get('project') ? $request->request->get('project')['id'] : null;
 
+
         $task = new Task();
         $taskCreated = Task::create($v);
-
+        if ($request->request->get('repeat') === $TASK_REPEAT) {
+          (new TasksEventsRepeat)->setRecurrence($taskCreated,  $request->request, 'App\Task');
+          (new TasksEventsRepeatRule())->setRule($taskCreated,  $request->request);
+         }
         (new Task)->setNotification($taskCreated);
 
         return $task;
     }
 
-    /**
-     * @param Task $task
-     * @return array
-     */
-    public function show(Task $task)
-    {
 
+    public function show(Task $task, Request $request)
+    {
+        $repeatTask = null;
+        $repeatTaskRuleText = null;
+        if($request->get('repeatTaskId') !== "undefined" ){
+            $repeatTask = TasksEventsRepeat::where('id',$request->get('repeatTaskId'))->with(['status'])->get()->toArray() ;
+            $repeatTaskRuleText = TasksEventsRepeatRule::where('task_id', $task->id)->select(['text_rule'])->get()->toArray();
+
+        }
         $task->attributes = $task->attributes();
         $task->status = $task->getStatus($task->getAttribute('status_id'));
         $task->priority = $task->getPriority($task->getAttribute('priority_id'));
@@ -121,7 +131,9 @@ class TasksController extends Controller
             'priorities' => $priorities,
             'categories' => $tasksCategory,
             'category' => $task->category,
-            'project' => $task->project
+            'project' => $task->project,
+            'repeatTask' => $repeatTask,
+            'repeatTaskRuleText' => $repeatTaskRuleText
         ];
     }
 
@@ -164,8 +176,19 @@ class TasksController extends Controller
      */
     public function destroy(Task $task)
     {
+        if($task->repeat) {
+            TasksEventsRepeatRule::where(['task_id' => $task->id])->delete();
+            TasksEventsRepeat::where(['task_id' => $task->id])->delete();
+
+        }
         $task->delete();
+
         return response(['success' => true], 204);
+    }
+
+    public function destroyRepeatTask($repeatTaskId)
+    {
+        TasksEventsRepeat::find($repeatTaskId)->update(['show' => 0]);
     }
 
     public function details(TaskRequest $request, $term, $id)
@@ -214,6 +237,77 @@ class TasksController extends Controller
         return $event;
     }
 
+    public function updateCalendarRepeatDates(Request $request)
+    {
+        $WEEKLY_VIEW = 2;
+        $modifyAllEvents = $request->request->get('toAllEvents');
+        $createNewEvent = $request->request->get('createNewTaskEvent');
+
+        if ($createNewEvent) {
+            $taskId = $request->request->get('event')['event']['extendedProps']['task_id'];
+            $task = Task::find($taskId);
+            $startDate   = new \DateTime($request->request->get('start'));
+
+            $endDate   = new \DateTime($request->request->get('end'));
+            $repeatTaskId = $request->request->get('event')['event']['id'];
+            $this->createNewTaskFromRepeatedTask($task, $startDate, $endDate, $repeatTaskId);
+            return;
+        }
+        if ($modifyAllEvents) {
+
+            $taskId = $request->request->get('event')['event']['extendedProps']['task_id'];
+
+            $allRepeatedTasks = (new TasksEventsRepeatRule())->getAllRepeatedTasks($taskId);
+
+            $eventRules = json_decode(TasksEventsRepeatRule::where('task_id',$taskId)->get()->toArray()[0]['rules'],true);
+            $freq = (new TasksEventsRepeatRule)->getFraq($eventRules['freq']);
+            $days = (new TasksEventsRepeatRule)->getDays(array_column($eventRules['byweekday'], 'weekday'));
+            $startDate   = new \DateTime($request->request->get('start'));
+
+            $endDate   = new \DateTime($request->request->get('end'));
+
+            $rule = (new \Recurr\Rule)
+                ->setStartDate($startDate)
+                ->setEndDate($endDate)
+                ->setCount($eventRules['count'])
+                ->setFreq($freq);
+            if ($eventRules['freq'] === $WEEKLY_VIEW){
+                $rule->setByDay($days);
+
+            }else{
+                $rule->setByMonthDay(array_column($eventRules['byweekday'], 'weekday'));
+            }
+
+            if(($eventRules['until']) ){
+
+                $rule->setUntil(Carbon::parse($eventRules['until']));
+            }
+            $rule->setInterval($eventRules['interval']);
+            $transformer = new \Recurr\Transformer\ArrayTransformer();
+
+            $newDates =  $transformer->transform($rule)->toArray();
+
+            /** @var Recurrence $newDate */
+            foreach ($newDates as $key => $newDate) {
+                $v = ['start_date' => $newDate->getStart(), 'end_date' => $newDate->getEnd()];
+                TasksEventsRepeat::where('id',$allRepeatedTasks[$key]['id'])->update($v);
+            }
+
+        }else{
+            $repeatedTaskId = $request->request->get('event')['event']['id'];
+
+            $start = $request->request->get('event')['event']['start'];
+            $end = $request->request->get('event')['event']['end'];
+            $start = Carbon::parse($start)->format('Y-m-d H:i');
+            $end = Carbon::parse($end)->format('Y-m-d H:i');
+
+            $v = ['start_date' => $start, 'end_date' => $end];
+            TasksEventsRepeat::find($repeatedTaskId)->update($v);
+
+        }
+
+    }
+
     public function unseenTask()
     {
         return (new Task())->unHandledTaskNotification();
@@ -224,6 +318,49 @@ class TasksController extends Controller
         $task->update(['notification_enable' => 0]);
 
     }
+
+    public function updateAllRepeatedTasks(Request $request)
+    {
+        $taskId = $request->request->get('id');
+        $status_id = $request->request->get('status')['id'];
+        $name = $request->request->get('name');
+        $details = $request->request->get('details');
+
+        $vtr = ['status_id' => $status_id, 'name' => $name, 'details' => $details ];
+        TasksEventsRepeat::where(['task_id' => $taskId])->update($vtr);
+
+        $this->updateMainTaskFromRepeat($request);
+
+        return response(['success' => true], 204);
+
+    }
+
+    public function updateSingleRepeatedTasks(Request $request)
+    {
+        $repeatTaskId = $request->request->get('repeatTaskId');
+
+        $status_id = $request->request->get('status')['id'];
+        $name = $request->request->get('name');
+        $details = $request->request->get('details');
+        $v = ['status_id' => $status_id, 'name' => $name, 'details' => $details ];
+        TasksEventsRepeat::find($repeatTaskId)->update($v);
+        $this->updateMainTaskFromRepeat($request);
+        return response(['success' => true], 204);
+    }
+
+    private function updateMainTaskFromRepeat($request)
+    {
+
+        $taskId = $request->request->get('id');
+        $categoryId = $request->request->get('category') ? $request->request->get('category')['id'] : null;
+        $priorityId = $request->request->get('priority') ? $request->request->get('priority')['id'] : null;
+        $projectId = $request->request->get('project') ? $request->request->get('project')['id'] : null ;
+        $name = $request->request->get('name');
+        $details = $request->request->get('details');
+        $vt = ['category_id' => $categoryId, 'priority_id' => $priorityId, 'project_id' => $projectId, 'name' => $name, 'details' => $details];
+        Task::where(['id' => $taskId])->update($vt);
+    }
+
     private function filterBy($request, $entityId, $entityType)
     {
 
@@ -248,6 +385,23 @@ class TasksController extends Controller
 
         return response()->json($tasksPercentage)->original;
 
+
+    }
+
+    private function createNewTaskFromRepeatedTask($task, \DateTime $startDate, \DateTime $endDate, $repeatTaskId)
+    {
+        $start = Carbon::parse($startDate)->format('Y-m-d H:i');
+        $end = Carbon::parse($endDate)->format('Y-m-d H:i');
+
+        $taskToArray = $task->toArray();
+
+        $taskToArray['start_date'] = $start;
+        $taskToArray['end_date'] = $end;
+        $taskToArray['id'] = null;
+        $taskToArray['repeat'] = 0;
+        Task::create($taskToArray);
+
+       TasksEventsRepeat::find($repeatTaskId)->update(['show' => 0]);
 
     }
 }

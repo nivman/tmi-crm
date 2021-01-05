@@ -33,6 +33,14 @@
           </div>
           <template slot="name" slot-scope="props">
             {{ props.row.name }}
+            <p class="control tooltip" v-if="props.row.repeat">
+
+              <i class="fas fa-redo-alt"></i>
+              <span class="tooltip-text"> {{
+                  props.row.repeat_rules[0] ? props.row.repeat_rules[0].text_rule : ''
+                }}</span>
+
+            </p>
           </template>
           <template slot="customer" slot-scope="props">
             <div class="has-text-centered">
@@ -118,11 +126,24 @@
                 </button>
               </p>
               <p class="control tooltip" v-if="$store.getters.admin">
-                <router-link style="font-size: 0.65rem" :to="'/tasks/edit/' + props.row.id"
-                             class="button is-warning is-small">
+
+                <span v-if="!props.row.repeat_rules[0]">
+                       <router-link style="font-size: 0.65rem"
+                                    :to="'/tasks/edit/' + props.row.id"
+                                    class="button is-warning is-small">
                   <i class="fas fa-edit"></i>
                   <span class="tooltip-text">עריכה</span>
                 </router-link>
+                </span>
+                <span v-else>
+                  <router-link style="font-size: 0.65rem"
+                               :to="'/tasks/edit/' + props.row.id +'?repeatTaskId=' +props.row.task_repeat[0].id+ '&all=true'"
+                               class="button is-warning is-small">
+                  <i class="fas fa-edit"></i>
+                  <span class="tooltip-text">עריכה</span>
+                </router-link>
+
+                </span>
               </p>
             </div>
           </template>

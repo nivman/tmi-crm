@@ -16,6 +16,11 @@
 
               </a>
             </p>
+
+            <p class="control tooltip recurring-schedule-icon" v-if="!form.id">
+              <a @click="openRecurringSchedule" class="far fa-calendar recurring-schedule-a"></a>
+
+            </p>
             <p class="control tooltip">
               <button
                   type="button"
@@ -186,7 +191,8 @@
               </header>
               <section class="modal-card-body">
                 <div class="columns">
-                  <div class="column">
+                  <div class="column"
+                       :style="{background: !this.repeatTask ? 'white': 'lightgrey',pointerEvents :!this.repeatTask ? '': 'none'}">
                     <div class="field">
                       <label class="label" for="start_date">זמן התחלה</label>
                       <flat-pickr
@@ -202,10 +208,14 @@
                       </div>
                     </div>
                   </div>
-                  <div class="column">
+
+                  <div class="column"
+                       :style="{background: !this.repeatTask ? 'white': 'lightgrey',pointerEvents :!this.repeatTask ? '': 'none'}">
+
                     <div class="field">
                       <label class="label" for="end_date">זמן סיום</label>
                       <flat-pickr
+
                           class="input"
                           id="end_date"
                           name="end_date"
@@ -238,6 +248,7 @@
                     </div>
                   </div>
                 </div>
+                <p>{{ recurrenceText }}</p>
               </section>
             </div>
           </div>
@@ -278,6 +289,7 @@
 
         </section>
       </div>
+
     </form>
     <button
         class="modal-close is-large is-hidden-mobile"
@@ -285,12 +297,16 @@
         @click="$router.go(-1)"
     ></button>
     <event-form-modal></event-form-modal>
+
+    <recurrence-editor-component v-model="everyWeek" :startDate="form.start_date"
+                                 @clicked="onSubmitRecurrence"></recurrence-editor-component>
   </div>
 
 </template>
 
 <script>
 import EventFormModal from '../calendar/EventFormModal.vue'
+import RecurrenceEditorComponent from '../RecurrenceEditorComponent'
 
 export default {
   props: [
@@ -301,6 +317,19 @@ export default {
   ],
   data() {
     return {
+      everyWeek: {
+        repeatOption: {
+          type: 'every_week',
+          everyWeekPicker: ['1', '2', '3', '4', '5', '6', '7']
+        },
+      },
+      recurrence: [],
+      recurrenceRule: '',
+      recurrenceText: '',
+      repeat: 0,
+      repeatTaskId: '',
+      updateAllRepeatedTask: false,
+      repeatTask: '',
       customers: [],
       projects: [],
       loading: true,
@@ -327,7 +356,7 @@ export default {
         estimated_time: '',
         actual_time: '',
         category: '',
-        notification_enable : 0
+        notification_enable: 0
       }),
       config: {
         altInput: true,
@@ -344,7 +373,14 @@ export default {
     }
   },
   created() {
+    if (this.$route.query.calendarDates) {
+      this.form.start_date = moment(this.$route.query.startDate.split(" ")[0]).format('DD/MM/YYYY HH:mm');
+    }
+    this.repeatTaskId = this.$route.query.repeatTaskId;
+    this.updateAllRepeatedTask = this.$route.query.all;
+
     if (this.popupTaskId !== undefined) {
+
       this.fetchTask(this.popupTaskId);
 
     } else {
@@ -494,13 +530,25 @@ export default {
     },
     submit() {
 
+      if (this.repeatTask) {
+        this.repeatDialog();
+        return
+      }
       this.isSaving = true
+      this.form.repeat = this.repeat;
+
+      if (this.repeat === 1) {
+        this.form.recurrence = this.recurrence;
+        this.form.recurrenceRule = this.recurrenceRule
+        this.form.recurrenceText = this.recurrenceText
+      }
+
       let route = !this.modal ? '/tasks' : `/${this.modal}`;
       if (this.$route.name === 'calendar-task') {
         route = '/calendar';
       }
 
-      if(this.form.notification_time){
+      if (this.form.notification_time) {
         this.form.notification_enable = 1;
       }
       if (this.form.id && this.form.id !== '') {
@@ -535,10 +583,12 @@ export default {
             .finally(() => (this.isSaving = false))
       }
     },
+
+
     fetchTask(id) {
 
       this.$http
-          .get(`app/tasks/${id}`)
+          .get(`app/tasks/${id}?repeatTaskId=${this.repeatTaskId}`)
           .then(res => {
 
             this.attributes = res.data.task.attributes;
@@ -551,12 +601,24 @@ export default {
             this.form.category = res.data.task.category[0];
             this.form.priority = res.data.task.priority[0];
             this.form.project = res.data.task.project[0];
-            this.form.status = taskStatus.length > 0 ? taskStatus[0] : '';
 
-            this.form.start_date = this.format_date(res.data.task.start_date);
-            this.form.end_date = this.format_date(res.data.task.end_date);
+            if (!res.data.repeatTask) {
+              this.form.status = taskStatus.length > 0 ? taskStatus[0] : '';
+              this.form.start_date = this.format_date(res.data.task.start_date);
+              this.form.end_date = this.format_date(res.data.task.end_date);
+
+            } else {
+              this.repeatTask = res.data.repeatTask;
+              this.form.start_date = this.format_date(res.data.repeatTask[0].start_date);
+              this.form.end_date = this.format_date(res.data.repeatTask[0].end_date);
+              this.form.status = res.data.repeatTask[0].status;
+              this.form.details = res.data.repeatTask[0].details;
+              this.form.name = res.data.repeatTask[0].name;
+              this.form.repeatTaskId = res.data.repeatTask[0].id;
+              this.recurrenceText = res.data.repeatTaskRuleText[0].text_rule;
+            }
             this.form.notification_time = this.format_date(res.data.task.notification_time);
-
+            this.repeat = res.data.task.repeat;
           })
           .catch(err => this.$event.fire('appError', err.response))
     },
@@ -571,10 +633,17 @@ export default {
           })
           .catch(err => this.$event.fire('appError', err))
     },
+
     addEvent() {
-      console.log(this.form.customer)
+
       this.$modal.show('event-form-modal', {customerId: this.form.customer.id});
     },
+
+    openRecurringSchedule() {
+      this.$modal.show('recurring-schedule-modal', {value: this.everyWeek});
+
+    },
+
     searchCustomers(search) {
 
       if (search === '') {
@@ -647,43 +716,176 @@ export default {
     },
     addProjectNameToTaskName() {
       let checkTaskName = this.form.name.match(/משימה/g);
-      if(checkTaskName) {
+      if (checkTaskName) {
         this.form.name = ' ( ' + this.form.project.name + ' ) '
       }
 
     },
     deleteEvent(task) {
 
-      let em = this;
-      this.$modal.show("dialog", {
-        title: "למחוק " + name + "!",
-        text: "הפעולה תמחק את הרשומה ללא אפשרות שיחזור.",
-        buttons: [
-          {
-            title: "כן למחוק",
-            class: "button is-danger is-radiusless is-radius-bottom-left",
-            handler: () => {
-              this.$http
-                  .delete(`app/tasks/delete/${task}`)
-                  .then(res => {
-                    em.closeModal();
-                    em.notify("success", name + " נמחק.");
-                    em.$modal.hide("dialog");
-                    em.$event.fire("refreshTasksTable");
+      if (this.repeat === 0) {
+        let em = this;
+        this.$modal.show("dialog", {
+          title: "למחוק " + name + "!",
+          text: "הפעולה תמחק את הרשומה ללא אפשרות שיחזור.",
+          buttons: [
+            {
+              title: "כן למחוק",
+              class: "button is-danger is-radiusless is-radius-bottom-left",
+              handler: () => {
+                this.$http
+                    .delete(`app/tasks/delete/${task}`)
+                    .then(res => {
+                      em.closeModal();
+                      em.notify("success", name + " נמחק.");
+                      em.$modal.hide("dialog");
+                      em.$event.fire("refreshTasksTable");
 
-                  })
-                  .catch(err => {
-                    this.$event.fire("appError", err.response);
-                  });
-            }
-          },
-          { title: "ביטול", class: "button is-warning is-radiusless is-radius-bottom-right" }
-        ]
+                    })
+                    .catch(err => {
+                      this.$event.fire("appError", err.response);
+                    });
+              }
+            },
+            {title: "ביטול", class: "button is-warning is-radiusless is-radius-bottom-right"}
+          ]
+
+        });
+      } else {
+        this.deleteMultipleEvents(task);
+      }
+
+    },
+    deleteMultipleEvents(task) {
+
+      this.$modal.show("dialog", {
+        title: "משימה חוזרת",
+        text: "האם למחוק את כל המשימות הקשורות או רק את זו?",
+        buttons: this.repeatsDeleteButtons(task, 'delete')
+
       });
+    },
+    repeatsDeleteButtons(task, action) {
+      let titleMassage = this.setRepeatTitle(action);
+      let buttons = [
+        {title: "ביטול", class: "button is-info is-radiusless is-radius-bottom-left"},
+        {
+          title: titleMassage[0].titleAll,
+          class: "button is-danger is-radiusless",
+          handler: () => {
+            this.$http
+                .delete(`app/tasks/delete/${task}`)
+                .then(res => {
+                  this.handleAfterRepeatUpdate(titleMassage[2].massageAll)
+                })
+                .catch(err => {
+                  this.$event.fire("appError", err.response);
+                });
+          }
+        }]
+      if (!this.updateAllRepeatedTask) {
+        buttons.push({
+          title: titleMassage[1].titleSingle,
+          class: "button is-warning ",
+          handler: () => {
+            this.$http
+                .delete(`app/tasks/repeat/delete/${this.repeatTaskId}`)
+                .then(res => {
+                  this.handleAfterRepeatUpdate(titleMassage[3].massageSingle)
+                })
+                .catch(err => {
+                  this.$event.fire("appError", err.response);
+                });
+          }
+        });
+      }
+      return buttons;
+
+    },
+    repeatsUpdateButtons(action) {
+      let titleMassage = this.setRepeatTitle(action);
+
+      let buttons = [
+        {title: "ביטול", class: "button is-info is-radiusless is-radius-bottom-left"},
+        {
+          title: titleMassage[0].titleAll,
+          class: "button is-danger is-radiusless",
+          handler: () => {
+            this.form
+                .post(`app/tasks/repeat/all`)
+                .then(res => {
+                  this.handleAfterRepeatUpdate(titleMassage[2].massageAll)
+                })
+                .catch(err => {
+                  this.$event.fire("appError", err.response);
+                });
+          }
+        }
+      ]
+      if (!this.updateAllRepeatedTask) {
+        buttons.push({
+          title: titleMassage[1].titleSingle,
+          class: "button is-warning ",
+          handler: () => {
+            this.form
+                .post(`app/tasks/repeat/single`)
+                .then(res => {
+                  this.handleAfterRepeatUpdate(titleMassage[3].massageSingle)
+
+                })
+                .catch(err => {
+                  this.$event.fire("appError", err.response);
+                });
+          }
+        })
+      }
+      return buttons;
+    },
+    handleAfterRepeatUpdate(titleMassage) {
+      this.closeModal();
+      this.notify("success", titleMassage);
+      this.$modal.hide("dialog");
+      this.$event.fire("refreshTasksTable");
+
+    },
+    setRepeatTitle(action) {
+
+      if (action === 'delete') {
+        return [{titleAll: 'למחוק הכל'}, {titleSingle: 'למחוק רק את המשימה הזאת'}, {massageAll: 'כל המשימות הקשורות נמחקו'}, {massageSingle: 'משימה נמחקה'}]
+      }
+      return [{titleAll: 'לעדכן הכל'}, {titleSingle: 'לעדכן רק את המשימה הזאת'}, {massageAll: 'כל המשימות הקשורות עודכנו'}, {massageSingle: 'משימה עודכנה'}]
+    },
+    repeatDialog() {
+
+
+      this.$modal.show("dialog", {
+        title: "משימה חוזרת",
+        text: "האם לעדכן את כל המשימות הקשורות או רק את זו?",
+
+        buttons: this.repeatsUpdateButtons('update')
+
+      });
+    },
+    onSubmitRecurrence(recurrence) {
+      this.recurrence = recurrence.all();
+
+      this.recurrenceText = recurrence.toText();
+      this.recurrenceRule = recurrence.origOptions
+      this.repeat = 1;
     }
   },
-  components: {EventFormModal},
+  components: {EventFormModal, RecurrenceEditorComponent},
 }
 </script>
 <style>
+.recurring-schedule-icon {
+  font-size: 20px;
+  margin-left: 7px;
+  bottom: 2px;
+  cursor: pointer;
+}
+
+.recurring-schedule-a {
+  color: rgba(10, 10, 10, 0.2);
+}
 </style>

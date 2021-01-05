@@ -3,7 +3,6 @@
       name="event-form-modal"
       height="auto"
       :scrollable="true"
-
       classes="is-rounded rtl-direction"
       transition="custom"
       @before-open="beforeOpen">

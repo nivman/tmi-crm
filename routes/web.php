@@ -69,6 +69,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('events/eventsList/add', 'EventsController@list');
     Route::post('events/calender/dates', 'EventsController@updateCalendarDates');
     Route::post('tasks/calender/dates', 'TasksController@updateCalendarDates');
+    Route::post('tasks/calender/repeat/dates', 'TasksController@updateCalendarRepeatDates');
     Route::get('events/create', 'EventsController@eventsTypes');
   //  Route::delete('events/eventsTypes', 'EventsController@eventsTypes');
     Route::delete('events/delete/{event}', 'EventsController@destroy');
@@ -179,6 +180,9 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::delete('customers/delete/{customer}', 'CustomersController@destroy');
         Route::delete('customers/leads/delete/{customer}', 'CustomersController@destroy');
         Route::delete('tasks/delete/{task}', 'TasksController@destroy');
+        Route::post('tasks/repeat/all', 'TasksController@updateAllRepeatedTasks');
+        Route::post('tasks/repeat/single', 'TasksController@updateSingleRepeatedTasks');
+        Route::delete('tasks/repeat/delete/{repeatTaskId}', 'TasksController@destroyRepeatTask');
         Route::delete('expenses/delete/{expense}', 'ExpensesController@destroy');
         Route::delete('categories/delete/{category}', 'CategoriesController@destroy');
         Route::get('tasks/details', 'TasksController@details');

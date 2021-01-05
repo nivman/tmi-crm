@@ -54,9 +54,10 @@ import '@fullcalendar/timegrid/main.css'
 import heLocale from '@fullcalendar/core/locales/he.js';
 import TaskFormModal from "../tasks/TaskFormModal";
 import TaskOrEventDialog from "./TaskOrEventDialog";
+
 export default {
   components: {
-    FullCalendar, EventFormModal, TaskFormModal,TaskOrEventDialog
+    FullCalendar, EventFormModal, TaskFormModal, TaskOrEventDialog
   },
   data: function () {
     return {
@@ -101,7 +102,7 @@ export default {
     this.$event.listen("refreshEvents", () => {
       let activeRange = this.$refs.calendar.getApi().currentData.dateProfile.activeRange;
       let startDate = moment(activeRange.start).format("YYYY-MM-DD");
-      let endDate =moment(activeRange.end).format("YYYY-MM-DD")
+      let endDate = moment(activeRange.end).format("YYYY-MM-DD")
       this.fetchEvents(startDate, endDate);
     });
 
@@ -129,6 +130,7 @@ export default {
       this.fetchEvents(dates.start, dates.end);
     }
   },
+
   methods: {
     fetchEvents(start, end) {
 
@@ -136,9 +138,10 @@ export default {
       this.$http
           .get(`app/events?start=${start}&end=${end}&fetchData=${this.fetchData}`)
           .then(res => {
-            console.log(res)
+
             let calendarView = this.$refs.calendar.$vnode.componentInstance.$options.calendar.currentData.currentViewType;
-            let taskAndEvents = [...res.data.tasks, ...res.data.events];
+            let taskAndEvents = [...res.data.tasks, ...res.data.events, ...res.data.repeatTasksEventsTitles];
+
             this.calendarOptions.events = taskAndEvents.map(event => {
               if (calendarView === 'dayGridMonth') {
                 event.allDay = true
@@ -151,9 +154,9 @@ export default {
               event.backgroundColor = event.type ? event.type.color : statusColor;
 
               event.textColor = 'black';
-              let eventCustomerName =  event.customer ? ' (' + event.customer.name + ')' : ''
+              let eventCustomerName = event.customer ? ' (' + event.customer.name + ')' : ''
               let eventTitle = event.name ? event.name : event.title;
-              event.title = eventTitle +  eventCustomerName  ;
+              event.title = eventTitle + eventCustomerName;
               return event;
             });
           })
@@ -168,10 +171,12 @@ export default {
       //task have customer_id and event have contact_id
       if (clickInfo.event._def.extendedProps.customer_id) {
         this.$router.push({path: `/calendar-tasks/edit/${clickInfo.event._def.publicId}`})
-      } else {
+      } else if (clickInfo.event._def.extendedProps.contact_id) {
         this.eventId = clickInfo.event._def.publicId
-
         this.$modal.show("event-form-modal", {eventId: clickInfo.event._def.publicId});
+      } else {
+
+        this.getRepeatedTask(clickInfo.event._def.extendedProps.task_id, clickInfo.event._def.publicId);
       }
     },
     handleEvents(events) {
@@ -179,12 +184,46 @@ export default {
     },
     handleDrop(event) {
       let updateRoute = event.event._def.extendedProps.customer_id ? 'tasks' : 'events';
+      let isRepeat = event.event._def.extendedProps.repeat;
 
       let start = moment.utc(event.event._instance.range.start).format("YYYY-MM-DD H:m:s");
       let end = moment.utc(event.event._instance.range.end).format("YYYY-MM-DD H:m:s");
+      if (!isRepeat) {
+        this.$http
+            .post(`app/${updateRoute}/calender/dates`, {'event': event, 'start': start, 'end': end})
+            .then(res => {
+              //Todo
+            })
+            .catch(err => {
+              this.$event.fire('appError', err.response)
+            })
+      } else {
+        let originalStartDay = moment(event.event._def.extendedProps.start_date).day();
+        let newStartDay = moment(start).day();
 
+        if (originalStartDay !== newStartDay) {
+          // if user move event to different day create new task or event
+            this.handleDropRepeat(event, start, end, false, true);
+        } else {
+          this.repeatDialogMassage(event, start, end)
+        }
+
+      }
+
+    },
+    handleDropRepeat(event, start, end, toAllEvents, createNewTaskEvent) {
+      let dates = this.setChangeOnFirstEvent(event.event._def.extendedProps.task, start, end, createNewTaskEvent)
+
+      let start_date = moment(dates[0]).format("YYYY-MM-DD H:m:s");
+      let end_date = moment(dates[1]).format("YYYY-MM-DD H:m:s");
       this.$http
-          .post(`app/${updateRoute}/calender/dates`, {'event': event, 'start': start, 'end': end})
+          .post(`app/tasks/calender/repeat/dates`, {
+            'event': event,
+            'start': start_date,
+            'end': end_date,
+            'toAllEvents': toAllEvents,
+            'createNewTaskEvent' : createNewTaskEvent
+          })
           .then(res => {
             //Todo
           })
@@ -192,26 +231,58 @@ export default {
             this.$event.fire('appError', err.response)
           })
     },
+
+    setChangeOnFirstEvent(firstEvent, start, end, createNewTaskEvent) {
+
+      let originStartDateTask = new Date(firstEvent.start_date);
+      let originEndDateTask = new Date(firstEvent.end_date);
+      let changeStartTask = new Date(start)
+      let changeEndTask = new Date(end)
+
+      originStartDateTask.setHours(changeStartTask.getHours())
+      originStartDateTask.setMinutes(changeStartTask.getMinutes())
+
+      originEndDateTask.setHours(changeEndTask.getHours())
+      originEndDateTask.setMinutes(changeEndTask.getMinutes())
+
+      if (createNewTaskEvent) {
+        originStartDateTask.setDate(changeStartTask.getDate())
+        originEndDateTask.setDate(changeEndTask.getDate())
+      }
+
+      return [originStartDateTask, originEndDateTask]
+    },
+
+
     handleDrag(event) {
+      let isRepeat = event.event._def.extendedProps.repeat;
+
       let updateRoute = event.event._def.extendedProps.customer_id ? 'tasks' : 'events';
 
       let start = moment.utc(event.event._instance.range.start).format("YYYY-MM-DD H:m:s");
       let end = moment.utc(event.event._instance.range.end).format("YYYY-MM-DD H:m:s");
 
-      this.$http
-          .post(`app/${updateRoute}/calender/dates`, {'event': event, 'start': start, 'end': end})
-          .then(res => {
-          //Todo
-          })
-          .catch(err => {
-            this.$event.fire('appError', err.response)
-          })
+      if (!isRepeat) {
+        this.$http
+            .post(`app/${updateRoute}/calender/dates`, {'event': event, 'start': start, 'end': end})
+            .then(res => {
+              //Todo
+            })
+            .catch(err => {
+              this.$event.fire('appError', err.response)
+            })
+      }else {
+        this.repeatDialogMassage(event, start, end)
+      }
     },
     addEvent() {
       this.$modal.show("event-form-modal", {event: null});
     },
     addTask() {
       this.$router.push({path: `/tasks/add/`})
+    },
+    getRepeatedTask(taskId, repeatTaskId) {
+      this.$router.push({path: `/calendar-tasks/edit/${taskId}?repeatTaskId=${repeatTaskId}`})
     },
     formatDates(dates) {
       let start = moment(dates.start).format("YYYY-MM-DD")
@@ -249,6 +320,32 @@ export default {
         let dates = this.formatDates(this.$refs.calendar.getApi().currentData.dateProfile.activeRange)
 
         this.fetchEvents(dates.start, dates.end);
+      });
+    },
+    repeatDialogMassage(event, start, end) {
+      let em = this;
+
+      this.$modal.show("dialog", {
+        title: "שינוי פרטים לאירוע חוזר",
+        text: "האם לשנות לאירוע הזה או לכל האירועים שקשורים אליו",
+        buttons: [
+          {
+            title: "לכל האירועים",
+            class: "button is-danger is-radiusless is-radius-bottom-left",
+            handler: () => {
+              this.handleDropRepeat(event, start, end, true, false);
+              em.$modal.hide("dialog");
+
+            }
+          },
+          {
+            title: "רק לאירוע הזה", class: "button is-warning is-radiusless is-radius-bottom-right",
+            handler: () => {
+              this.handleDropRepeat(event, start, end, false,false);
+              em.$modal.hide("dialog");
+            }
+          }
+        ]
       });
     }
   },

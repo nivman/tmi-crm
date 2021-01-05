@@ -9,6 +9,7 @@ use App\File;
 use App\Helpers\Date;
 use App\Helpers\Filters;
 use App\Task;
+use App\TasksEventsRepeat;
 use Carbon\Carbon;
 use Doctrine\DBAL\Events;
 use Illuminate\Database\Eloquent\Collection;
@@ -61,14 +62,29 @@ class EventsController extends Controller
         $fetchData = $request->fetchData;
 
         $events = $fetchData === '0' ? [] : Event::whereBetween('start_date',[$start,$end])->with('type')->get();
-        $tasks = $fetchData === '1' ? new Collection() : Task::whereBetween('start_date',[$start,$end])->with('status', 'customer')->get();
+        $tasks = $fetchData === '1' ? new Collection() :
+            Task::whereBetween('start_date',[$start,$end])
+            ->where('repeat', 0)
+            ->with('status', 'customer')->get();
+
+        $repeatTasksEvents = $fetchData === '1' ? new Collection() :
+            TasksEventsRepeat::whereBetween('start_date',[$start,$end])
+            ->where('show', 1)
+            ->with('status' ,'task')->get();
 
         $taskTitles = array_map(function($task) {
             $task['title'] = $task['name'];
             return $task;
         }, $tasks->toArray() );
 
-        return ['tasks' => $taskTitles, 'events' => $events];
+        $repeatTasksEventsTitles = array_map(function($repeatTasksEvent) {
+            $repeatTasksEvent['title'] = $repeatTasksEvent['name'];
+            $repeatTasksEvent['repeat'] = true;
+
+            return $repeatTasksEvent;
+        }, $repeatTasksEvents->toArray() );
+
+        return ['tasks' => $taskTitles, 'events' => $events, 'repeatTasksEventsTitles' =>$repeatTasksEventsTitles];
     }
 
     public function list(Request $request)

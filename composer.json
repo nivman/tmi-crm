@@ -30,6 +30,7 @@
 		"rinvex/laravel-cacheable": "^4.1",
 		"rinvex/laravel-support": "^4.2",
 		"robinvdvleuten/ulid": "^4.1",
+		"simshaun/recurr": "^4.0",
 		"spatie/laravel-activitylog": "^3.14",
 		"thomasjohnkane/snooze": "^1.0",
 		"webklex/laravel-imap": "^2.2"
