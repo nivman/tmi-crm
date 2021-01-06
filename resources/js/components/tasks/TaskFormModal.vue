@@ -307,8 +307,10 @@
 <script>
 import EventFormModal from '../calendar/EventFormModal.vue'
 import RecurrenceEditorComponent from '../RecurrenceEditorComponent'
+import hebrewDates from '../../mixins/hebrewDates'
 
 export default {
+  mixins: [hebrewDates],
   props: [
     'modal',
     'cusId',
@@ -358,17 +360,22 @@ export default {
         category: '',
         notification_enable: 0
       }),
-      config: {
+      config_to_complete: {
+        altInput: true,
+        altFormat: 'd/m/Y',
+        dateFormat: 'd/m/Y',
+      }
+    }
+  },
+  computed: {
+    config() {
+      return {
+        locale: this.getLocale !== 'en' ? require(`flatpickr/dist/l10n/he.js`).default.he : 'en',
         altInput: true,
         enableTime: true,
         altFormat: 'd/m/Y H:i',
         dateFormat: 'd/m/Y H:i',
         time_24hr: true
-      },
-      config_to_complete: {
-        altInput: true,
-        altFormat: 'd/m/Y',
-        dateFormat: 'd/m/Y',
       }
     }
   },
@@ -503,6 +510,7 @@ export default {
     }
 
   },
+
   methods: {
     format_date(value) {
 
@@ -857,7 +865,6 @@ export default {
     },
     repeatDialog() {
 
-
       this.$modal.show("dialog", {
         title: "משימה חוזרת",
         text: "האם לעדכן את כל המשימות הקשורות או רק את זו?",
@@ -868,8 +875,11 @@ export default {
     },
     onSubmitRecurrence(recurrence) {
       this.recurrence = recurrence.all();
+      let gettext =  function(id) {
+        return hebrewDates.hebrewStrings[id] || id;
+      };
 
-      this.recurrenceText = recurrence.toText();
+      this.recurrenceText = recurrence.toText( gettext, hebrewDates);
       this.recurrenceRule = recurrence.origOptions
       this.repeat = 1;
     }

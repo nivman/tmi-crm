@@ -239,7 +239,10 @@ class TasksController extends Controller
 
     public function updateCalendarRepeatDates(Request $request)
     {
-        $WEEKLY_VIEW = 2;
+        $MONTHLY = 1;
+        $WEEKLY = 2;
+
+
         $modifyAllEvents = $request->request->get('toAllEvents');
         $createNewEvent = $request->request->get('createNewTaskEvent');
 
@@ -271,10 +274,10 @@ class TasksController extends Controller
                 ->setEndDate($endDate)
                 ->setCount($eventRules['count'])
                 ->setFreq($freq);
-            if ($eventRules['freq'] === $WEEKLY_VIEW){
+            if ($eventRules['freq'] === $WEEKLY){
                 $rule->setByDay($days);
 
-            }else{
+            }elseif ($eventRules['freq'] === $MONTHLY){
                 $rule->setByMonthDay(array_column($eventRules['byweekday'], 'weekday'));
             }
 

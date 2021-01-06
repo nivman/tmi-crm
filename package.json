@@ -61,6 +61,8 @@
 		"vuex": "^3.5.1"
 	},
 	"dependencies": {
+		"@braid/vue-formulate": "^2.4.5",
+		"@braid/vue-formulate-i18n": "^1.13.0",
 		"@creativebulma/bulma-tooltip": "^1.2.0",
 		"@fullcalendar/core": "^5.4.0",
 		"@fullcalendar/daygrid": "^5.4.0",

@@ -211,13 +211,6 @@ export default {
         project: ''
 
       }),
-      config: {
-        altInput: true,
-        enableTime: true,
-        altFormat: "d/m/Y H:i",
-        dateFormat: "d/m/Y H:i",
-        time_24hr: true
-      },
       loading: false,
       isSaving: false,
       contact_id: null,
@@ -225,10 +218,22 @@ export default {
       type: '',
     }
   },
+  computed: {
+    config() {
+      return {
+        locale: this.getLocale !== 'en' ? require(`flatpickr/dist/l10n/he.js`).default.he : 'en',
+        altInput: true,
+        enableTime: true,
+        altFormat: "d/m/Y H:i",
+        dateFormat: "d/m/Y H:i",
+        time_24hr: true
+      }
+    }
+  },
   watch: {
     'form.project': function () {
 
-  //  this.projectSelected = !this.projectSelected
+      //  this.projectSelected = !this.projectSelected
       if (this.projects.length > 0 && !this.contactSelected) {
 
         this.getContactsByProjectId(this.form.project)
@@ -245,16 +250,16 @@ export default {
       this.contactSelected = !this.contactSelected
     },
     'form.type': function () {
-    this.form.typeColor = this.form.type.color
+      this.form.typeColor = this.form.type.color
 
     }
   },
   methods: {
     getContactsByProjectId(project) {
 
-     if(!project) {
-       return false;
-     }
+      if (!project) {
+        return false;
+      }
       let customer_id = project.customer_id
       this.$http
           .post('app/project-customers/' + customer_id)
@@ -281,7 +286,7 @@ export default {
     getProjectsByContactId(contacts) {
       let id = contacts.map(a => a.customer_id)
 
-      if(!id[0]) {
+      if (!id[0]) {
         return false;
       }
       this.$http
@@ -321,28 +326,27 @@ export default {
       this.form.end_date = moment(new Date()).add(30, 'm').format('DD/MM/YYYY H:mm')
       this.create();
 
-      if(e.params.eventId){
+      if (e.params.eventId) {
 
         this.getEventById(e.params.eventId);
-      }
-      else if (e.params.event) {
+      } else if (e.params.event) {
 
         this.form = new this.$form(e.params.event)
         this.form.contact = e.params.event.contact.first_name + ' ' + e.params.event.contact.last_name
         this.form.contact_id = e.params.event.contact.id
-        this.form.start_date = moment( e.params.event.start_date).format("DD/MM/YYYY H:mm");
-        this.form.end_date = moment( e.params.event.end_date).format("DD/MM/YYYY H:mm");
+        this.form.start_date = moment(e.params.event.start_date).format("DD/MM/YYYY H:mm");
+        this.form.end_date = moment(e.params.event.end_date).format("DD/MM/YYYY H:mm");
         let project = e.params.event.project;
         this.form.project = project ? project.name : '';
-        this.form.project_id =  project ? project.id : null;
+        this.form.project_id = project ? project.id : null;
 
         this.form.details = this.clearContent(e.params.event.details);
         this.getProjectsByContactId([e.params.event.contact]);
       } else {
         // task-or-event-dialog = click on slot in the calendar
-        if(calendarDates.name === 'task-or-event-dialog') {
-          this.form.start_date = moment( e.params.params.startStr).format("DD/MM/YYYY H:mm");
-          this.form.end_date = moment( e.params.params.endStr).format("DD/MM/YYYY H:mm");
+        if (calendarDates.name === 'task-or-event-dialog') {
+          this.form.start_date = moment(e.params.params.startStr).format("DD/MM/YYYY H:mm");
+          this.form.end_date = moment(e.params.params.endStr).format("DD/MM/YYYY H:mm");
         }
 
         if (e.params.customerId) {
@@ -416,7 +420,7 @@ export default {
             this.$event.fire('appError', err.response)
           })
     },
-    getProject (id) {
+    getProject(id) {
 
       this.$http
           .get(`app/projects/${id}`)
@@ -441,8 +445,8 @@ export default {
             this.form.type_id = res.data.type_id;
             this.form.details = res.data.details;
 
-            this.form.start_date = moment( res.data.start_date).format("DD/MM/YYYY hh:mm");
-            this.form.end_date = moment( res.data.end_date).format("DD/MM/YYYY hh:mm");
+            this.form.start_date = moment(res.data.start_date).format("DD/MM/YYYY hh:mm");
+            this.form.end_date = moment(res.data.end_date).format("DD/MM/YYYY hh:mm");
 
           })
           .catch(err => {
@@ -458,7 +462,7 @@ export default {
             .then(() => {
 
               this.$forceUpdate();
-           //   this.$event.fire('refreshEventsListTable')
+              //   this.$event.fire('refreshEventsListTable')
               this.notify(
                   'success',
                   'עודכן בהצלחה'
@@ -494,12 +498,12 @@ export default {
           .catch(err => this.$event.fire('appError', err))
     },
     clearContent(details) {
-      if(details) {
-        let removeEmailAddr=  details.replace(/([^.@\s]+)(\.[^.@\s]+)*@([^.@\s]+\.)+([^.@\s]+)/, '')
+      if (details) {
+        let removeEmailAddr = details.replace(/([^.@\s]+)(\.[^.@\s]+)*@([^.@\s]+\.)+([^.@\s]+)/, '')
         let removeEmptyLine = removeEmailAddr.replaceAll(/\r?\n|\r/g, '')
-        let removeBiggerLessSign = removeEmptyLine.replaceAll(/<|>/g,'')
-        let breakLineOnDot = removeBiggerLessSign.replaceAll(/\./g,'\n')
-        return breakLineOnDot.replaceAll(/\[.+\n.+/gi,'')
+        let removeBiggerLessSign = removeEmptyLine.replaceAll(/<|>/g, '')
+        let breakLineOnDot = removeBiggerLessSign.replaceAll(/\./g, '\n')
+        return breakLineOnDot.replaceAll(/\[.+\n.+/gi, '')
 
       }
       return ''

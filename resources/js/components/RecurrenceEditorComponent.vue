@@ -42,7 +42,6 @@
                     item-value="value"
                     item-text="name"
                     single-line
-                    @input="endRepeatOption"
                     :options="endOption"
                     v-model="end">
                 </v-select>
@@ -228,8 +227,10 @@
 
 <script>
 import {RRule, RRuleSet, rrulestr} from 'rrule'
+import hebrewDates from '../mixins/hebrewDates'
 
 export default {
+  mixins: [hebrewDates],
   props: ['value', 'startDate'],
   components: {RRule, RRuleSet, rrulestr},
   data() {
@@ -411,17 +412,14 @@ export default {
 
     updateDaysOption(datesTime, count) {
 
-      let onMonthDay = this.monthRadioBox === '0' ? this.onMonthDay : null;
-
       let rule = new RRule({
         freq: RRule.DAILY,
         dtstart: datesTime.startDateTime,
         until: datesTime.endDateTime,
         bysetpos: this.week.value,
         byweekday: this.everyWeekPicker,
-        bymonthday: onMonthDay,
         count: count,
-        interval: this.interval
+        interval: parseInt(this.interval)
       })
 
       this.rule = rule;
@@ -431,16 +429,17 @@ export default {
     updateMonthDayOption(datesTime, count) {
 
       let onMonthDay = this.monthRadioBox === '0' ? this.onMonthDay : null;
+      let week = this.week.value ? this.week.value : 1
 
       let rule = new RRule({
         freq: RRule.MONTHLY,
         dtstart: datesTime.startDateTime,
         until: datesTime.endDateTime,
-        bysetpos: this.week.value,
+        bysetpos: week,
         byweekday: this.everyWeekPicker,
         bymonthday: onMonthDay,
         count: count,
-        interval: this.interval
+        interval: parseInt(this.interval)
       })
 
       this.rule = rule;
@@ -455,14 +454,18 @@ export default {
         until: datesTime.endDateTime,
         byweekday: this.everyWeekPicker,
         count: count,
-        interval: this.interval
+        interval: parseInt(this.interval)
       })
-
       this.rule = rule;
       return rule;
     },
     printRule(rule) {
-      this.toString = rule.toText()
+
+      let gettext =  function(id) {
+        return hebrewDates.hebrewStrings[id] || id;
+      };
+
+      this.toString = rule.toText( gettext, hebrewDates)
 
     },
 
@@ -471,11 +474,6 @@ export default {
       data.repeatOption.type = event.target.value;
       this.emitData(data);
     },
-    endRepeatOption() {
-
-
-    },
-
   },
 
 }

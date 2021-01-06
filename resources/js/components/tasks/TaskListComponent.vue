@@ -136,6 +136,7 @@
                 </router-link>
                 </span>
                 <span v-else>
+
                   <router-link style="font-size: 0.65rem"
                                :to="'/tasks/edit/' + props.row.id +'?repeatTaskId=' +props.row.task_repeat[0].id+ '&all=true'"
                                class="button is-warning is-small">

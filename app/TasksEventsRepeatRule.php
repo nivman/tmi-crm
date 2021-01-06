@@ -39,6 +39,9 @@ class TasksEventsRepeatRule extends Model
 
             case 2:
                 return 'WEEKLY';
+
+            case 3:
+                return 'DAILY';
         }
     }
 

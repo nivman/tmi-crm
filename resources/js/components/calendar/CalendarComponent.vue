@@ -91,6 +91,7 @@ export default {
         eventsSet: this.handleEvents,
         eventDrop: this.handleDrop,
         eventResize: this.handleDrag,
+        // eventDragStart: this.handleDragStart,
         events: [],
 
       },
@@ -202,9 +203,16 @@ export default {
         let newStartDay = moment(start).day();
 
         if (originalStartDay !== newStartDay) {
-          // if user move event to different day create new task or event
+
+          let msg = confirm("מעבר יום של אירוע חוזר יוציא את האירוע מסט האירועים החוזרים שלו");
+          if (msg == true) {
+            // if user move event to different day create new task or event
             this.handleDropRepeat(event, start, end, false, true);
+          } else {
+            event.revert();
+          }
         } else {
+
           this.repeatDialogMassage(event, start, end)
         }
 
@@ -253,7 +261,38 @@ export default {
       return [originStartDateTask, originEndDateTask]
     },
 
+    handleDragStart(event) {
 
+      event.revert();
+      let em = this
+      this.$modal.show("dialog", {
+        title: "שינוי יום אירוע חוזר",
+        text: "השינוי יוציא את האירוע מה סט האירועים החוזרים אליהם הוא שייך",
+        buttons: [
+          {
+            title: "אישור",
+            class: "button is-danger is-radiusless is-radius-bottom-left",
+            handler: () => {
+              event.disableDragging = true
+              em.$modal.hide("dialog");
+
+            }
+          },
+          {
+            title: "ביטול", class: "button is-warning is-radiusless is-radius-bottom-right",
+            handler: () => {
+
+              em.$modal.hide("dialog");
+            }
+          }
+        ]
+      });
+
+
+
+
+
+    },
     handleDrag(event) {
       let isRepeat = event.event._def.extendedProps.repeat;
 
