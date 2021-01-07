@@ -484,9 +484,11 @@ export default {
     },
     submit() {
       this.isSaving = true;
-      let path = this.$route.name === 'lead' ? "/leads" : "/customers";
-      let refreshTable = this.$route.name === 'lead' ? "refreshLeadsTable" : "refreshCustomersTable";
-
+      console.log(this.$route)
+      let path = (!this.$route || this.$route.name === 'lead') ? "/leads" : "/customers";
+      let refreshTable = (!this.$route || this.$route.name === 'lead')? "refreshLeadsTable" : "refreshCustomersTable";
+      console.log(path)
+      console.log(refreshTable)
       if (this.form.id && this.form.id !== "") {
 
         this.form
@@ -497,7 +499,12 @@ export default {
                   "success",
                   "לקוח עודכן"
               );
-              this.$router.push(path);
+              if (this.$route) {
+                this.$router.push(path);
+              }else {
+                this.closeModal();
+              }
+
             })
             .catch(err => this.$event.fire("appError", err.response))
             .finally(() => (this.isSaving = false));
