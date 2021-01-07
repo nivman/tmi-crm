@@ -5,23 +5,32 @@ namespace App\Http\Controllers;
 use App\Http\Requests\NotesRequest;
 use App\Notes;
 use App\NotesCategories;
+use App\Project;
 use Illuminate\Http\Request;
 
 class NotesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(Request $request)
     {
+        $projectId = $request->request->get('projectId');
+        $categoryId = $request->request->get('categoryId');
+        if($categoryId || $projectId) {
 
-        if($request->request->get('categoryId')) {
-            $ids = explode(",", $request->request->get('categoryId'));
-            return response()->json(Notes::orderBy('id','DESC')->with('note_category')->whereIn('note_category_id', $ids)->mine()->vueTable(Notes::$columns));
+            $categoryIds = explode(",", $categoryId);
+            $orWhere = $categoryId ? 'where' : 'orWhere';
+            $query = Notes::whereIn('note_category_id',$categoryIds)
+                ->orderBy('id','DESC')
+                ->with('note_category', 'project')
+                ->$orWhere(function($query) use ($projectId){
+                        if ($projectId) {
+
+                            $query->where('project_id','=',$projectId);
+                        }
+            })->mine()->vueTable(Notes::$columns);
+            return $query;
         }
-        return response()->json(Notes::orderBy('id','DESC')->with('note_category')->mine()->vueTable(Notes::$columns));
+        return response()->json(Notes::orderBy('id','DESC')->with('note_category', 'project')->mine()->vueTable(Notes::$columns));
     }
 
     public function changeTitle(Request $request)
@@ -45,14 +54,13 @@ class NotesController extends Controller
         $id = $categoryId == -1 ? null : $categoryId;
         $note->update(['note_category_id' => $id]);
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
-        return NotesCategories::all();
+        $notesCategories = NotesCategories::all();
+        $projects = Project::all();
+
+        return ['notesCategories' => $notesCategories , 'projects' => $projects];
     }
 
     /**
@@ -65,7 +73,7 @@ class NotesController extends Controller
     {
         $v = $request->validated();
         $v['note_category_id'] = $request->request->get('category_note') ? $request->request->get('category_note')['id'] : null;
-
+        $v['project_id'] = $request->request->get('project') ? $request->request->get('project')['id'] : null;
         return Notes::create($v);
     }
 
@@ -84,18 +92,26 @@ class NotesController extends Controller
     public function edit(Notes $notes)
     {
        $notesCategories = NotesCategories::all();
-        return  ['notes' => $notes, 'notesCategories' => $notesCategories];
+       $projects = Project::all();
+       return  ['notes' => $notes, 'notesCategories' => $notesCategories, 'projects' => $projects];
     }
 
     public function update(NotesRequest $request, Notes $notes)
     {
         $v = $request->validated();
         $categoryId = $request->request->get('category_note');
+        $projectId = $request->request->get('project');
 
         if ($categoryId) {
             $v['note_category_id'] = isset($categoryId[0]) ? $categoryId[0]['id'] : $categoryId['id'];
         }else {
             $v['note_category_id'] = null;
+        }
+
+        if ($projectId) {
+            $v['project_id'] = isset($projectId[0]) ? $projectId[0]['id'] : $projectId['id'];
+        }else {
+            $v['project_id'] = null;
         }
 
         $notes->update($v);
@@ -110,9 +126,12 @@ class NotesController extends Controller
         return response(['success' => true], 204);
     }
 
-    public function getCategories()
+    public function getNoteExtraData()
     {
+        $notesCategories = NotesCategories::all();
+        $projects = Project::all();
 
-        return NotesCategories::all();
+        return ['notesCategories' => $notesCategories , 'projects' => $projects];
+
     }
 }

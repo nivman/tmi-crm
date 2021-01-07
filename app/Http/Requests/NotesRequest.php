@@ -18,6 +18,7 @@ class NotesRequest extends FormRequest
             'title' => 'required|max:525',
             'subject' => 'nullable',
             'note_category_id' => 'nullable',
+            'project_id' => 'nullable'
              ];
 
     }

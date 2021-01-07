@@ -106,7 +106,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::post('notes/create', 'NotesController@create');
     Route::post('notes/edit/{notes}', 'NotesController@edit');
     Route::post('notes/update/{notes}', 'NotesController@update');
-    Route::post('notes/categories', 'NotesController@getCategories');
+    Route::post('notes/extra-data', 'NotesController@getNoteExtraData');
     Route::post('notes/edit-title', 'NotesController@changeTitle');
     Route::post('notes/color', 'NotesController@changeColor');
     Route::post('notes/edit-subject', 'NotesController@changeSubject');

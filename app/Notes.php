@@ -14,7 +14,7 @@ class Notes extends Model
 
     public static $columns = [ 'title', 'subject'];
 
-    protected $fillable = ['title', 'subject', 'created_at', 'note_category_id'];
+    protected $fillable = ['title', 'subject', 'created_at', 'note_category_id', 'project_id'];
 
 
     public function note_category()
@@ -22,4 +22,8 @@ class Notes extends Model
         return $this->belongsTo(NotesCategories::class);
     }
 
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
 }

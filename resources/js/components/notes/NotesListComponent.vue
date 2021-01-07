@@ -31,6 +31,20 @@
               label="name"
               track-by="name">
           </multiselect>
+          <v-select
+              label="name"
+              id="project"
+              name="project"
+               placeholder="פרוייקטים"
+              class="rtl-direction column projects-column"
+              item-value="id"
+              item-text="name"
+              return-object
+              single-line
+              :options="projects"
+              v-model="searchProjects">
+
+          </v-select>
         </div>
       </div>
       <div class="mail-view">
@@ -44,6 +58,8 @@
               :class="{noMargin: index % 4 ===0}"
               class="panel-content outer-item"
               v-for="(note, index)  in notes" :key="note.id">
+
+
             <div class="card" style="width: 100%; overflow: initial;">
               <header class="card-header">
                 <div class="card-header-title has-tooltip-right"
@@ -76,16 +92,25 @@
                 </a>
               </header>
               <div class="card-content">
-                <div class="content details-content" @click="changeSubject(note.id)">
-                  <div :class="{ active: note.id === showEditSubject}">
-                    {{ note.subject }}
-                  </div>
-                  <div :class="{ active: note.id !== showEditSubject}">
-                    <textarea class="textarea" style="width: 100%" rows="5" v-model="note.subject"
-                              @keyup="editSubject(note.subject, note.id)">
-                      {{ note.subject }}
-                    </textarea>
-                  </div>
+                <span class="label">{{note.project ? " פרויקט: "+note.project.name : ''}}</span>
+                <div class="content details-content">
+                    <label class="label" for="details">פרטים</label>
+                    <template>
+                      <div class="scroll-container">
+                      <quill-editor
+                          id="details"
+                          name="details"
+
+                          ref="myQuillEditor"
+                          v-model="note.subject"
+                          :options="editorOption"
+                          @change="editSubject(note.subject, note.id)"
+                          @blur="onEditorBlur($event)"
+                          @focus="onEditorFocus($event)"
+                          @ready="onEditorReady($event)" />
+                      </div>
+                    </template>
+
                 </div>
               </div>
               <footer class="card-footer footer-note">
@@ -154,7 +179,11 @@ import NotesFormComponent from "./NotesFormComponent";
 import infiniteScroll from 'vue-infinite-scroll'
 import Multiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
+import {quillEditor} from 'vue-quill-editor'
 export default {
   props: ['params'],
   mixins: [tBus('app/notes')],
@@ -165,6 +194,10 @@ export default {
       showEditSubject: null,
       showCategoriesSubject: null,
       notesCategories: [],
+      project: '',
+      projects: [],
+      searchProjects: '',
+      projectId: '',
       searchNotesCategories: '',
       searchTerm: '',
       notes: [],
@@ -176,7 +209,28 @@ export default {
       backgroundCategory: [],
       noteId: '',
       categoryIds: [],
+      editorOption: {
+        scrollingContainer: '.scroll-container',
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],
+            ['clean'],
+            ['link', 'image', 'video'],
+            [{ 'direction': 'rtl' }],
+          ],
+
+          syntax: {
+            highlight: text => hljs.highlightAuto(text).value
+          }
+        },
+        theme: 'snow',
+      }
     };
+  },
+  computed: {
+    editor() {
+      return this.$refs.myQuillEditor.quill
+    }
   },
   created() {
     this.changeNotesCategories(-1);
@@ -205,6 +259,18 @@ export default {
       });
 
       this.categoryIds = categoryIds;
+      let em = this
+      em.page = 1;
+      this.busy = false
+      em.notes = []
+      setTimeout(function () {
+        em.infiniteHandler()
+        em.busy = true
+      }, 1500)
+    },
+    'searchProjects': function () {
+
+      this.projectId = this.searchProjects ?this.searchProjects.id : '';
       let em = this
       em.page = 1;
       this.busy = false
@@ -277,21 +343,21 @@ export default {
     changeTitle(noteId) {
       this.showEditTitle = noteId;
     },
-    changeSubject(noteId) {
-      this.showEditSubject = noteId;
-    },
+
     changeNotesCategories(noteId) {
       this.noteId = noteId;
-      this.$http.post(`/app/notes/categories`)
+      this.$http.post(`/app/notes/extra-data`)
           .then(response => {
-            this.notesCategories = response.data
+
+            this.notesCategories = response.data.notesCategories;
+            this.projects = response.data.projects;
           });
       this.showCategoriesSubject = noteId;
     },
     infiniteHandler() {
 
       this.busy = true
-      this.$http.get(`/app/notes?page=${this.page}&query=${this.searchTerm}&categoryId=${this.categoryIds}`)
+      this.$http.get(`/app/notes?page=${this.page}&query=${this.searchTerm}&categoryId=${this.categoryIds}&projectId=${this.projectId}`)
           .then(response => {
 
             if (response.data.data.length > 0) {
@@ -391,8 +457,21 @@ export default {
           .then(response => {
           })
     },
+    onEditorBlur(quill) {
+
+    },
+    onEditorFocus(quill) {
+
+    },
+    onEditorReady(quill) {
+
+    },
+    onEditorChange({ quill, html, text }) {
+
+      this.content = html
+    },
   },
-  components: {DateFormatComponent, NotesFormComponent, infiniteScroll, Multiselect}
+  components: {DateFormatComponent, NotesFormComponent, infiniteScroll, Multiselect, quillEditor}
 }
 </script>
 <style>
@@ -410,7 +489,7 @@ export default {
 }
 
 .details-content {
-  overflow: auto;
+  /*overflow: auto;*/
   height: 150px;
 }
 
@@ -454,6 +533,10 @@ export default {
   padding: 0px;
   text-align: right;
 }
+.projects-column{
+  padding: 0px;
+  text-align: right;
+}
 
 .multiselect__option {
   text-align: right;
@@ -471,5 +554,13 @@ export default {
 
 .panel-heading-notes {
   margin-left: 1%;
+}
+.ql-editor {
+  /*text-align: right;*/
+}
+.scroll-container {
+  overflow: auto;
+
+  height: 150px;
 }
 </style>
