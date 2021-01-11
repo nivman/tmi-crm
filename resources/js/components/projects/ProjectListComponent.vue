@@ -64,12 +64,20 @@
 
             </div>
           </template>
+          <template slot="active" slot-scope="props">
+            <div class="has-text-centered">
+
+                            {{props.row.active == 1 ? 'פעיל' : 'לא פעיל' }}
+
+            </div>
+          </template>
           <template slot="some_money_so_far" slot-scope="props">
             <div class="has-text-centered">
 
               {{ moneyBurnCalculation(props.row.actual_time) }}
             </div>
           </template>
+
           <template slot="actions" slot-scope="props">
             <div class="buttons has-addons is-centered">
               <p class="control tooltip">
@@ -157,12 +165,12 @@ export default {
       showProjectForm: false,
       projectId: null,
       projectName: null,
-      columns: ['name', 'customer', 'start_date','end_date', 'price', 'expenses', 'type','percentage_done','some_money_so_far' ,'actions'],
+      columns: ['name', 'customer', 'start_date','end_date', 'price', 'expenses', 'type','percentage_done','some_money_so_far' ,'active', 'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       addRoute: null,
       options: {
         orderBy: { ascending: true, column: 'name' },
-        sortable: ['name', 'start_date', 'end_date', 'priority'],
+        sortable: ['name', 'start_date', 'end_date', 'priority', 'active'],
         editableColumns: ['details'],
         perPage: 10,
         columnsClasses: {
@@ -183,6 +191,7 @@ export default {
           price: 'מחיר',
           expenses: 'הוצאות',
           actions: 'פעולות',
+          active: 'פעיל',
           percentage_done: 'אחוז מהעבודה עד כה',
           some_money_so_far : 'כמה כסף עד עכשיו'
         },

@@ -58,7 +58,6 @@ export default {
             datalabels: {
               anchor: 'center',
               textAlign: 'center',
-              rotation:45,
               height:500,
               align: 'end',
               borderRadius: 3,
@@ -68,7 +67,7 @@ export default {
                 style: 'bold',
                 lineHeight: 1
               },
-                   display(context) {
+              display(context) {
 
                 const {chart} = context;
                 const meta = chart.getDatasetMeta(context.datasetIndex);
@@ -84,9 +83,10 @@ export default {
                     return {'value' :value.total, 'name' :value.name}
                   })
 
-                  let projectTotalHours = (groupProjectsValues[chart.datasetIndex].value).toFixed(1);
                   let percentageHours = (value * 100 / groupProjectsValues[chart.datasetIndex].value).toFixed(1);
-                  return  percentageHours+'%'+'\n'+' סה"כ: '+projectTotalHours+'\n' + ' שעות: ' + value;
+                  return  percentageHours+'%'+'\n'+'\n' + ' ש: ' + value;
+                  //  let projectTotalHours = (groupProjectsValues[chart.datasetIndex].value).toFixed(1);
+                  //  return  percentageHours+'%'+'\n'+' סה"כ: '+projectTotalHours+'\n' + ' שעות: ' + value;
                 }
 
               },

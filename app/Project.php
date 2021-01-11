@@ -16,9 +16,9 @@ class Project extends ModelForm
 {
     use AccountingJournal, AttributableModel, LogActivity, Restrictable, VueTable;
 
-    public static $columns = ['id', 'name', 'customer_id', 'type_id', 'price', 'start_date', 'end_date', 'expenses'];
+    public static $columns = ['id', 'name', 'customer_id', 'type_id', 'price', 'start_date', 'end_date', 'expenses', 'active'];
 
-    protected $fillable = ['code', 'name', 'customer_id', 'type_id', 'price', 'start_date', 'end_date', 'expenses'];
+    protected $fillable = ['code', 'name', 'customer_id', 'type_id', 'price', 'start_date', 'end_date', 'expenses', 'active'];
     protected $hidden = ['created_at', 'updated_at'];
 
     public function customer()

@@ -84,6 +84,11 @@ function tBus(url) {
                                 this.$http
                                     .delete(`${url}/delete/${id}`)
                                     .then(res => {
+
+                                        if(res.status === 203) {
+                                            alert("בטח ניסיתן למחוק משהו שקשור למשהו ועדין לא טיפלתי בזה ( :-/ )")
+                                            console.log(res)
+                                        }
                                         this.notify("success", name + " נמחק.");
                                         this.refreshTable();
                                         this.$modal.hide("dialog");

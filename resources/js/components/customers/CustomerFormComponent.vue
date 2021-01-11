@@ -484,11 +484,10 @@ export default {
     },
     submit() {
       this.isSaving = true;
-      console.log(this.$route)
+
       let path = (!this.$route || this.$route.name === 'lead') ? "/leads" : "/customers";
       let refreshTable = (!this.$route || this.$route.name === 'lead')? "refreshLeadsTable" : "refreshCustomersTable";
-      console.log(path)
-      console.log(refreshTable)
+
       if (this.form.id && this.form.id !== "") {
 
         this.form

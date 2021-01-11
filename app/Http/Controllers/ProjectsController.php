@@ -6,6 +6,7 @@ use App\Contact;
 use App\Http\Requests\ProjectRequest;
 use App\Project;
 use App\ProjectTypes;
+use App\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +19,7 @@ class ProjectsController extends Controller
      */
     public function index()
     {
-        $projects = Project::with(['customer', 'type'])->mine()->vueTable(Project::$columns);
+        $projects = Project::with(['customer', 'type'])->orderBy('active','DESC')->mine()->vueTable(Project::$columns);
         $percentageDone = (new Project)->getPercentageDone($projects);
 
         return response()->json($percentageDone);
@@ -120,15 +121,20 @@ class ProjectsController extends Controller
         return DB::table('projects')->select('id', 'name as text')
             ->get();
     }
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Project  $project
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(Project $project)
     {
-        //
+        try {
+            $project->delete();
+        }catch (\Exception $e) {
+
+            return response()->json(['data'=> $e->getMessage()], '203');
+
+        }
+
+
+
+        return response(['success' => true], 204);
     }
 
     public function getProjectById($projectId)

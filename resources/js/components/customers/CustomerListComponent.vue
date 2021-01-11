@@ -13,7 +13,14 @@
           לקוחות
           <i v-if="loading" class="fas fa-spinner fa-pulse"></i>
         </div>
+
         <div class="panel-block table-body-br">
+<!--          <panel-filters-component-->
+<!--              v-if="filtering"-->
+<!--              :filters="filters"-->
+<!--              :class="{ loaded: filtering }"-->
+<!--              @hide-panel-filters="filtering = false"-->
+<!--          ></panel-filters-component>-->
           <v-server-table
               :url="url"
               :columns="columns"
@@ -23,6 +30,10 @@
               name="customersTable"
               :slots="slots"
           >
+<!--            <template slot="beforeBody">-->
+
+<!--              <table-filters-component :filters="filters"></table-filters-component>-->
+<!--            </template>-->
             <template slot="status" slot-scope="props">
               <div class="has-text-centered" :style="{background: props.row.status ? props.row.status.color : ''} ">
                 {{ props.row.status ? props.row.status.name : '' }}
@@ -123,12 +134,7 @@
           </v-server-table>
         </div>
       </div>
-      <panel-filters-component
-          v-if="filtering"
-          :filters="filters"
-          :class="{ loaded: filtering }"
-          @hide-panel-filters="filtering = false"
-      ></panel-filters-component>
+
       <router-view></router-view>
 
     </div>
@@ -161,18 +167,20 @@ export default {
       customColumn: [],
       totalAmount: 0,
       columns: ['name', 'company', 'email', 'phone', 'status', 'payments', 'actions'],
-      filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
+      filters: new this.$form({name: '', company: '', email: '', phone: '', status: '' }),
       options: {
+        filterByColumn: true,
         orderBy: { ascending: true, column: 'name' },
-        sortable: ['id', 'name', 'company', 'email', 'phone'],
+        sortable: [ 'name', 'company', 'email', 'phone', 'status'],
         perPage: 10,
         columnsClasses: {
-          id: 'w50 has-text-centered',
+
           receivable: 'w125 has-text-right',
           actions: 'w175 has-text-centered p-x-none',
         },
-        filterable: ['id', 'name', 'company', 'email', 'phone'],
+        filterable: ['name', 'company', 'email', 'phone', 'status'],
         headings: {
+
           name: 'שם',
           company: 'חברה',
           email: 'אימייל',

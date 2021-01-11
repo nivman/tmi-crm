@@ -31,7 +31,7 @@ class DashboardController extends Controller
         }
 
         $projectsData = count($projectsIds) === 0 ? $this->projectsByDate() : $this->projectsByIds($projectsIds);
-
+        $aggregateProjectData = $this->aggregateProjectData($projectsData);
 
         $categories = array_map(function ($category) {
 
@@ -66,7 +66,10 @@ class DashboardController extends Controller
             'options' => [
                 'responsive' => false,
                 'maintainAspectRatio' => false,
-                'legend' => ['display' => true, 'position' => 'bottom', 'lineAt' => 15]],
+                'legend' => ['display' => true, 'position' => 'bottom', 'lineAt' => 15],
+                'projectsData' => $aggregateProjectData
+            ],
+
         ];
         $chart = new BarChart($config);
 
@@ -286,5 +289,26 @@ class DashboardController extends Controller
         }
 
         return count($formatProjectsData) > 1 ? $categoriesNames : $categoriesKeyValue;
+    }
+
+    private function aggregateProjectData(array $projectsData)
+    {
+
+        $projectsActualTime =json_encode((new Task())->sumProjectActualTime(array_unique(array_column($projectsData, 'project_id'))));
+        $projectsPrice = Project::whereIn('id', array_unique(array_column($projectsData, 'project_id')))->select('id as project_id','price')->get()->toArray() ;
+
+
+        $projectsData = [];
+        foreach(json_decode($projectsActualTime,true) as $projectActualTime) {
+
+           foreach ($projectsPrice as $projectPrice) {
+               if ($projectActualTime['project_id'] === $projectPrice['project_id'] ) {
+                   $id = $projectPrice['project_id'];
+                   $projectsData[$id] = ['price' => $projectPrice['price'], 'actual_time' => $projectActualTime['actual_time']];
+               }
+           }
+
+        }
+    return $projectsData;
     }
 }

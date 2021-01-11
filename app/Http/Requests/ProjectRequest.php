@@ -26,7 +26,8 @@ class ProjectRequest extends FormRequest
             'type_id' =>  'nullable',
             'type' =>   'nullable',
             'price' => 'nullable',
-            'expenses' => 'nullable'
+            'expenses' => 'nullable',
+            'active' => 'required',
         ];
 
         $project = new Project();

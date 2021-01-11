@@ -5,7 +5,7 @@
       <div class="modal-card animated fastest zoomIn">
         <header class="modal-card-head is-radius-top">
           <p class="modal-card-title">
-            {{ form.id ? 'עריכת פרויקט' : 'יצירת פרויקט' }}
+            {{ form.id ? 'עריכת פרויקט: '+ form.name : 'יצירת פרויקט' }}
           </p>
           <div class="buttons">
             <div v-if="projectId" class="buttons has-addons is-centered" style="direction: ltr">
@@ -63,6 +63,23 @@
         </header>
         <section class="modal-card-body is-radius-bottom">
           <loading v-if="loading"></loading>
+
+          <div>
+            <VueToggles
+                style="direction: ltr;"
+                v-model="form.active"
+                @click="activeProject"
+                height="20"
+                width="80"
+                fontSize="12"
+                checkedColor="#000000"
+                uncheckedColor="#000000"
+                fontWeight="bold"
+                checkedText="פעיל"
+                uncheckedText="לא-פעיל"
+                checkedBg="#b4d455"
+                uncheckedBg="lightgrey"/>
+          </div>
           <div class="field">
             <label class="label" for="customer">לקוח</label>
             <v-select
@@ -283,6 +300,7 @@ import TaskFormModal from "../tasks/TaskFormModal";
 import TaskListComponent from "../tasks/TaskListComponent";
 import ExpenseListComponent from "../expenses/ExpenseListComponent";
 import ExpenseFormComponent from "../expenses/ExpenseFormComponent";
+import VueToggles from 'vue-toggles';
 export default {
   props: ['customerId', 'customerName'],
   data() {
@@ -299,6 +317,7 @@ export default {
       isSaving: false,
       projectId: null,
       projectName: '',
+
       form: new this.$form({
         id: '',
         name: '',
@@ -307,7 +326,8 @@ export default {
         price: '',
         type: '',
         expenses: '',
-        customer: ''
+        customer: '',
+        active: true,
       }),
       config: {
         altInput: true,
@@ -380,7 +400,7 @@ export default {
         route = '/customers';
       }
       if (this.form.id && this.form.id !== '') {
-
+        console.log(this.form.active)
         this.form
             .put(`app/projects/${this.form.id}`)
             .then(() => {
@@ -417,6 +437,7 @@ export default {
           .get(`app/projects/${id}`)
           .then(res => {
             this.projectName = res.data.project.name;
+
             this.attributes = res.data.project.attributes
             delete res.data.project.attributes
             this.form = new this.$form(res.data.project)
@@ -426,6 +447,7 @@ export default {
             this.form.start_date = this.format_date(res.data.project.start_date)
             this.form.date_to_complete = this.format_date(res.data.project.date_to_complete)
 
+            this.form.active = res.data.project.active === 0 ? false : true;
             this.loading = false
           })
           .catch(err => this.$event.fire('appError', err.response))
@@ -471,9 +493,13 @@ export default {
     showExpenses() {
 
       this.showExpensesList = this.showExpensesList !== true
-    }
+    },
+    activeProject() {
+
+      this.form.active = !this.form.active;
+    },
   },
-  components: {EventsListComponent, TaskFormModal, TaskListComponent, ExpenseListComponent, ExpenseFormComponent}
+  components: {EventsListComponent, TaskFormModal, TaskListComponent, ExpenseListComponent, ExpenseFormComponent, VueToggles}
 
 
 }

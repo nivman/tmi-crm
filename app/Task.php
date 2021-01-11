@@ -172,7 +172,7 @@ class Task extends ModelForm
             ->leftJoin('projects as p', 't.project_id', '=', 'p.id')
             ->groupBy('t.category_id')
             ->groupBy('t.project_id')
-            ->get([ 't.project_id', 'p.name as project_name','c.name', 't.category_id',  DB::raw('SUM(actual_time) AS actual_time')])->toArray();
+            ->get([ 't.project_id', 'p.name as project_name', 'p.price as project_price', 'c.name', 't.category_id',  DB::raw('SUM(actual_time) AS actual_time')])->toArray();
     }
 
     public function sumTasksTimeByCustomersId($customersId)
@@ -209,7 +209,7 @@ class Task extends ModelForm
         return DB::table('tasks')
             ->whereIn('project_id', $projectsId)
             ->groupBy('project_id')
-            ->get(['project_id',  DB::raw('SUM(actual_time) AS actual_time')]);
+            ->get(['project_id',  DB::raw('SUM(actual_time) / 60 AS actual_time')])->toArray();
     }
     public function setNotification($taskCreated)
     {

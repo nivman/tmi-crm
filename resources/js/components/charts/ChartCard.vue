@@ -48,8 +48,7 @@
 
           <div class="menu-bar-chart" v-if="config.type ==='bar'">
           <div>אחוז שעות העבודה לקטגוריה מתוך כלל השעות בפרוייקט : %</div>
-          <div>סה"כ שעות לפרוייקט : סה"כ </div>
-          <div>שעות עבודה לקטגוריה : שעות</div>
+          <div>שעות עבודה לקטגוריה : ש</div>
           </div>
           <chart
               ref="chart"
@@ -140,8 +139,8 @@ export default {
                 data.data.labels = Object.keys(data.data.labels).map((key) => data.data.labels[key]);
             //  }
 
-
-
+              console.log(data.data.datasets[0].label)
+            
               this.translateTerm(data)
               this.config = data
               this.loading = false

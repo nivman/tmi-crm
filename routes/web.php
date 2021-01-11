@@ -111,6 +111,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::post('notes/color', 'NotesController@changeColor');
     Route::post('notes/edit-subject', 'NotesController@changeSubject');
     Route::delete('notes/edit-subject/{note}', 'NotesController@destroy');
+    Route::delete('projects/delete/{project}', 'ProjectsController@destroy');
     Route::resource('notes', 'NotesController');
     Route::resource('products', 'ProductsController')->except(['update', 'destroy']);
     Route::resource('expenses', 'ExpensesController')->except(['update', 'destroy']);

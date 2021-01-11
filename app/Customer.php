@@ -70,6 +70,7 @@ class Customer extends ModelForm
 
     public function getCustomFields($customers)
     {
+
         $attributes = [];
         $attributesNames = [];
         $customersIds = array_column($customers["data"], 'id');
@@ -143,5 +144,58 @@ class Customer extends ModelForm
         $customersIds = implode(',', $customersIds);
         return  (new Project())->sumTasksTimeByCustomersId($customersIds);
 
+    }
+
+    public function checkRelation($key)
+    {
+        return in_array($key, Customer::$columns);
+
+    }
+
+    public function sortBy($ascending, $request, $params, $sortByTaskAttr = [], $filterByEntity =[])
+    {
+
+        $query = Customer::query();
+        $result = null;
+
+        $request->query->set('orderBy', $params[0]['orderByValue']);
+
+        foreach ($params as $key => $param) {
+
+            $result = $query->leftJoin($params[$key]['tableToJoin'], $params[$key]['orderBy'], '=', $params[$key]['columnToJoin'])
+                ->select('customers.*')
+                ->where(function ($q) use ($params, $key, $filterByEntity) {
+
+                    if (count($filterByEntity) > 0) {
+
+                        $q->where('customers.'.$filterByEntity['entityType'], '=', $filterByEntity['entityId']);
+
+                        if ($params[0]['tableToJoin'] === 'events_types' ) {
+                            $q->OrWhere($params[$key]['orderByValue'], 'LIKE', "%{$params[$key]['query']}%")->where($params[$key]['orderBy'], '=', null);
+
+                        }else {
+                            $q->where($params[$key]['orderByValue'], 'LIKE', "%{$params[$key]['query']}%") ;
+                        }
+                    }else{
+
+                        $q->where($params[$key]['orderByValue'], 'LIKE', "%{$params[$key]['query']}%");
+
+                        if ($params[$key]['query'] == '') {
+
+                            $q->orWhere($params[$key]['orderByValue'], '=', null);
+                        }
+                    }
+                })
+                ->with(['journal', 'status'])
+                ->mine()
+                ->orderBy($params[$key]['orderByValue'], $ascending)
+                ->vueTable(Customer::$columns, false, 'customers');
+
+        }
+
+        $customers['data'] = $query->get()->toArray();
+
+        $customers['count'] = $result['count'];
+        return response()->json($customers);
     }
 }

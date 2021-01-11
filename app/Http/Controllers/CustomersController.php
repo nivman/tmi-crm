@@ -10,6 +10,7 @@ use App\Events\EmailEvent;
 use App\Events\StatusChange;
 use App\Events\StatusChangeEvent;
 use App\File;
+use App\Helpers\Filters;
 use App\Status;
 use App\Task;
 use Illuminate\Http\Request;
@@ -58,9 +59,26 @@ class CustomersController extends Controller
 
     public function index(Request $request)
     {
+        $params = Filters::filters($request, 'customers');
 
+        $ascending = $request->request->get('ascending') == 1 ? 'DESC' : 'ASC';
         $leadRequest = strpos($request->getPathInfo(), 'lead') ? 1 : 0;
-        $customers = Customer::with(['journal', 'status'])->where('is_lead', '=', $leadRequest)->mine()->vueTable(Customer::$columns);
+        $orderByTaskValue = $request->query->get('orderBy');
+        $hasRelation = (new Task())->checkRelation($orderByTaskValue);
+
+        $sortByTaskAttr = [$hasRelation, $orderByTaskValue];
+
+        if ($params['filter']) {
+
+            $customers = (new Customer())->sortBy($ascending, $request, $params['params'], $sortByTaskAttr)->getData();
+            $customers = json_encode($customers);
+            $customers= json_decode($customers, true);
+
+        }else {
+            $customers = Customer::with(['journal', 'status'])->where('is_lead', '=', $leadRequest)->mine()->vueTable(Customer::$columns);
+        }
+
+
         $attributes = (new Customer)->getCustomFields($customers);
         $customersProfit = (new Customer)->getProfits($customers);
 
@@ -200,24 +218,24 @@ class CustomersController extends Controller
     {
 
         $unseenLeads = (new Customer)->getUnseenLeads();
-        $x = [];
-        array_filter($unseenLeads, function ($element) {
+        $leadsData = [];
+        array_filter($unseenLeads, function ($unseenLead) {
 
-            $v = [
-                'customer_id' => $element->id,
-                'name' => $element->name,
-                'email' => $element->email,
-                'phone' => $element->phone,
+            $leadData = [
+                'customer_id' => $unseenLead->id,
+                'name' => $unseenLead->name,
+                'email' => $unseenLead->email,
+                'phone' => $unseenLead->phone,
                 'user_id' => 1,
                 'is_lead' => 1,
                 'opening_balance' => -1
             ];
-            event(new EmailEvent($v));
+            event(new EmailEvent($leadData));
 
         });
         if (count($unseenLeads) > 0) {
             foreach ($unseenLeads as $unseenLead) {
-                $v = [
+                $leadData = [
                     'customer_id' => $unseenLead->id,
                     'name' => $unseenLead->name,
                     'email' => $unseenLead->email,
@@ -226,10 +244,10 @@ class CustomersController extends Controller
                     'is_lead' => 1,
                     'opening_balance' => -1
                 ];
-                $x[] = $v;
+                $leadsData[] = $leadData;
             }
         }
 
-        return $x;
+        return $leadsData;
     }
 }
