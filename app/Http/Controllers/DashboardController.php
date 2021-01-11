@@ -295,7 +295,7 @@ class DashboardController extends Controller
     {
 
         $projectsActualTime =json_encode((new Task())->sumProjectActualTime(array_unique(array_column($projectsData, 'project_id'))));
-        $projectsPrice = Project::whereIn('id', array_unique(array_column($projectsData, 'project_id')))->select('id as project_id','price')->get()->toArray() ;
+        $projectsPrice = Project::whereIn('id', array_unique(array_column($projectsData, 'project_id')))->select('id as project_id','price', 'name')->get()->toArray() ;
 
 
         $projectsData = [];
@@ -304,7 +304,12 @@ class DashboardController extends Controller
            foreach ($projectsPrice as $projectPrice) {
                if ($projectActualTime['project_id'] === $projectPrice['project_id'] ) {
                    $id = $projectPrice['project_id'];
-                   $projectsData[$id] = ['price' => $projectPrice['price'], 'actual_time' => $projectActualTime['actual_time']];
+
+                   $projectsData[$id] = [
+                       'price' => $projectPrice['price'],
+                       'actual_time' => $projectActualTime['actual_time'],
+                       'name' => $projectPrice['name']
+                   ];
                }
            }
 

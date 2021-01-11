@@ -56,7 +56,7 @@
               :type="config.type"
               :options="config.options"
               class="has-padding-medium inline-block"
-              :style="{ width: width, height: height }"
+              :style="{ width: width, height: height, color: 'red' }"
           />
         </div>
       </div>
@@ -75,6 +75,7 @@ export default {
   props: {
     width: { default: '100%' },
     height: { default: '400px' },
+
     params: { type: Object, default: null },
     source: { type: String, required: true },
 
@@ -133,16 +134,27 @@ export default {
         this.$http
             .get(this.source, { params: this.params })
             .then(({ data }) => {
-             let labelsType = Object.prototype.toString.call(data.data.labels)
 
-             // if (labelsType === '[object Object]') {
                 data.data.labels = Object.keys(data.data.labels).map((key) => data.data.labels[key]);
-            //  }
+               if (data.options.projectsData) {
 
-              console.log(data.data.datasets[0].label)
-            
+                let projectLabels = data.data.datasets
+                let labels = Object.keys(data.options.projectsData).map((key) => data.options.projectsData[key]);
+
+                labels.forEach(function(project, index){
+                  if (project.name === projectLabels[index].label) {
+                    let price = !project.price ? 'לא  נקבע' : project.price;
+                    data.data.datasets[index].label = project.name + ' ( מחיר: ' + price + ' זמן: ' + parseFloat(project.actual_time) +')'
+
+                  }
+
+                })
+
+              }
+
               this.translateTerm(data)
               this.config = data
+
               this.loading = false
             })
             .catch(err => {

@@ -65,8 +65,20 @@ export default {
               color: 'black',
               font: {
                 style: 'bold',
-                lineHeight: 1
+                lineHeight: 1,
+
               },
+              labels: {
+                title: {
+                  backgroundColor: 'transparent',
+                  color: 'black'
+                },
+                value: {
+                  color: 'black',
+                  backgroundColor: 'transparent',
+                }
+              },
+
               display(context) {
 
                 const {chart} = context;
