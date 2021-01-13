@@ -22,7 +22,8 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('dashboard/vendor', 'DashboardController@vendor');
     Route::get('dashboard/projects/{projectsIds}', 'DashboardController@projects');
     Route::get('charts/pie_chart', 'DashboardController@pieChart');
-    Route::get('charts/bar_chart', 'DashboardController@barChart');
+    Route::get('charts/category-hours-per-project-bar', 'DashboardController@categoryHoursPerProjectBar');
+    Route::get('charts/hours-per-category-bar', 'DashboardController@hoursPerCategoryHoursBar');
     Route::get('charts/line_chart', 'DashboardController@lineChart');
     Route::get('dashboard/customer', 'DashboardController@customer');
     Route::post('invoices/email/{invoice}', 'InvoicesController@email');

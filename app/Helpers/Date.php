@@ -35,16 +35,21 @@ class Date
 
     public static function formatDateGeneralTime($request, $dateName)
     {
-
         $dateValue =  $request[$dateName];
 
         return Carbon::createFromFormat('d/m/Y H:i', $dateValue)->format('Y-m-d H:i');
-
     }
 
     public static function convertToViewFormat($dateToFormat)
     {
-
         return Carbon::createFromFormat('Y-m-d H:i:s', $dateToFormat)->format('d/m/Y H:i');
+    }
+
+    public static function convertDatesRange($start, $end)
+    {
+        $startDate = Carbon::createFromFormat('d/m/Y', $start)->format('Y-m-d');
+        $endDate = Carbon::createFromFormat('d/m/Y', $end)->format('Y-m-d');
+
+        return ['startDate' => $startDate , 'endDate' => $endDate];
     }
 }

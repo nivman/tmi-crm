@@ -377,12 +377,7 @@ export default {
         actual_time: '',
         category: '',
         notification_enable: 0
-      }),
-      config_to_complete: {
-        altInput: true,
-        altFormat: 'd/m/Y',
-        dateFormat: 'd/m/Y',
-      }
+      })
     }
   },
   computed: {

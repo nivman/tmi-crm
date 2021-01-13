@@ -181,7 +181,17 @@ class Task extends ModelForm
             ->leftJoin('projects as p', 't.project_id', '=', 'p.id')
             ->groupBy('t.category_id')
             ->groupBy('t.project_id')
-            ->get([ 't.project_id', 'p.name as project_name', 'p.price as project_price', 'c.name', 't.category_id',  DB::raw('SUM(actual_time) AS actual_time')])->toArray();
+            ->get([ 't.project_id', 'p.name as project_name', 'p.price as project_price', 'c.name', 't.category_id',  DB::raw('CONCAT(Floor(SUM(actual_time) /60), ".",LPAD(ROUND((SUM(actual_time) /60 - Floor(SUM(actual_time) /60)) * 60 % 60),2,"0")) AS actual_time')])->toArray();
+    }
+
+    public function sumTasksTimeByCategoriesId($startDate, $endDate)
+    {
+
+        return  DB::table('tasks', 't')
+            ->whereBetween('start_date',[$startDate,$endDate])
+            ->leftJoin('categories as c', 't.category_id', '=', 'c.id')
+            ->groupBy('t.category_id')
+            ->get(['t.category_id', 'c.name', 't.category_id',  DB::raw('CONCAT(Floor(SUM(actual_time) /60), ".",LPAD(ROUND((SUM(actual_time) /60 - Floor(SUM(actual_time) /60)) * 60 % 60),2,"0")) AS actual_time')])->toArray();
     }
 
     public function sumTasksTimeByCustomersId($customersId)
@@ -190,7 +200,6 @@ class Task extends ModelForm
         return  DB::table('tasks', 't')
             ->whereIn('t.customer_id', $customersId)
             ->leftJoin('customers as cu', 't.customer_id', '=', 'cu.id')
-
             ->groupBy('t.customer_id')
             ->get([
                 't.customer_id',
@@ -218,8 +227,9 @@ class Task extends ModelForm
         return DB::table('tasks')
             ->whereIn('project_id', $projectsId)
             ->groupBy('project_id')
-            ->get(['project_id',  DB::raw('SUM(actual_time) / 60 AS actual_time')])->toArray();
+            ->get(['project_id',  DB::raw('CONCAT(Floor(SUM(actual_time) /60), ".",LPAD(ROUND((SUM(actual_time) /60 - Floor(SUM(actual_time) /60)) * 60 % 60),2,"0")) AS actual_time')])->toArray();
     }
+
     public function setNotification($taskCreated)
     {
         if (!$taskCreated->notification_time) {

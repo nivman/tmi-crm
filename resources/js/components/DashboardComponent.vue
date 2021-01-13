@@ -5,13 +5,31 @@
                 <chart-card :source="pie" :params="pieParams" @monthChanged="pieParamsMonthChanged" @yearChanged="pieParamsYearChanged" />
             </div>
             <div class="column is-three-quarters">
-                <chart-card
-                    width="100%"
-                    :source="line"
-                    :params="lineParams"
-                    @monthChanged="lineParamsMonthChanged"
-                    @yearChanged="lineParamsYearChanged"
-                />
+<!--                <chart-card-->
+<!--                    width="100%"-->
+<!--                    :source="line"-->
+<!--                    :params="lineParams"-->
+<!--                    @monthChanged="lineParamsMonthChanged"-->
+<!--                    @yearChanged="lineParamsYearChanged"-->
+<!--                />-->
+
+              <div class="columns">
+
+                <div class="column">
+
+                  <chart-card
+                      :source="bar_category"
+                      width="100%"
+                      :params="barCategoriesParams"
+                      class="bar-chart"
+                      refs="test"
+                      @rangeChanged = "barCategoryRangeChanged">
+                  </chart-card>
+                </div>
+              </div>
+
+
+
             </div>
         </div>
         <div class="columns">
@@ -19,13 +37,11 @@
             <div class="column">
 
                 <chart-card
-                   :source="bar"
+                    :source="bar_project"
                     width="100%"
-                    :params="barParams"
+                    :params="barProjectsParams"
                     class="bar-chart"
-                    @projectChanged = "barProjectChanged"
-
-                >
+                    @projectChanged = "barProjectChanged">
                 </chart-card>
             </div>
         </div>
@@ -49,9 +65,11 @@ export default {
             projectsIds: [],
             loading: true,
             pie: 'app/charts/pie_chart',
-            bar: 'app/charts/bar_chart',
+            bar_project: 'app/charts/category-hours-per-project-bar',
+            bar_category: 'app/charts/hours-per-category-bar',
             line: 'app/charts/line_chart',
-            barParams: { month: moment().format('MM'),year: moment().format('YYYY'), showProjectsList: true , projects :[]},
+            barProjectsParams: {showProjectsList: true , projects :[]},
+            barCategoriesParams: {showCategoriesList: true , rangeDate :[]},
             lineParams: { month: moment().format('MM'), year: moment().format('YYYY') },
             pieParams: { month: moment().format('MM'), year: moment().format('YYYY'), hideFilter: true },
         };
@@ -59,7 +77,6 @@ export default {
 
     methods: {
         lineParamsMonthChanged(month) {
-
             this.lineParams.month = month;
         },
         lineParamsYearChanged(year) {
@@ -71,10 +88,23 @@ export default {
         pieParamsYearChanged(year) {
             this.pieParams.year = year;
         },
-      barProjectChanged(projects) {
 
-        this.barParams.projects = projects;
-      }
+        barProjectChanged(projects) {
+           this.barProjectsParams.projects = projects;
+        },
+        barCategoryRangeChanged(dates) {
+          if (dates.includes("to")) {
+            this.barCategoriesParams.rangeDate = dates;
+          }
+        }
     },
+  created() {
+
+    let startDate = moment(new Date()).startOf('month').format('DD/MM/YYYY');
+    let endDate = moment(new Date()).endOf('month').format('DD/MM/YYYY');
+
+    this.dateRange = `${startDate} to ${endDate}`
+    this.barCategoryRangeChanged(this.dateRange);
+  }
 };
 </script>

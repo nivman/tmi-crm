@@ -86,19 +86,15 @@ export default {
                 return !meta.hidden;
               },
               formatter: function (value, chart) {
+              // for now this if refer to "שעות עבודה לפי קטגוריות פר פרוייקט"
+                if (em.type === 'bar' &&  em._props.options.name !== 'categoriesTime') {
 
-                if (em.type === 'bar') {
-
-                    let groupProjectsValues = em.groupBy()
-
+                  let groupProjectsValues = em.groupBy()
                   groupProjectsValues =  groupProjectsValues.map(function (value){
                     return {'value' :value.total, 'name' :value.name}
                   })
-
                   let percentageHours = (value * 100 / groupProjectsValues[chart.datasetIndex].value).toFixed(1);
                   return  percentageHours+'%'+'\n'+'\n' + ' ש: ' + value;
-                  //  let projectTotalHours = (groupProjectsValues[chart.datasetIndex].value).toFixed(1);
-                  //  return  percentageHours+'%'+'\n'+' סה"כ: '+projectTotalHours+'\n' + ' שעות: ' + value;
                 }
 
               },

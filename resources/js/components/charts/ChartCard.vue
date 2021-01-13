@@ -5,17 +5,29 @@
                 <button type="button" class="button is-primary is-small is-pulled-right m-l-sm" @click="download()">
                     <i class="fas fa-download"></i>
                 </button>
-                <div class="select is-small is-pulled-right m-l-sm" v-if="!params.showProjectsList">
+                    <div class="select is-small is-pulled-right m-l-sm categories-time-list" v-if="params.showCategoriesList">
+                          <flat-pickr
+                              class="input"
+                              id="end_date"
+                              name="end_date"
+                              enableTime="true"
+                              :config="range_date_config"
+                              v-model="dateRange"
+                              @input="$emit('rangeChanged', dateRange)"
+                              :class="{ 'is-danger': errors.has('end_date') }"
+                          ></flat-pickr>
+                    </div>
+                <div class="select is-small is-pulled-right m-l-sm" v-if="!params.showProjectsList && !params.showCategoriesList">
                     <select @change="$emit('yearChanged', $event.target.value)">
                         <option v-for="year in years" :value="year" :key="year" :selected="params.year == year"> {{
-                            year
+                            שנה
                           }}</option>
                     </select>
                 </div>
                 <div class="select is-small is-pulled-right" v-if="params.month && !params.showProjectsList" >
                     <select @change="$emit('monthChanged', $event.target.value)">
                         <option v-for="month in months" :value="month" :key="month" :selected="params.month == month"> {{
-                            month
+                            חודש
                           }}</option>
                     </select>
                 </div>
@@ -46,7 +58,7 @@
       <div class="columns">
         <div class="column has-text-centered">
 
-          <div class="menu-bar-chart" v-if="config.type ==='bar'">
+          <div class="menu-bar-chart" v-if="config.type ==='bar' && params.showProjectsList">
           <div>אחוז שעות העבודה לקטגוריה מתוך כלל השעות בפרוייקט : %</div>
           <div>שעות עבודה לקטגוריה : ש</div>
           </div>
@@ -70,22 +82,31 @@ import _times from 'lodash/times'
 import { saveAs } from 'file-saver'
 import Multiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
+import flatPickr from 'vue-flatpickr-component'
+import 'flatpickr/dist/flatpickr.css'
+import * as moment from "moment";
 export default {
-  components: { Chart, Multiselect },
+  components: { Chart, Multiselect, flatPickr },
   props: {
     width: { default: '100%' },
     height: { default: '400px' },
-
     params: { type: Object, default: null },
     source: { type: String, required: true },
 
   },
   data () {
     return {
+      dateRange: '',
       loading: false,
       config: null,
       project:'',
-      projects: []
+      projects: [],
+      range_date_config: {
+        altInput: true,
+        altFormat: 'd/m/Y',
+        dateFormat: 'd/m/Y',
+        mode: "range"
+      }
     }
   },
   created() {
@@ -95,6 +116,9 @@ export default {
           this.projects = res.data
 
         })
+    let startDate = moment(new Date()).startOf('month').format('DD/MM/YYYY');
+    let endDate = moment(new Date()).endOf('month').format('DD/MM/YYYY');
+    this.dateRange = `${startDate} to ${endDate}`
   },
   computed: {
     months () {
@@ -144,7 +168,7 @@ export default {
                 labels.forEach(function(project, index){
                   if (project.name === projectLabels[index].label) {
                     let price = !project.price ? 'לא  נקבע' : project.price;
-                    console.log(price)
+
                     let percentageDone = !project.price ? '':  parseFloat((project.actual_time * 150) * 100 / price).toFixed(1)+'%';
                     data.data.datasets[index].label = project.name + ' ( מחיר: ' +
                         price +
@@ -153,7 +177,6 @@ export default {
                         ' ;אחוז סופי: ' +
                         percentageDone +
                         ')'
-
                   }
 
                 })
@@ -251,5 +274,8 @@ export default {
   text-align: right;
   font-size: 12px;
   font-weight: bold;
+}
+.categories-time-list{
+  direction: ltr;
 }
 </style>
