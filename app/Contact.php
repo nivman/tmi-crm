@@ -14,7 +14,7 @@ class Contact extends Model
 {
     use AttributableModel, LogActivity, Restrictable, VueTable;
 
-    public static $columns = ['id', 'first_name', 'last_name', 'email', 'phone', 'customer'];
+    public static $columns = ['id', 'first_name', 'last_name', 'email', 'phone', 'customer.name'];
 
     protected $fillable = ['first_name', 'last_name', 'email', 'phone', 'customer_id'];
     protected $hidden   = ['created_at', 'updated_at'];

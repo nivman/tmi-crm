@@ -85,14 +85,14 @@ export default {
       filters: new this.$form({ first_name: '', last_name: '', email: '', phone: '', customer: { name: '' } }),
       options: {
         orderBy: { ascending: true, column: 'first_name' },
-        sortable: ['first_name', 'last_name', 'email', 'phone', 'customer'],
+        sortable: ['first_name', 'last_name', 'email', 'phone'],
         perPage: 10,
         columnsClasses: {
           id: 'w50 has-text-centered',
           receivable: 'w125 has-text-right',
           actions: 'w175 has-text-centered p-x-none',
         },
-        filterable: ['first_name', 'last_name', 'email', 'phone', 'customer'],
+        filterable: ['first_name', 'last_name', 'email', 'phone', 'customer.name'],
         headings: {
           first_name: 'שם פרטי',
           last_name: 'שם משפחה',

@@ -109,8 +109,8 @@ class Customer extends ModelForm
 
     public function getContactByCustomer($id)
     {
-        $customerId = (new Contact)->getContactById($id);
-        return Customer::find($customerId);
+     //   $customerId = (new Contact)->getContactById($id);
+        return Customer::find($id);
     }
 
     public function getCustomerById($id)
@@ -149,6 +149,13 @@ class Customer extends ModelForm
     public function checkRelation($key)
     {
         return in_array($key, Customer::$columns);
+
+    }
+
+    public function getCustomerByEmail($email)
+    {
+        $customer = Customer::where(['email' => $email])->get()->toArray();
+        return count($customer);
 
     }
 

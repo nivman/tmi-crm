@@ -49,7 +49,6 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::post('email/settings', 'mail\EmailController@index');
     Route::post('customers-projects/{ids}', 'ProjectsController@getProjectsFormCustomersByIds');
     Route::get('customers/projects/{id}', 'ProjectsController@getCustomerProjectsList');
-    Route::post('customers-contacts/{ids}', 'ContactsController@getContactsCustomerById');
     Route::put('customer/{customer}', 'CustomersController@update');
     Route::get('customer/contact/{customerId}', 'CustomersController@getCustomerByContactId');
     Route::get('contacts/search', 'ContactsController@search');

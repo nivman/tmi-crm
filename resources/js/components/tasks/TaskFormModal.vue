@@ -52,6 +52,22 @@
             </div>
             <div class="column">
               <div class="field">
+                <label class="label" for="contact">איש קשר</label>
+                <v-select
+                    label="full_name"
+                    id="contact"
+                    name="contact"
+                    item-value="id"
+                    item-text="full_name"
+                    class="rtl-direction"
+                    :options="contacts"
+                    @search="searchContacts"
+                    v-model="form.contact">
+                </v-select>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
                 <label class="label" for="project">פרויקט</label>
                 <v-select
                     label="name"
@@ -333,6 +349,7 @@ export default {
       updateAllRepeatedTask: false,
       repeatTask: '',
       customers: [],
+      contacts: [],
       projects: [],
       loading: true,
       attributes: [],
@@ -348,6 +365,7 @@ export default {
       form: new this.$form({
         id: '',
         customer: '',
+        contact: '',
         name: 'משימה',
         details: '',
         notification_time: null,
@@ -407,7 +425,7 @@ export default {
 
               this.form.project = res.data
               let result = [{'customer_id': res.data.customer_id}]
-              this.getCustomersById(result)
+              this.getCustomersByIdFromProjects(result)
               this.projectId = this.$route.query.projectId
             }
             //add task from customer form
@@ -421,7 +439,7 @@ export default {
 
               this.form.project = res.data
 
-              this.getCustomersById([res.data])
+              this.getCustomersByIdFromProjects([res.data])
               this.projectId = this.projId
             }
             //click from task list
@@ -450,7 +468,7 @@ export default {
                     this.optionsStatuses = res.data.statuses
                     this.categories = res.data.categories
                     if (this.$route.query.cusId) {
-                      this.getCustomersById([{'customer_id': this.$route.query.cusId}])
+                      this.getCustomersByIdFromProjects([{'customer_id': this.$route.query.cusId}])
                     }
                   })
                   .catch(err =>
@@ -497,18 +515,23 @@ export default {
       this.projectSelected = !this.projectSelected;
       if (this.projects.length > 0) {
         this.addProjectNameToTaskName();
-        this.getCustomersById(this.projects);
+        this.getCustomersByIdFromProjects(this.projects);
       }
     },
     'form.customer': function () {
       this.customerSelected = !this.customerSelected;
       if (this.form.customer) {
         this.getProjectsByCustomerId([this.form.customer]);
+        this.getContactsByCustomerId([this.form.customer]);
       } else {
         this.customerSelected = false;
       }
+    },
+    'form.contact': function () {
+      if (this.form.contact) {
+        this.getCustomersByIdFromContacts(  [{'customer_id': this.form.contact.customer_id}])
+      }
     }
-
   },
 
   methods: {
@@ -609,6 +632,11 @@ export default {
             this.form.category = res.data.task.category[0];
             this.form.priority = res.data.task.priority[0];
             this.form.project = res.data.task.project[0];
+            if( res.data.task.contact) {
+
+              this.form.contact.full_name = res.data.task.contact.first_name + ' ' + res.data.task.contact.last_name;
+              this.form.contact.id = res.data.task.contact.id;
+            }
 
             if (!res.data.repeatTask) {
               this.form.status = taskStatus.length > 0 ? taskStatus[0] : '';
@@ -652,6 +680,21 @@ export default {
 
     },
 
+    searchContacts(search) {
+
+      if (search === '') {
+        return;
+      }
+      this.$http
+          .get('app/contacts/search?query=' + search)
+          .then(res => {
+            this.contacts = res.data;
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+    },
+
     searchCustomers(search) {
 
       if (search === '') {
@@ -663,12 +706,15 @@ export default {
             this.customers = res.data;
             if (this.customers.length > 0) {
               this.getProjectsByCustomerId(this.customers);
+              this.getContactsByCustomerId(this.customers);
             }
           })
           .catch(err => {
             this.$event.fire('appError', err.response)
           })
     },
+
+
     searchProjects(search) {
 
       if (search === '' || this.customerSelected) {
@@ -685,7 +731,7 @@ export default {
             this.$event.fire('appError', err.response)
           })
     },
-    getCustomersById(projects) {
+    getCustomersByIdFromProjects(projects) {
       let customer_id = projects.map(a => a.customer_id);
       this.$http
           .post('app/project-customers/' + customer_id)
@@ -696,6 +742,21 @@ export default {
             this.$event.fire('appError', err.response)
           })
     },
+
+    getCustomersByIdFromContacts(contacts) {
+
+      let customer_id = contacts.map(a => a.customer_id);
+      this.$http
+          .get('app/customer/contact/' + customer_id)
+          .then(res => {
+
+            this.form.customer = res.data.customer;
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+    },
+
     getProjectsByCustomerId(customers) {
 
       let id = customers.map(a => a.id)
@@ -711,6 +772,23 @@ export default {
             this.$event.fire('appError', err.response)
           })
     },
+
+    getContactsByCustomerId(customers)  {
+      let id = customers.map(a => a.id)
+      this.$http
+          .get('app/contacts/' + id)
+          .then(res => {
+
+            this.contacts = []
+            if (res.data.length > 0) {
+              this.contacts = res.data;
+            }
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response)
+          })
+    },
+
     closeModal() {
 
       if (!this.popupTaskId && this.$route.name !== 'notification-task') {

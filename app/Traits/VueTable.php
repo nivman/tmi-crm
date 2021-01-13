@@ -41,6 +41,7 @@ trait VueTable
         $data->limit($limit)->skip($limit * ($page - 1));
 
         if (isset($orderBy) && $orderBy != 'false' && $orderBy && $orderBy != 'actions') {
+
             $direction = $ascending == 1 ? 'ASC' : 'DESC';
             $data->orderBy($orderBy, $direction);
         }
@@ -125,46 +126,49 @@ trait VueTable
 
                     $method = $index ? 'orWhereHas' : 'whereHas';
                     $q->{$method}($relation[0], function ($qu) use ($relation, $query, $data, $joinTables, $queryFields) {
-                        if(!$queryFields){
+                        if (!$queryFields) {
                             $tableName = $relation[0] === 'categories' ? $relation[0] : $relation[0] . 's.';
-                           $qu->where($tableName . '.' . $relation[1], 'like', "%{$query}%");
-                        }
-                        elseif (count($queryFields) > 0 && $joinTables) {
+                            $qu->where($tableName . '.' . $relation[1], 'like', "%{$query}%");
+                        } elseif (count($queryFields) > 0 && $joinTables) {
                             foreach ($queryFields as $key => $queryField) {
-                                if ( $key == 'start_date' || $key == 'end_date') {
+                                if ($key == 'start_date' || $key == 'end_date') {
 
                                     $start = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['start']);
 
                                     $end = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['end']);
                                     $qu->whereBetween($key, [$start, $end]);
                                 }
-                                if ($data->getModel()->checkRelation($key)  && $key !== 'start_date') {
+                                if ($data->getModel()->checkRelation($key) && $key !== 'start_date') {
 
                                     $qu->where($joinTables . '.' . $key, 'like', "%{$queryField}%");
                                 }
                             }
-                        }
-
-                        else {
+                        } else {
 
                             $qu->where($relation[1], 'like', "%{$query}%");
                         }
                     });
                 } else {
+
                     $queryFields = json_decode($query, true);
+
                     $hasQueryFields = (!$queryFields || is_int($queryFields)) ? null : $queryFields;
                     $method = (!$hasQueryFields && $index) ? 'orWhere' : 'where';
 
-                    if ($hasQueryFields  && $joinTables) {
+                    if ($hasQueryFields && $joinTables) {
 
                         self::runOverFields($hasQueryFields, $data, $method, $q, $joinTables);
-                    }
-                    else {
-                        if ($hasQueryFields) {
-                             self::runOverFields($hasQueryFields, $data, $method, $q, $joinTables);
-                        } else {
+                    } else {
 
-                            $q->{$method}($field, 'LIKE', "%{$query}%");
+                        if ($hasQueryFields) {
+
+                            self::runOverFields($hasQueryFields, $data, $method, $q, $joinTables);
+                        } else {
+                            if (!$joinTables) {
+
+                                $q->{$method}($field, 'LIKE', "%{$query}%");
+                            }
+
                         }
 
                     }
@@ -184,7 +188,7 @@ trait VueTable
      */
     protected static function runOverFields($queryFields, Builder $data, string $method, $q, $joinTables): array
     {
-        if(!is_array($queryFields)) {
+        if (!is_array($queryFields)) {
             return [];
         }
         foreach ($queryFields as $key => $queryField) {
@@ -196,7 +200,7 @@ trait VueTable
 
                     $end = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['end']);
                     $q->whereBetween($key, [$start, $end]);
-                }else{
+                } else {
                     $q->{$method}($joinTables . '.' . $key, 'LIKE', "%{$queryField}%");
                 }
 

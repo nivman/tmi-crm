@@ -45,6 +45,7 @@ class GetEmails extends Command
     private $leadTitle = [];
     private $taskTitle = [];
     private $mailMail = '';
+    private $mailFromName = '';
     /**
      * The name and signature of the console command.
      *
@@ -82,6 +83,8 @@ class GetEmails extends Command
             return false;
         }
         $this->mailMail = $emailSettings[0]['main_mail_address'];
+        $this->mailFromName = $emailSettings[0]['mail_from_name'];
+
         $this->eventTitle = json_decode($emailSettings[0]['event_title']);
         $this->leadTitle = json_decode($emailSettings[0]['lead_title']);
         $this->taskTitle = json_decode($emailSettings[0]['task_title']);
@@ -130,7 +133,10 @@ class GetEmails extends Command
                      $this->createRecordEmailEvent($message);
                  }
                  elseif ($message->to[0]->mail === $this->mailMail && in_array($message->subject,  $this->taskTitle)) {
-                     $this->createTask($message);
+                    //dont create new task if this is the forward mail of the notification
+                     if ( $this->mailFromName !== $message->from[0]->personal) {
+                         $this->createTask($message);
+                     }
 
                  }
                  else{
@@ -184,6 +190,12 @@ class GetEmails extends Command
          preg_match('/From:.+ <(.+)>/', $myStr, $email);
          preg_match('/טלפון(\d+)/', $myStr, $phone);
 
+        if (count($email) > 0) {
+            $hasCustomer = (new Customer())->getCustomerByEmail($email[1]);
+            if ($hasCustomer === 1) {
+                return false;
+            }
+        }
         $v = [
             'name' => 'ליד חדש מהאתר',
             'email' => count($email) > 0 ? $email[1] : '',

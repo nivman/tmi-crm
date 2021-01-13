@@ -53,7 +53,7 @@ class TasksController extends Controller
             return (new Task())->sortBy($ascending, $request, $params['params'], $sortByTaskAttr);
         }
 
-        $tasks = Task::with(['customer', 'project', 'priority', 'status', 'category', 'taskRepeat','repeatRules'])->mine()->vueTable(Task::$columns);
+        $tasks = Task::with(['customer', 'contact', 'project', 'priority', 'status', 'category', 'taskRepeat','repeatRules'])->mine()->vueTable(Task::$columns);
 
         $tasksPercentage = (new Task())->getPercentage($tasks);
         return response()->json($tasksPercentage);
@@ -83,6 +83,7 @@ class TasksController extends Controller
         $TASK_REPEAT = 1;
         $v = $request->validated();
         $v['customer_id'] = $request->request->get('customer') ? $request->request->get('customer')['id'] : null;
+        $v['contact_id'] = $request->request->get('contact') ? $request->request->get('contact')['id'] : null;
         $v['priority_id'] = $request->request->get('priority') ? $request->request->get('priority')['id'] : null;
         $v['category_id'] = $request->request->get('category') ? $request->request->get('category')['id'] : null;
         $v['status_id'] = $request->request->get('status') ? $request->request->get('status')['id'] : null;
@@ -114,6 +115,7 @@ class TasksController extends Controller
         $task->status = $task->getStatus($task->getAttribute('status_id'));
         $task->priority = $task->getPriority($task->getAttribute('priority_id'));
         $task->customer = $task->getCustomer($task->getAttribute('customer_id'));
+        $task->contact = $task->getContact($task->getAttribute('contact_id'));
         $task->category = $task->getCategory($task->getAttribute('category_id'));
         $task->project = $task->getProject($task->getAttribute('project_id'));
 
@@ -127,6 +129,7 @@ class TasksController extends Controller
             'status' => $task->status,
             'priority' => $task->priority,
             'customer' => $task->customer,
+            'contact' => $task->contact,
             'statuses' => $tasksStatuses,
             'priorities' => $priorities,
             'categories' => $tasksCategory,
@@ -160,6 +163,7 @@ class TasksController extends Controller
         $v['status_id'] = $request->request->get('status') ? $request->request->get('status')['id'] : null;
         $v['priority_id'] = $request->request->get('priority') ? $request->request->get('priority')['id'] : null;
         $v['customer_id'] = $request->request->get('customer') ? $request->request->get('customer')['id'] : null;
+        $v['contact_id'] = $request->request->get('contact') ? $request->request->get('contact')['id'] : null;
         $v['category_id'] = $request->request->get('category') ? $request->request->get('category')['id'] : null;
         $v['project_id'] = $request->request->get('project') ? $request->request->get('project')['id'] : null;
         $task->update($v);

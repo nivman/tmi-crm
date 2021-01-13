@@ -144,7 +144,15 @@ export default {
                 labels.forEach(function(project, index){
                   if (project.name === projectLabels[index].label) {
                     let price = !project.price ? 'לא  נקבע' : project.price;
-                    data.data.datasets[index].label = project.name + ' ( מחיר: ' + price + ' זמן: ' + parseFloat(project.actual_time) +')'
+                    console.log(price)
+                    let percentageDone = !project.price ? '':  parseFloat((project.actual_time * 150) * 100 / price).toFixed(1)+'%';
+                    data.data.datasets[index].label = project.name + ' ( מחיר: ' +
+                        price +
+                        ' ;זמן: ' +
+                        parseFloat(project.actual_time) +
+                        ' ;אחוז סופי: ' +
+                        percentageDone +
+                        ')'
 
                   }
 

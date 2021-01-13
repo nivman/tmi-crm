@@ -23,6 +23,7 @@ class TaskRequest extends FormRequest
             'start_date' => 'nullable|date_format:Y-m-d H:i',
             'end_date' => 'nullable|date_format:Y-m-d H:i|after_or_equal:start_date',
             'customer_id' => 'nullable',
+            'contact_id' => 'nullable',
             'priority_id' => 'nullable',
             'event_id' => 'nullable',
             'status_id' => 'nullable',
