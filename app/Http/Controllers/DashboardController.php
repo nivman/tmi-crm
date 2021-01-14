@@ -25,11 +25,7 @@ class DashboardController extends Controller
     public function hoursPerCategoryHoursBar(Request $request)
     {
         $dates = $request->request->get('rangeDate');
-        $dateRangeArr = explode(" to ", $dates);
-        // if it less then 2 its mean that user enter only start date
-        if (count($dateRangeArr) < 2) {
-            return "test";
-        }
+        $dateRangeArr = explode(" אל ", $dates);
         $dateRange = Date::convertDatesRange($dateRangeArr[0], $dateRangeArr[1]);
 
         $categoriesTime = (new Task)->sumTasksTimeByCategoriesId($dateRange['startDate'],$dateRange['endDate']);

@@ -96,17 +96,18 @@ export default {
   },
   data () {
     return {
+
       dateRange: '',
       loading: false,
       config: null,
       project:'',
       projects: [],
-      range_date_config: {
-        altInput: true,
-        altFormat: 'd/m/Y',
-        dateFormat: 'd/m/Y',
-        mode: "range"
-      }
+      // range_date_config: {
+      //   altInput: true,
+      //   altFormat: 'd/m/Y',
+      //   dateFormat: 'd/m/Y',
+      //   mode: "range"
+      // }
     }
   },
   created() {
@@ -118,9 +119,19 @@ export default {
         })
     let startDate = moment(new Date()).startOf('month').format('DD/MM/YYYY');
     let endDate = moment(new Date()).endOf('month').format('DD/MM/YYYY');
-    this.dateRange = `${startDate} to ${endDate}`
+    this.dateRange = `${startDate} אל ${endDate}`
   },
   computed: {
+    range_date_config() {
+      return {
+        locale: this.getLocale !== 'en' ? require(`flatpickr/dist/l10n/he.js`).default.he : 'en',
+        altInput: true,
+        altFormat: 'd/m/Y',
+        dateFormat: 'd/m/Y',
+        mode: "range"
+
+      }
+    },
     months () {
       let date = new Date()
       let months = this.params.year == date.getFullYear() ? date.getMonth() + 1 : 12
@@ -249,7 +260,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style>
 .panel-body {
   position: relative;
 }
@@ -275,7 +286,8 @@ export default {
   font-size: 12px;
   font-weight: bold;
 }
-.categories-time-list{
-  direction: ltr;
+#end_date + input {
+  padding-right: calc(1.75em - 1px);
 }
+
 </style>
