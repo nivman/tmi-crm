@@ -36,10 +36,13 @@ class CategoriesController extends Controller
 
     public function index(Request $request)
     {
+
         if ($request->all) {
             return Category::select(['id', 'name', 'id as value'])->orderBy('name', 'asc')->get();
         }
-
+        if ($request->type === 'App\Expenses') {
+            return Category::where(['entity_name'=> $request->type])->select(['id', 'name', 'id as value'])->orderBy('name', 'asc')->get();
+        }
         $categories = response()->json(Category::vueTable(Category::$columns));
 
         $entityConvert = Category::convertEntityName($categories->getData(), $categories->original['count']);

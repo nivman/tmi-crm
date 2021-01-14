@@ -44,6 +44,9 @@ class ModelForm extends  Model
                     case 'App\Lead':
                         $value->entity_name = 'ליד';
                         break;
+                    case 'App\Expenses':
+                        $value->entity_name = 'הוצאות';
+                        break;
                 }
                 return $value;
             },

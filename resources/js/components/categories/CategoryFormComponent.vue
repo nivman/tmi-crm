@@ -36,6 +36,7 @@
                         <option value="App\Customer">לקוח</option>
                         <option value="App\Task">משימה</option>
                         <option value="App\Lead">ליד</option>
+                        <option value="App\Expenses">הוצאות</option>
                       </select>
                     </div>
                     <div class="help is-danger">

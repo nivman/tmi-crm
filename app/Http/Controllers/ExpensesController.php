@@ -38,6 +38,7 @@ class ExpensesController extends Controller
 
         $v['project_id'] = $request->request->get('project_id');
         $v['vendor_id'] = $request->request->get('vendor') ? $request->request->get('vendor')['id'] : null;
+        $v['category_id'] = $request->request->get('category_id');
         $expense = $request->user()->expenses()->create($v);
         $expense->categories()->sync($v['category']);
         return $expense;

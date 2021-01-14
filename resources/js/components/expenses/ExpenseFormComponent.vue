@@ -42,7 +42,7 @@
               <number-input-component
                   :value.sync="form.amount"
                   :validation="{rules: 'required', name: 'amount'}"
-                  :field="{label: 'Amount', name: 'amount', id: 'amount'}">
+                  :field="{label: 'סכום', name: 'amount', id: 'amount'}">
               </number-input-component>
               <div class="help is-danger">
                 {{ errors.first("amount") }}
@@ -58,13 +58,14 @@
                     <select
                         id="category"
                         name="category"
+                        @change="categoryChange"
                         v-model="form.category"
                         v-validate="'required'"
                         placeholder="בחירת קטגוריה">
                       <option
                           v-if="$store.state.settings.ac.select"
                           value=""
-                          disabled>בחירת קטגוריה
+                          >בחירת קטגוריה
                       </option>
                       <option
                           v-for="category in categories"
@@ -238,7 +239,7 @@ export default {
         title: "",
         reference: "",
         amount: "",
-        category: "",
+        category_id: "",
         account_id: "",
         details: "",
         project_id: "",
@@ -254,16 +255,10 @@ export default {
           this.account = res.data[0]
           this.form.account_id = res.data[0].id
           this.$http
-              .get("app/categories?all=1")
+              .get("app/categories?type=App\\Expenses")
               .then(res => {
 
                 this.categories = res.data;
-                if (
-                    !this.$store.state.settings.ac.select &&
-                    this.categories.length > 0
-                ) {
-                  this.form.category = this.categories[0].id;
-                }
                 this.$http
                     .get(`app/vendors`)
                     .then(res => {
@@ -363,6 +358,7 @@ export default {
             .finally(() => (this.isSaving = false));
       }
     },
+
     fetchExpense(id) {
       this.$http
           .get(`app/expenses/${id}`)
@@ -381,6 +377,7 @@ export default {
             this.$event.fire("appError", err.response);
           });
     },
+
     validateForm() {
       this.$validator
           .validateAll()
@@ -391,14 +388,21 @@ export default {
           })
           .catch(err => this.$event.fire("appError", err));
     },
+
     projectChange(selected) {
       this.project = selected;
       this.form.project_id = selected ? selected.id : "";
     },
+
+    categoryChange() {
+      this.form.category_id = this.form.category;
+    },
+
     accountChange(selected) {
       this.account = selected;
       this.form.account_id = selected ? selected.id : "";
     },
+
     getAccount(id) {
       this.$http
           .get(`app/accounts/${id}`)

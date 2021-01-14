@@ -16,7 +16,7 @@ class Expense extends ModelForm
 
     public static $columns = ['id', 'created_at', 'title', 'reference', 'amount', 'vendor.name','categories.name', 'account.name', 'project.name'];
 
-    protected $fillable = ['id', 'title', 'amount', 'reference', 'details', 'account_id', 'user_id', 'project_id', 'vendor_id'];
+    protected $fillable = ['id', 'title', 'amount', 'reference', 'details', 'account_id', 'user_id', 'project_id', 'vendor_id', 'category_id'];
     protected $hidden   = ['updated_at'];
     protected $with     = ['account', 'categories', 'project', 'vendor'];
 
