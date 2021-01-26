@@ -37,7 +37,7 @@
 
               <i class="fas fa-redo-alt"></i>
               <span class="tooltip-text"> {{
-                  props.row.repeat_rules[0] ? props.row.repeat_rules[0].text_rule : ''
+                  props.row.repeat_rules ? props.row.repeat_rules[0].text_rule : ''
                 }}</span>
 
             </p>
@@ -127,7 +127,7 @@
               </p>
               <p class="control tooltip" v-if="$store.getters.admin">
 
-                <span v-if="!props.row.repeat_rules[0]">
+                <span v-if="!props.row.repeat_rules">
                        <router-link style="font-size: 0.65rem"
                                     :to="'/tasks/edit/' + props.row.id"
                                     class="button is-warning is-small">
@@ -138,7 +138,7 @@
                 <span v-else>
 
                   <router-link style="font-size: 0.65rem"
-                               :to="'/tasks/edit/' + props.row.id +'?repeatTaskId=' +props.row.task_repeat[0].id+ '&all=true'"
+                               :to="'/tasks/edit/' + props.row.id +'?repeatTaskId=' +props.row.task_repeat.id+ '&all=true'"
                                class="button is-warning is-small">
                   <i class="fas fa-edit"></i>
                   <span class="tooltip-text">עריכה</span>
@@ -361,6 +361,7 @@ export default {
         if (this.customerId) {
           route = `app/customers/tasks/${this.customerId}`;
         } else if (this.projectId) {
+          console.log(this.projectId)
           route = `app/projects/tasks/${this.projectId}`;
         }
         return route;
