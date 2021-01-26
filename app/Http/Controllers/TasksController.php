@@ -230,7 +230,6 @@ class TasksController extends Controller
 
     public function updateCalendarDates(Request $request)
     {
-
         $eventId = $request->request->get('event')['event']['id'];
         $request->request->set('start_date', $request->request->get('start'));
         $request->request->set('end_date', $request->request->get('end'));
@@ -323,7 +322,6 @@ class TasksController extends Controller
     public function cancelNotification(Task $task)
     {
         $task->update(['notification_enable' => 0]);
-
     }
 
     public function updateAllRepeatedTasks(Request $request)
@@ -355,6 +353,13 @@ class TasksController extends Controller
         return response(['success' => true], 204);
     }
 
+    public function duplicate($id)
+    {
+        $task = Task::find($id);
+        $record = $task->replicate();
+        $record->save();
+        return response(['success' => true], 204);
+    }
     private function updateMainTaskFromRepeat($request)
     {
 
@@ -411,4 +416,5 @@ class TasksController extends Controller
        TasksEventsRepeat::find($repeatTaskId)->update(['show' => 0]);
 
     }
+
 }

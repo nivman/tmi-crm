@@ -7,16 +7,25 @@
           <p class="modal-card-title">
             {{ form.id ? 'עריכת משימה' : 'יצירת משימה' }}
           </p>
-          <div class="buttons is-centered">
-            <p class="control tooltip" v-if="customerId">
-              <a
-                  @click="addEvent"
-                  class="fas fa-comment-dots is-small button is-info">
+          <div class="buttons duplicate-icon"  v-if="form.id">
+            <div class="buttons has-addons" style="direction: ltr">
+              <div class="button-child">
+                <span class="control tooltip">
+                           <a @click="addEvent" class="fas fa-comment-dots is-small button is-info">
                 <span class="tooltip-text bottom"> התקשרות חדשה</span>
-
               </a>
-            </p>
-
+                </span>
+              </div>
+              <div class="button-child">
+                <span class="control tooltip">
+                     <a @click="duplicateTask" class="far fa-copy is-small button is-success">
+                <span class="tooltip-text bottom">שכפול משימה</span>
+              </a>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="buttons is-centered">
             <p class="control tooltip recurring-schedule-icon" v-if="!form.id">
               <a @click="openRecurringSchedule" class="far fa-calendar recurring-schedule-a"></a>
 
@@ -669,7 +678,21 @@ export default {
 
       this.$modal.show('event-form-modal', {customerId: this.form.customer.id});
     },
+    duplicateTask() {
+      this.$http
+          .get(`app/tasks/duplicate/${this.form.id}`)
+          .then(() => {
+            this.$event.fire('refreshTasksTable');
+            this.notify(
+                'success',
+                'משימה שוכפלה'
+            )
+            this.$modal.hide("dialog");
 
+          })
+          .catch(err => this.$event.fire('appError', err.response))
+
+    },
     openRecurringSchedule() {
       this.$modal.show('recurring-schedule-modal', {value: this.everyWeek});
 
@@ -970,5 +993,8 @@ export default {
 
 .recurring-schedule-a {
   color: rgba(10, 10, 10, 0.2);
+}
+.duplicate-icon{
+  margin-bottom: 0px !important;
 }
 </style>

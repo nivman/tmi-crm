@@ -53,13 +53,13 @@
               </div>
               <div class="button-child">
                 <span class="control tooltip">
-                  <a @click="addUpSale" class="button is-info	has-text-white is-small">
-                    <i class="fas fa-shopping-cart"></i>
+                  <a @click="addUpSale" class="button is-warning	has-text-white is-small">
+                    <i class="fas fa-piggy-bank"></i>
                     <span class="tooltip-text bottom">מכירה חדשה</span>
                   </a>
                </span>
                 <span class="control tooltip">
-                  <a @click="showUpSale" class="button is-success has-text-white is-small">
+                  <a @click="showUpSale" class="button is-danger has-text-white is-small">
                   <i class="fas fa-chart-bar"></i>
                     <span class="tooltip-text bottom">רשימת מכירות </span>
                   </a>

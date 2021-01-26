@@ -181,11 +181,15 @@ class Project extends ModelForm
         $finalPrice = [];
         foreach ($projects['data'] as $project) {
             $upSales = array_sum(array_column($project['up_sale'], 'amount'));
+            $project['originalPrice'] = $project['price'];
             $project['price']  = $project['price'] + $upSales;
+
             $finalPrice[] = $project;
 
         }
+
         $projects['data'] = $finalPrice;
+
         return $projects;
     }
 }

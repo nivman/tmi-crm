@@ -39,6 +39,19 @@
           <template slot="end_date" slot-scope="props">
             <date-format-component :dateTime="props.row.end_date"></date-format-component>
           </template>
+          <template slot="price" slot-scope="props">
+            <div>
+              <span v-if="props.row.originalPrice">
+                    מחיר מקורי: {{ props.row.originalPrice }}
+                  <br>
+              </span>
+              <span>
+                   מחיר כולל  : {{  props.row.price}}
+              </span>
+
+            </div>
+
+          </template>
           <template slot="type" slot-scope="props">
             <div class="has-text-centered">
               {{ props.row.type ? props.row.type.name : '' }}

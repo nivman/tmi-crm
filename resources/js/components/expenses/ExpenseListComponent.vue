@@ -128,11 +128,11 @@ export default {
   computed: {
     url: {
       get () {
-        let route = 'app/expenses';
+
         if (this.projectId) {
           return `app/expenses/project/${this.projectId}`;
         }
-        return route;
+        return 'app/expenses';
       },
 
     },

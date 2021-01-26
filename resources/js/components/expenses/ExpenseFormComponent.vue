@@ -121,13 +121,8 @@
                       v-model="form.project"
                       input-id="project"
                       :options="projects"
-                      @input="projectChange"
-                      class="expenses-dropdown"
-                      :style="{ width: '100%' }"
-                      placeholder="בחירת פרוייקט">
-                    <template slot="no-options">
-                      :-( לא מצאתי פרוייקט
-                    </template>
+                      @input="projectChange">
+
                   </v-select>
                 </div>
                 <div class="help is-danger">

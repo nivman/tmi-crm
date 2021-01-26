@@ -187,6 +187,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::delete('customers/delete/{customer}', 'CustomersController@destroy');
         Route::delete('customers/leads/delete/{customer}', 'CustomersController@destroy');
         Route::delete('tasks/delete/{task}', 'TasksController@destroy');
+        Route::get('tasks/duplicate/{id}',  'TasksController@duplicate');
         Route::post('tasks/repeat/all', 'TasksController@updateAllRepeatedTasks');
         Route::post('tasks/repeat/single', 'TasksController@updateSingleRepeatedTasks');
         Route::delete('tasks/repeat/delete/{repeatTaskId}', 'TasksController@destroyRepeatTask');

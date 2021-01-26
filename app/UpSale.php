@@ -12,7 +12,7 @@ class UpSale extends ModelForm
 {
     use AttributableModel, LogActivity, Restrictable, VueTable;
 
-    public static $columns = ['id', 'title', 'amount', 'categories.name','project.name'];
+    public static $columns = ['id', 'title', 'amount', 'category.name','project.name'];
 
     protected $fillable = ['id', 'title', 'amount',  'project_id', 'category_id'];
     protected $with     = ['category', 'project'];

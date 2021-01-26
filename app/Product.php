@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\ModelForm;
 use App\Providers\AppServiceProvider;
 use App\Traits\VueTable;
 use App\Traits\LogActivity;
@@ -13,7 +14,7 @@ use Rinvex\Attributes\Models\Attribute;
 use Rinvex\Attributes\Models\Type\Varchar;
 use Rinvex\Attributes\Support\RelationBuilder;
 
-class Product extends Model
+class Product extends ModelForm
 {
     use AttributableModel, DynamicHiddenVisible, LogActivity, VueTable;
 

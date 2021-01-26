@@ -15,7 +15,8 @@ class UpSaleController extends Controller
      */
     public function index()
     {
-        return response()->json(UpSale::vueTable(UpSale::$columns));
+
+        return response()->json(UpSale::with(['category'])->mine()->vueTable(UpSale::$columns));
     }
 
     /**
@@ -100,6 +101,11 @@ class UpSaleController extends Controller
 
     public function getUpSalesByProjectId($projectId)
     {
-        return  response()->json(UpSale::where(['project_id' => $projectId])->mine()->vueTable(UpSale::$columns));
+        $upSales = UpSale::where(['project_id' => $projectId])->mine()->vueTable(UpSale::$columns);
+
+        $sum = array_sum(array_column($upSales['data'],'amount'));
+        $upSales['sum'] = $sum;
+
+        return  response()->json($upSales);
     }
 }

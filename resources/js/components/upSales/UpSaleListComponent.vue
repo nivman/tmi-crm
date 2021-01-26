@@ -9,9 +9,17 @@
 
       </div>
       <div class="panel-block">
-        <v-server-table name="upsalesTable" :url="url" :columns="columns" :options="options" ref="upsalesTable">
+        <v-server-table
+            name="upsalesTable"
+            :url="url"
+            :columns="columns"
+            :options="options"
+            @loaded="onLoaded"
+            ref="upsalesTable">
           <template slot="category" slot-scope="props">
             {{ props.row.category.name }}
+
+
           </template>
           <template slot="project" slot-scope="props">
             {{ props.row.project ? props.row.project.name : '' }}
@@ -32,8 +40,16 @@
               </p>
             </div>
           </template>
+                      <template slot="afterBody">
+                        <div style="width: 100px;
+    float: right;
+    position: absolute;"> סה"כ: {{ totalUpSale }}</div>
+
+                      </template>
         </v-server-table>
+
       </div>
+
     </div>
     <router-view></router-view>
   </div>
@@ -48,6 +64,7 @@ export default {
   props:['projectId'],
   data () {
     return {
+      totalUpSale: '',
       columns: ['title', 'amount', 'category', 'project', 'actions'],
       options: {
         perPage: 10,
@@ -77,5 +94,10 @@ export default {
     },
 
   },
+  methods: {
+    onLoaded (data) {
+      this.totalUpSale = data.data.sum;
+    },
+  }
 }
 </script>

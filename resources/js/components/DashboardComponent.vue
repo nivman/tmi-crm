@@ -93,7 +93,7 @@ export default {
            this.barProjectsParams.projects = projects;
         },
         barCategoryRangeChanged(dates) {
-          console.log(dates)
+
           if (dates.includes("אל")) {
             this.barCategoriesParams.rangeDate = dates;
           }
@@ -105,7 +105,7 @@ export default {
     let endDate = moment(new Date()).endOf('month').format('DD/MM/YYYY');
 
     this.dateRange = `${startDate} אל ${endDate} `
-    console.log(this.dateRange)
+
     this.barCategoryRangeChanged(this.dateRange);
   }
 };
