@@ -45,7 +45,7 @@
                     מחיר מקורי: {{ props.row.originalPrice }}
                   <br>
               </span>
-              <span>
+              <span v-if="props.row.originalPrice !== props.row.price " >
                    מחיר כולל  : {{  props.row.price}}
               </span>
 
