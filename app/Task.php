@@ -227,7 +227,7 @@ class Task extends ModelForm
         return DB::table('tasks')
             ->whereIn('project_id', $projectsId)
             ->groupBy('project_id')
-            ->get(['project_id',  DB::raw('CONCAT(Floor(SUM(actual_time) /60), ".",LPAD(ROUND((SUM(actual_time) /60 - Floor(SUM(actual_time) /60)) * 60 % 60),2,"0")) AS actual_time')])->toArray();
+            ->get(['project_id', DB::raw('SUM(actual_time /60) AS original_actual_time') , DB::raw('CONCAT(Floor(SUM(actual_time) /60), ".",LPAD(ROUND((SUM(actual_time) /60 - Floor(SUM(actual_time) /60)) * 60 % 60),2,"0")) AS actual_time')])->toArray();
     }
 
     public function setNotification($taskCreated)

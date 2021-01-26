@@ -47,6 +47,9 @@ class ModelForm extends  Model
                     case 'App\Expenses':
                         $value->entity_name = 'הוצאות';
                         break;
+                    case 'App\UpSale':
+                        $value->entity_name = '(Upselling) מכירות נוספות';
+                        break;
                 }
                 return $value;
             },

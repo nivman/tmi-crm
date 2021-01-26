@@ -40,7 +40,7 @@ class CategoriesController extends Controller
         if ($request->all) {
             return Category::select(['id', 'name', 'id as value'])->orderBy('name', 'asc')->get();
         }
-        if ($request->type === 'App\Expenses') {
+        if ($request->type === 'App\Expenses' || $request->type === 'App\UpSale') {
             return Category::where(['entity_name'=> $request->type])->select(['id', 'name', 'id as value'])->orderBy('name', 'asc')->get();
         }
         $categories = response()->json(Category::vueTable(Category::$columns));

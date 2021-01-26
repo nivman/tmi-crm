@@ -46,6 +46,25 @@ class Project extends ModelForm
         return $this->hasMany(Expense::class);
     }
 
+    public function upSale()
+    {
+        return $this->hasMany(UpSale::class);
+//        $data = UpSale::with(['project' => function($query) {
+//            $query->sum('amount');
+//            ;
+//        }])->get(['title','project_id', DB::raw('amount')])->toArray();
+//
+//
+//
+//
+//dd($data);
+//
+//
+//
+//        return $this->hasMany(UpSale::class)->selectRaw('SUM(amount) as amount')
+//            ->groupBy('project_id');;
+    }
+    
     public function scopeSearch($query, $search)
     {
         if (!empty($search)) {
@@ -155,5 +174,18 @@ class Project extends ModelForm
         $customerTasksTime =array_column($customerTasksTime, null, 'customer_id');
         return $customerTasksTime;
 
+    }
+
+    public function setProjectTotalPrice($projects)
+    {
+        $finalPrice = [];
+        foreach ($projects['data'] as $project) {
+            $upSales = array_sum(array_column($project['up_sale'], 'amount'));
+            $project['price']  = $project['price'] + $upSales;
+            $finalPrice[] = $project;
+
+        }
+        $projects['data'] = $finalPrice;
+        return $projects;
     }
 }

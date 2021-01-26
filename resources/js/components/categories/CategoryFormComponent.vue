@@ -37,6 +37,7 @@
                         <option value="App\Task">משימה</option>
                         <option value="App\Lead">ליד</option>
                         <option value="App\Expenses">הוצאות</option>
+                        <option value="App\UpSale">(Upselling) מכירות נוספות</option>
                       </select>
                     </div>
                     <div class="help is-danger">

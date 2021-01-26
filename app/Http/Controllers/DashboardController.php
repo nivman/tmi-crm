@@ -11,6 +11,7 @@ use App\Project;
 use App\Purchase;
 
 use App\Task;
+use App\UpSale;
 use Carbon\Carbon;
 use App\Charts\BarChart;
 use App\Charts\PieChart;
@@ -28,13 +29,12 @@ class DashboardController extends Controller
         $dateRangeArr = explode(" אל ", $dates);
         $dateRange = Date::convertDatesRange($dateRangeArr[0], $dateRangeArr[1]);
 
-        $categoriesTime = (new Task)->sumTasksTimeByCategoriesId($dateRange['startDate'],$dateRange['endDate']);
+        $categoriesTime = (new Task)->sumTasksTimeByCategoriesId($dateRange['startDate'], $dateRange['endDate']);
         $categoriesName = array_column($categoriesTime, 'name');
 
         // if task have no category replace the null
         $pos = array_search(null, $categoriesName);
-        if ($pos)
-        {
+        if ($pos) {
             $categoriesName[$pos] = "ללא קטגוריה";
         }
 
@@ -42,7 +42,7 @@ class DashboardController extends Controller
 
         $config = [
             'title' => "שעות עבודה פר קטגוריה",
-            'datasets' =>  $datasets,
+            'datasets' => $datasets,
             'labels' => [],
             'options' => [
                 'responsive' => false,
@@ -88,7 +88,7 @@ class DashboardController extends Controller
 
         $groupProjectsData = $this->createFullProjectTimeData($categoriesNames, $groupProjectsData);
 
-        if(count($groupProjectsData) > 1) {
+        if (count($groupProjectsData) > 1) {
             foreach ($groupProjectsData as $key => $item) {
                 usort($groupProjectsData[$key], fn($a, $b) => strcmp($a->category_id, $b->category_id));
             }
@@ -198,12 +198,12 @@ class DashboardController extends Controller
 
     public function projectsByIds($projectsIds)
     {
-        return(new Task)->sumTasksTimeByProjectsId($projectsIds);
+        return (new Task)->sumTasksTimeByProjectsId($projectsIds);
     }
 
     private function projectsByDate()
     {
-        return(new Task)->getTasksByProjectsStartDate();
+        return (new Task)->getTasksByProjectsStartDate();
     }
 
     /**
@@ -240,7 +240,7 @@ class DashboardController extends Controller
             $groupProjectsData[$groupProjects][] = $value;
         }
         ksort($categoriesNames);
-        return array($groupProjectsData, $categoriesNames );
+        return array($groupProjectsData, $categoriesNames);
     }
 
     /**
@@ -334,43 +334,52 @@ class DashboardController extends Controller
     private function aggregateProjectData(array $projectsData)
     {
 
-        $projectsActualTime =json_encode((new Task())->sumProjectActualTime(array_unique(array_column($projectsData, 'project_id'))));
+        $projectsActualTime = json_encode((new Task())->sumProjectActualTime(array_unique(array_column($projectsData, 'project_id'))));
+
         $projectsPrice = Project::whereIn('id', array_unique(array_column($projectsData, 'project_id')))
-            ->select('id as project_id','price', 'name')
+            ->select('id as project_id', 'price', 'name')
             ->get()->toArray();
 
 
         $projectsData = [];
-        foreach(json_decode($projectsActualTime,true) as $projectActualTime) {
+        foreach (json_decode($projectsActualTime, true) as $projectActualTime) {
 
-           foreach ($projectsPrice as $projectPrice) {
-               if ($projectActualTime['project_id'] === $projectPrice['project_id'] ) {
-                   $id = $projectPrice['project_id'];
-                   //dd($projectActualTime['actual_time']);
-                   $projectsData[$id] = [
-                       'price' => $projectPrice['price'],
-                       'actual_time' => $projectActualTime['actual_time'],
-                       'name' => $projectPrice['name']
-                   ];
-               }
-           }
+            foreach ($projectsPrice as $projectPrice) {
+                if ($projectActualTime['project_id'] === $projectPrice['project_id']) {
+                    $id = $projectPrice['project_id'];
+                    $upSaleAmount = $this->getUpSaleByProjectId($id);
+                    $projectsData[$id] = [
+                        'price' => $projectPrice['price'] + $upSaleAmount,
+                        'actual_time' => $projectActualTime['actual_time'],
+                        'original_actual_time' => $projectActualTime['original_actual_time'],
+                        'name' => $projectPrice['name']
+                    ];
+                }
+            }
 
         }
 
-    return $projectsData;
+        return $projectsData;
+    }
+
+    private function getUpSaleByProjectId($id)
+    {
+       $upSales = UpSale::where(['project_id' => $id])->get()->toArray();
+
+       return array_sum(array_column($upSales, 'amount'));
     }
 
     private function createCategoriesDatasets(array $categoriesTime, array $categoriesName)
     {
         $categories = [];
         foreach ($categoriesTime as $categoryTime) {
-                foreach ($categoriesName as $key => $categoryName) {
-                    if ($categoryName === $categoryTime->name) {
-                        $name = !$categoryName ? 'ללא קטגוריה' : $categoryName;
-                        $actualTime = !$categoryTime->actual_time ? "0" : $categoryTime->actual_time;
-                        $categories[$name][] = $actualTime;
-                    }
+            foreach ($categoriesName as $key => $categoryName) {
+                if ($categoryName === $categoryTime->name) {
+                    $name = !$categoryName ? 'ללא קטגוריה' : $categoryName;
+                    $actualTime = !$categoryTime->actual_time ? "0" : $categoryTime->actual_time;
+                    $categories[$name][] = $actualTime;
                 }
+            }
         }
 
         return $categories;

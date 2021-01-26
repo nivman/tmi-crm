@@ -55,7 +55,7 @@ class VendorsController extends Controller
 
     public function store(VendorRequest $request)
     {
-        $v            = $request->validated();
+        $v = $request->validated();
         $v['user_id'] = auth()->id();
         return Vendor::create($v);
     }

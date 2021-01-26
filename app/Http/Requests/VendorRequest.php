@@ -50,11 +50,6 @@ class VendorRequest extends FormRequest
                 $validated[$attribute->slug] = \Carbon\Carbon::parse($validated[$attribute->slug]);
             }
         }
-
-        $cs                        = getCS($validated['country'], $validated['state']);
-        $validated['state_name']   = $cs['state']->name;
-        $validated['country_name'] = $cs['country']->name;
-
         return $validated;
     }
 }

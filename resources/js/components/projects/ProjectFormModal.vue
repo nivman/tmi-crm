@@ -51,6 +51,20 @@
                   </a>
                 </span>
               </div>
+              <div class="button-child">
+                <span class="control tooltip">
+                  <a @click="addUpSale" class="button is-info	has-text-white is-small">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="tooltip-text bottom">מכירה חדשה</span>
+                  </a>
+               </span>
+                <span class="control tooltip">
+                  <a @click="showUpSale" class="button is-success has-text-white is-small">
+                  <i class="fas fa-chart-bar"></i>
+                    <span class="tooltip-text bottom">רשימת מכירות </span>
+                  </a>
+                </span>
+              </div>
             </div>
             <p class="control tooltip" style="bottom: 10px; margin-right: 10px;">
               <button
@@ -287,6 +301,21 @@
         </section>
       </div>
     </div>
+    <div v-if="showUpSaleForm">
+      <up-sale-form-component :projectId="projectId" :projectName="projectName"></up-sale-form-component>
+    </div>
+    <div class="modal is-active" v-if="showUpSaleList">
+      <div class="modal-background"></div>
+      <div style="margin: 10%" class="animated fastest zoomIn">
+        <header style="direction: ltr" class="modal-card-head is-radius-top">
+          <button type="button" class="delete" @click="showUpSale"></button>
+        </header>
+        <section class="modal-card-body is-radius-bottom event-form-task-list">
+
+          <up-sale-list-component :projectId="projectId"  :projectName="projectName"></up-sale-list-component>
+        </section>
+      </div>
+    </div>
     <div v-if="showExpenseForm">
       <expense-form-component :projectId="projectId"></expense-form-component>
     </div>
@@ -300,6 +329,8 @@ import TaskFormModal from "../tasks/TaskFormModal";
 import TaskListComponent from "../tasks/TaskListComponent";
 import ExpenseListComponent from "../expenses/ExpenseListComponent";
 import ExpenseFormComponent from "../expenses/ExpenseFormComponent";
+import UpSaleListComponent from "../upSales/UpSaleListComponent";
+import UpSaleFormComponent from "../upSales/UpSaleFormComponent";
 import VueToggles from 'vue-toggles';
 export default {
   props: ['customerId', 'customerName'],
@@ -311,6 +342,8 @@ export default {
       showTasksList: false,
       showExpensesList: false,
       showExpenseForm: false,
+      showUpSaleForm: false,
+      showUpSaleList: false,
       types: [],
       loading: true,
       attributes: [],
@@ -484,6 +517,9 @@ export default {
     addExpense() {
       this.showExpenseForm = this.showExpenseForm !== true
     },
+    addUpSale() {
+      this.showUpSaleForm = this.showUpSaleForm !== true
+    },
     showEvents() {
       this.showEventsList = this.showEventsList !== true
     },
@@ -494,12 +530,19 @@ export default {
 
       this.showExpensesList = this.showExpensesList !== true
     },
+    showUpSale() {
+
+      this.showUpSaleList = this.showUpSaleList !== true
+    },
     activeProject() {
 
       this.form.active = !this.form.active;
     },
   },
-  components: {EventsListComponent, TaskFormModal, TaskListComponent, ExpenseListComponent, ExpenseFormComponent, VueToggles}
+  components: {
+    UpSaleFormComponent,
+    UpSaleListComponent,
+    EventsListComponent, TaskFormModal, TaskListComponent, ExpenseListComponent, ExpenseFormComponent, VueToggles}
 
 
 }

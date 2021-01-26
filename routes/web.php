@@ -74,6 +74,11 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
   //  Route::delete('events/eventsTypes', 'EventsController@eventsTypes');
     Route::delete('events/delete/{event}', 'EventsController@destroy');
     Route::resource('events', 'EventsController');
+    Route::get('upsales/{upsale}', 'UpSaleController@show');
+    Route::put('upsales', 'UpSaleController@store');
+
+    Route::resource('upsales', 'UpSaleController');
+
     Route::get('tasks/details/{term}/{id}', 'TasksController@details');
 
     Route::get('tasks/customers/{id}', 'TasksController@getCustomer');
@@ -90,6 +95,7 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
     Route::get('projects/list', 'ProjectsController@list');
     Route::get('projects/', 'ProjectsController@edit');
     Route::get('expenses/projects/{projectId}', 'ProjectsController@getProjectById');
+    Route::get('upsales/project/{projectId}', 'UpSaleController@getUpSalesByProjectId');
     Route::post('projects/add', 'ProjectsController@store');
     Route::get('projects/search', 'ProjectsController@search');
     Route::get('projects/tasks/{id}', 'TasksController@getProjectTasks');

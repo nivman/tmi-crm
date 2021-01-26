@@ -61,7 +61,6 @@
                              <i class="far fa-smile percentageRowIcon"></i>
                             </span>
               </p>
-
             </div>
           </template>
           <template slot="active" slot-scope="props">

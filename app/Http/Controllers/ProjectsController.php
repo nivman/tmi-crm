@@ -7,6 +7,7 @@ use App\Http\Requests\ProjectRequest;
 use App\Project;
 use App\ProjectTypes;
 use App\Task;
+use App\UpSale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -19,8 +20,10 @@ class ProjectsController extends Controller
      */
     public function index()
     {
-        $projects = Project::with(['customer', 'type'])->orderBy('active','DESC')->mine()->vueTable(Project::$columns);
-        $percentageDone = (new Project)->getPercentageDone($projects);
+
+        $projects = Project::with(['customer', 'type','upSale'])->orderBy('active','DESC')->mine()->vueTable(Project::$columns);
+        $totalProjectsPrice = (new Project)->setProjectTotalPrice($projects);
+        $percentageDone = (new Project)->getPercentageDone($totalProjectsPrice);
 
         return response()->json($percentageDone);
 

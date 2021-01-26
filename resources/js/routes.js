@@ -231,6 +231,25 @@ const router = new VueRouter({
             ]
         },
         {
+            path: "/upsales",
+            component: () => import("./components/upSales/UpSaleListComponent.vue"),
+            meta: { title: "Projects", admin: false },
+            children: [
+                {
+                    path: "add",
+                    component: () => import("./components/upSales/UpSaleFormComponent.vue"),
+                    meta: { title: "Add Project", admin: false, modal: true }
+                },
+
+                {
+                    path: "edit/:id",
+                    component: () => import("./components/upSales/UpSaleFormComponent.vue"),
+                    meta: { title: "Edit Project", admin: true, modal: true }
+                },
+
+            ]
+        },
+        {
             path: "/projects/tasks/:id",
             component: () => import(/* webpackChunkName: "components" */ "./components/tasks/TaskListComponent.vue"),
             meta: { title: "Task with projects", admin: true }

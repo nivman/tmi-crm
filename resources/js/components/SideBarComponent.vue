@@ -149,6 +149,13 @@
             <li>
               <router-link to="/projects/add" @click.native="hideMenu">יצירת פרוייקט</router-link>
             </li>
+            <li>
+              <router-link to="/upsales" exact @click.native="hideMenu">רשימת מכירות נוספות</router-link>
+            </li>
+            <li>
+            <li>
+              <router-link to="/upsales/add" @click.native="hideMenu">יצירת מכירה נוספת</router-link>
+            </li>
           </template>
         </side-bar-menu-component>
         <side-bar-menu-component :expand="subIsActive(['/notes'])">
