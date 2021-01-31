@@ -131,14 +131,14 @@ trait VueTable
                             $qu->where($tableName . '.' . $relation[1], 'like', "%{$query}%");
                         } elseif (count($queryFields) > 0 && $joinTables) {
                             foreach ($queryFields as $key => $queryField) {
-                                if ($key == 'start_date' || $key == 'end_date') {
+                                if ($key == 'start_date' || $key == 'end_date' || $key == 'created_at') {
 
                                     $start = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['start']);
 
                                     $end = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['end']);
-                                    $qu->whereBetween($key, [$start, $end]);
+                                    $qu->whereBetween($joinTables.'.'.$key, [$start, $end]);
                                 }
-                                if ($data->getModel()->checkRelation($key) && $key !== 'start_date') {
+                                if ($data->getModel()->checkRelation($key) && ($key !== 'start_date' && $key !== 'created_at')) {
 
                                     $qu->where($joinTables . '.' . $key, 'like', "%{$queryField}%");
                                 }
@@ -194,12 +194,13 @@ trait VueTable
         foreach ($queryFields as $key => $queryField) {
 
             if ($data->getModel()->checkRelation($key)) {
-                if ($key == 'start_date' || $key == 'end_date') {
+
+                if ($key == 'start_date' || $key == 'end_date' || $key == 'created_at') {
 
                     $start = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['start']);
 
                     $end = Carbon::createFromFormat('Y-m-d H:i:s', $queryField['end']);
-                    $q->whereBetween($key, [$start, $end]);
+                    $q->whereBetween($joinTables.'.'.$key, [$start, $end]);
                 } else {
                     $q->{$method}($joinTables . '.' . $key, 'LIKE', "%{$queryField}%");
                 }

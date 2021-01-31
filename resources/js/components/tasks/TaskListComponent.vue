@@ -37,7 +37,7 @@
 
               <i class="fas fa-redo-alt"></i>
               <span class="tooltip-text"> {{
-                  props.row.repeat_rules ? props.row.repeat_rules[0].text_rule : ''
+                  props.row.repeat_rules ? props.row.repeat_rules.text_rule : ''
                 }}</span>
 
             </p>

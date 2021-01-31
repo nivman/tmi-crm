@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Expense;
+use App\Helpers\Filters;
 use App\Http\Requests\ExpenseRequest;
  
 use Illuminate\Http\Request;
@@ -20,8 +21,19 @@ class ExpensesController extends Controller
         return response(['success' => true], 204);
     }
 
-    public function index(Request $request)
+    public function index(Request $request, $expensesId = -1, $entityType = null)
     {
+
+        $ascending = $request->request->get('ascending') == 1 ? 'DESC' : 'ASC';
+        $params = Filters::filters($request, 'expenses');
+
+        $orderByExpensesValue = $request->query->get('orderBy');
+        $hasRelation = (new Expense())->checkRelation($orderByExpensesValue);
+        $sortByExpensesAttr = [$hasRelation, $orderByExpensesValue];
+        if ($params['filter'] || $expensesId !== -1) {
+
+            return (new Expense())->sortBy($ascending, $request, $params['params'], $sortByExpensesAttr);
+        }
         return response()->json(Expense::vueTable(Expense::$columns));
     }
 
@@ -54,8 +66,14 @@ class ExpensesController extends Controller
         return $expense;
     }
 
-    public function getExpensesByProjectId($projectId)
+    public function getExpensesByProjectId(Request $request, $projectId)
     {
-      return  response()->json(Expense::where(['project_id' => $projectId])->mine()->vueTable(Expense::$columns));
+
+
+        $request->query->set('orderBy', 'project');
+        $request->query->set('projectId', $projectId);
+        $expenses = $this->index($request, $projectId, 'project_id');
+
+      return  response()->json($expenses->getData());
     }
 }

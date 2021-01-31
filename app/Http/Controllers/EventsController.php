@@ -26,7 +26,7 @@ class EventsController extends Controller
     protected function isValid($request)
     {
         return $request->validate([
-            'title'      => 'required|max:55|string|not_regex:/<[^>]*>/',
+            'title'      => 'required|max:255|string|not_regex:/<[^>]*>/',
             'start_date' => 'required|date_format:Y-m-d H:i',
             'end_date'   => 'nullable|date_format:Y-m-d H:i|after_or_equal:start_date',
             'color'      => 'nullable|string',
@@ -92,14 +92,14 @@ class EventsController extends Controller
         $ascending = $request->request->get('ascending') == 1 ? 'DESC' : 'ASC';
 
         $params = Filters::filters($request, 'events');
-        $orderByTaskValue = $request->query->get('orderBy');
-        $hasRelation = (new Event())->checkRelation($orderByTaskValue);
+        $orderByEventValue = $request->query->get('orderBy');
+        $hasRelation = (new Event())->checkRelation($orderByEventValue);
 
-        $sortByTaskAttr = [$hasRelation, $orderByTaskValue];
+        $sortByEventAttr = [$hasRelation, $orderByEventValue];
 
         if ($params['filter']) {
 
-            return (new Event())->sortBy($ascending, $request, $params['params'], $sortByTaskAttr);
+            return (new Event())->sortBy($ascending, $request, $params['params'], $sortByEventAttr);
         }
         return  Event::with(['type', 'contact', 'project'])->mine()->vueTable(Event::$columns);
 
