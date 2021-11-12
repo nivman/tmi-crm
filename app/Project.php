@@ -120,7 +120,7 @@ class Project extends ModelForm
             $collectTaskTime[] = $projectsTask->actual_time;
         }
         //TODO hour wage should be dynamic
-        $HourlyWage = 230;
+        $HourlyWage = 210;
         $convertToHours = (array_sum($collectTaskTime) / 60);
         $totalTimeAsAmount = $convertToHours *  $HourlyWage;
 

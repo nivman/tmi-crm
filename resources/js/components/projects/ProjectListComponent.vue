@@ -253,7 +253,7 @@ export default {
       if (tasksTime) {
         let sumTasksTime = tasksTime.reduce((a, b) => a + b, 0)
         //TODO hour wage should be dynamic
-        let HourlyWage = 230;
+        let HourlyWage = 210;
         let convertToHours = (sumTasksTime / 60)
         return convertToHours *  HourlyWage;
       }
