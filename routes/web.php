@@ -156,6 +156,8 @@ Route::prefix('app')->middleware(['auth'])->group(function () {
         Route::get('logs', 'UtilitiesController@logs');
         Route::get('profile/{username}', 'UsersController@show');
         Route::post('settings/system/update', 'SettingsController@update');
+        Route::post('settings/system/saveAccountSettings', 'SettingsController@saveAccountSettings');
+        Route::post('settings/system/getAccountSettings', 'SettingsController@getAccountSettings');
         Route::get('settings/system', 'SettingsController@show');
         Route::post('app/system', 'SettingsController@update');
         Route::get('logs/{activity}', 'UtilitiesController@showLog');

@@ -52,9 +52,9 @@
             </div>
 
           </template>
-          <template slot="type" slot-scope="props">
+          <template slot="task_hours" slot-scope="props">
             <div class="has-text-centered">
-              {{ props.row.type ? props.row.type.name : '' }}
+              {{ sumTasksTime(props.row.task_time) }}
             </div>
           </template>
           <template slot="percentage_done" slot-scope="props">
@@ -85,8 +85,7 @@
           </template>
           <template slot="some_money_so_far" slot-scope="props">
             <div class="has-text-centered">
-
-              {{ moneyBurnCalculation(props.row.actual_time) }}
+             {{ Math.round(moneyBurnCalculation(props.row.actual_time)) }}
             </div>
           </template>
 
@@ -177,7 +176,8 @@ export default {
       showProjectForm: false,
       projectId: null,
       projectName: null,
-      columns: ['name', 'customer', 'start_date','end_date', 'price', 'expenses', 'type','percentage_done','some_money_so_far' ,'active', 'actions'],
+      hourlyWage: null,
+      columns: ['name', 'customer', 'start_date','end_date', 'price', 'expenses', 'task_hours','percentage_done','some_money_so_far' ,'active', 'actions'],
       filters: new this.$form({ name: '', company: '', email: '', phone: '', balance: false, range: 0 }),
       addRoute: null,
       options: {
@@ -197,7 +197,7 @@ export default {
           customer: 'לקוח',
           start_date :'תחילת עבודה',
           end_date : 'סיום עבודה',
-          type: 'סוג',
+          task_hours: 'סה"כ שעות',
           date_to_complete: 'תאריך התחלה',
           actual_time: 'תאריך סיום',
           price: 'מחיר',
@@ -249,21 +249,46 @@ export default {
         }
       }
     },
+    sumTasksTime(tasksTime) {
+      if (tasksTime) {
+        let sumTasksTime = tasksTime.reduce((a, b) => a + b, 0)
+
+        let h = Math.floor(sumTasksTime / 60);
+        let m = sumTasksTime % 60;
+        h = h < 10 ? '0' + h : h;
+        m = m < 10 ? '0' + m : m;
+        return h + ':' + m;
+      }
+
+    },
     moneyBurnCalculation(tasksTime) {
       if (tasksTime) {
         let sumTasksTime = tasksTime.reduce((a, b) => a + b, 0)
-        //TODO hour wage should be dynamic
-        let HourlyWage = 230;
+        let HourlyWage = this.hourlyWage;
         let convertToHours = (sumTasksTime / 60)
         return convertToHours *  HourlyWage;
       }
     },
+    getHourlyWage(){
 
+      this.$http
+          .post('app/settings/system/getAccountSettings')
+          .then(res => {
+            this.hourlyWage = res.data.accountSettings.price
+          })
+          .catch(err => {
+            this.$event.fire('appError', err.response);
+          });
+
+    },
   },
+
   created () {
+
     this.showTaskList = false
     this.addRoute = !this.customerId ? '/projects/add' : `app/customers/projects/${this.customerId}`;
     this.$root.$refs.ProjectListComponent = this;
+    this.getHourlyWage();
   },
   computed: {
     url: {

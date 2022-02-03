@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+
+use App\AccountsSettings;
+use App\Http\Requests\AccountsSettingsRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\Env;
 use Illuminate\Http\Request;
@@ -21,8 +24,12 @@ class SettingsController extends Controller
 
     public function show(Request $request)
     {
+        $accountsSettings = (new AccountsSettings)->getAccountsSettings();
 
-        return Env::changeable();
+        $systemSettings = Env::changeable();
+
+
+        return ['systemSettings' => $systemSettings, 'accountsSettings' => $accountsSettings];
     }
 
     public function store(Request $request)
@@ -46,5 +53,33 @@ class SettingsController extends Controller
             return response($data, 201);
         }
         return response(['message' => 'Unable to update settings.'], 422);
+    }
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\AccountsSettings  $accountSettings
+     * @return \Illuminate\Http\Response
+     */
+    public function saveAccountSettings(AccountsSettingsRequest $request, AccountsSettings $accountSettings)
+    {
+        $v = $request->validated();
+
+        if (AccountsSettings::count() == 0) {
+            AccountsSettings::create([
+                'price' => $v['price'] ,
+            ]);
+        }else{
+            $accountSettings = $accountSettings->first();
+            $accountSettings->update($v);
+        }
+
+        return response('success', 201);
+    }
+
+    public function getAccountSettings()
+    {
+        $accountSettings = (new AccountsSettings)->getAccountsSettings();
+        return ['accountSettings' => $accountSettings];
     }
 }

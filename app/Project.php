@@ -49,20 +49,6 @@ class Project extends ModelForm
     public function upSale()
     {
         return $this->hasMany(UpSale::class);
-//        $data = UpSale::with(['project' => function($query) {
-//            $query->sum('amount');
-//            ;
-//        }])->get(['title','project_id', DB::raw('amount')])->toArray();
-//
-//
-//
-//
-//dd($data);
-//
-//
-//
-//        return $this->hasMany(UpSale::class)->selectRaw('SUM(amount) as amount')
-//            ->groupBy('project_id');;
     }
     
     public function scopeSearch($query, $search)
@@ -102,7 +88,7 @@ class Project extends ModelForm
 
                 if ($project['id'] === $projectTask->project_id) {
                     $project['actual_time'][] = $projectTask->actual_time;
-
+                    $project['task_time'][] = $projectTask->actual_time;
                     $projects['data'][$key] = $project;
                 }
             }
@@ -119,8 +105,8 @@ class Project extends ModelForm
         foreach ($projectsTasks as $projectsTask) {
             $collectTaskTime[] = $projectsTask->actual_time;
         }
-        //TODO hour wage should be dynamic
-        $HourlyWage = 230;
+        $accountSettings = (new AccountsSettings)->getAccountsSettings();
+        $HourlyWage = $accountSettings->price;
         $convertToHours = (array_sum($collectTaskTime) / 60);
         $totalTimeAsAmount = $convertToHours *  $HourlyWage;
 
