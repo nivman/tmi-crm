@@ -20423,3 +20423,12 @@ a.fc-event {
   width: 200px;
 }
 
+.recurring-schedule-modal {
+  left: 613px !important;
+  width: 685px !important;
+}
+
+#week > div > div {
+  width: 80px;
+}
+
